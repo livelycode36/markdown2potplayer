@@ -16,13 +16,14 @@ ReduceTime(originalTime, secondsToModify) {
 
 ; 将时间字符串转换为秒
 TimeToSeconds(timeStr) {
-  RegExMatch(timeStr, "^((?<hours>\d+):)?((?<minutes>[0-5][0-9]):)?(?<seconds>[0-5][0-9])$", &matches)
+  RegExMatch(timeStr, "^((?<hours>\d+):)?((?<minutes>[0-5][0-9]):)?(?<seconds>[0-5][0-9])(\.(?<ms>\d+))?$", &matches)
   h := matches.hours ? matches.hours : 0
   m := matches.minutes ? matches.minutes : 0
   s := matches.seconds ? matches.seconds : 0
+  ms := matches.seconds
 
   ; 修正正则表达式的bug：当传入的数据是"16:34"，会出现h=16，m=0，s=34的情况
-  if (CountCharOccurrences(timeStr, ":") == 1) {
+  if (CountCharOccurrences(timeStr, ":") > 1) {
     if (h > 0 && m = 0 && s >= 0) {
       m := h
       h := 0
@@ -36,6 +37,9 @@ TimeToSeconds(timeStr) {
 ; 查找字符串中`char`字符的总个数
 CountCharOccurrences(string, char) {
   parts := StrSplit(string, char)
+  if parts.Length > 1 {
+    return parts.Length - 1
+  }
   return parts.Length
 }
 
