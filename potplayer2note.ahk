@@ -12,6 +12,7 @@ url_protocol := IniRead("config.ini", "Note", "url_protocol")
 markdown_template := IniRead("config.ini", "MarkDown", "template")
 markdown_tittle := IniRead("config.ini", "MarkDown", "tittle")
 path_is_encode := IniRead("config.ini", "MarkDown", "path_is_encode")
+running_count := 0
 
 InitNote2PotPlayer()
 
@@ -27,7 +28,6 @@ InitNote2PotPlayer()
         Potplayer2Obsidian(markdown_tittle)
     }
     ^!g up::{
-        ; 在笔记软件中按快捷键没有问题。但是在Potplayer中按快捷键，会出现问题：Potplayer的快捷键被触发了，解决办法是：等待快捷键释放，然后再执行
         KeyWait "Control","T1"
         KeyWait "Alt","T1"
         KeyWait "g","T1"
@@ -66,7 +66,7 @@ RegistrationProtocol(protocol_name){
 Potplayer2Obsidian(markdown_tittle){
     ; 激活potplayer窗口
     if WinActive("ahk_exe " . note_app_name){
-        ActivatePotplayer()
+        ActivateProgram(potplayer_name)
     }
     
     media_path := GetMediaPath()
@@ -91,18 +91,25 @@ GetMediaTime(){
     return time
 }
 PressDownHotkey(hotkey){
-    ClipSaved := A_Clipboard
-    A_Clipboard := ""  ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
+    clip_saved := A_Clipboard
+    ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
+    A_Clipboard := ""
     Send hotkey
     ClipWait 0.60,0
     result := A_Clipboard
     ; MyLog "剪切板的值是：" . result
-    A_Clipboard := ClipSaved
+    A_Clipboard := clip_saved
 
+    global running_count += 1
     ; 解决：一旦potplayer左上角出现提示，快捷键不生效的问题
     if (result == "") {
+        if (running_count > 10) {
+            MsgBox "error: Replication failed!"
+            Exit
+        }
+
         ; 无限重试！
-        ActivatePotplayer() ;防止potplayer关闭，导致无限递归
+        ActivateProgram(potplayer_name) ;防止potplayer关闭，导致无限递归
         result := PressDownHotkey(hotkey)
     }
     return result
@@ -115,7 +122,7 @@ StopMedia(){
 }
 
 Paste2NoteApp(media_path, media_time, markdown_tittle, markdown_template){
-    ActivateNoteApp()
+    ActivateProgram(note_app_name)
     Sleep 300 ; 给程序切换窗口的时间
 
     SendScreenshot()
@@ -184,20 +191,11 @@ SendScreenshot(){
     Send "{LCtrl up}"
 }
 
-ActivatePotplayer(){
-    if (WinExist("ahk_exe " . potplayer_name)) {
-        WinActivate ("ahk_exe " . potplayer_name)
+ActivateProgram(process_name){
+    if (WinExist("ahk_exe " . process_name)) {
+        WinActivate ("ahk_exe " . process_name)
     } else {
-        MsgBox potplayer_name . " is not running"
-        Exit
-    }
-}
-ActivateNoteApp(){
-    active_note_app := "ahk_exe " . note_app_name
-    if (WinExist(active_note_app)) {
-        WinActivate active_note_app
-    } else {
-        MsgBox note_app_name . " is not running"
+        MsgBox process_name . " is not running"
         Exit
     }
 }
