@@ -13,7 +13,7 @@ url_protocol := IniRead("config.ini", "Note", "url_protocol")
 
 markdown_template := IniRead("config.ini", "MarkDown", "template")
 markdown_image_template := IniRead("config.ini", "MarkDown", "image_template")
-markdown_tittle := IniRead("config.ini", "MarkDown", "tittle")
+markdown_title := IniRead("config.ini", "MarkDown", "title")
 markdown_path_is_encode := IniRead("config.ini", "MarkDown", "path_is_encode")
 markdown_remove_suffix_of_video_file := IniRead("config.ini", "MarkDown", "remove_suffix_of_video_file")
 
@@ -69,13 +69,13 @@ RegistrationProtocol(protocol_name){
 
 ; 【主逻辑】将Potplayer的播放链接粘贴到Obsidian中
 Potplayer2Obsidian(markdown_template){
-    ; 用户模板中有{tittle}，则渲染模板，否则不渲染直接粘贴用户的数据
-    if (InStr(markdown_template,"{tittle}")){
+    ; 用户模板中有{title}，则渲染模板，否则不渲染直接粘贴用户的数据
+    if (InStr(markdown_template,"{title}")){
         ActivateProgram(potplayer_name)
         media_path := GetMediaPath()
         media_time := GetMediaTime()
     
-        markdown_template := RenderTittle(media_path, media_time, markdown_tittle, markdown_template)
+        markdown_template := RenderTitle(media_path, media_time, markdown_title, markdown_template)
     }
     markdown_template := RenderEnter(markdown_template)
     Paste2NoteApp(markdown_template)
@@ -155,9 +155,9 @@ StopMedia(){
     }
 }
 
-RenderTittle(media_path, media_time, markdown_tittle, markdown_template){
-    markdown_link := GenerateMarkdownLink(media_path, media_time, markdown_tittle)
-    result := StrReplace(markdown_template, "{tittle}",markdown_link)
+RenderTitle(media_path, media_time, markdown_title, markdown_template){
+    markdown_link := GenerateMarkdownLink(media_path, media_time, markdown_title)
+    result := StrReplace(markdown_template, "{title}",markdown_link)
     return result
 }
 
@@ -171,17 +171,17 @@ Paste2NoteApp(template){
     Send2NoteApp(template)
 }
 
-GenerateMarkdownLink(media_path, media_time, markdown_tittle){
+GenerateMarkdownLink(media_path, media_time, markdown_title){
     ; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
     name := GetNameForPath(media_path)
     if (markdown_remove_suffix_of_video_file != "0"){
         name := RemoveSuffix(name)
     }
-    markdown_tittle := StrReplace(markdown_tittle, "{name}",name)
-    markdown_tittle := StrReplace(markdown_tittle, "{time}",media_time)
+    markdown_title := StrReplace(markdown_title, "{name}",name)
+    markdown_title := StrReplace(markdown_title, "{time}",media_time)
 
     markdown_link := url_protocol "?path=" ProcessUrl(media_path) "&time=" media_time
-    result := "[" markdown_tittle "](" markdown_link ")"
+    result := "[" markdown_title "](" markdown_link ")"
     return result
 }
 
@@ -270,7 +270,7 @@ SendScreenshot(DataType){
     }
 }
 
-; 将用户的图像模板，例如：{image}{enter}tittle:{tittle}，以{image}分割，转为数组 => ["{image}","{enter}tittle:{tittle}"]
+; 将用户的图像模板，例如：{image}{enter}title:{title}，以{image}分割，转为数组 => ["{image}","{enter}title:{title}"]
 ImageTemplateConvertedToImagesTemplates(image_template){
     if (image_template == "{image}"){
       templates := ["{image}"]
