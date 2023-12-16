@@ -232,6 +232,18 @@ image_template={enter}image:{image}{enter}tittle:{tittle}{enter}
 
 【去掉开机自启】：把脚本的快捷方式删了就ok
 
+## 视频文件的后缀名
+
+![image-20231216154202619](./assets/image-20231216154202619.png)
+
+`0`是保留文件名
+
+`1`非0是，去除文件名
+
+![image-20231216154341755](./assets/image-20231216154341755.png)
+
+
+
 ## 地址是否编码
 
 
