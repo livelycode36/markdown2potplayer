@@ -11,7 +11,15 @@ ReduceTime(originalTime, secondsToModify) {
   }
 
   result := SecondsToTimeFormat(newSeconds)
-  return result
+  return result GetMilliseconds(originalTime)
+}
+
+GetMilliseconds(originalTime) {
+  ms := ""
+  if (InStr(originalTime,".")){
+    ms := SubStr(originalTime, InStr(originalTime,"."))
+  }
+  return ms
 }
 
 ; 将时间字符串转换为秒
@@ -23,7 +31,7 @@ TimeToSeconds(timeStr) {
   ms := matches.seconds
 
   ; 修正正则表达式的bug：当传入的数据是"16:34"，会出现h=16，m=0，s=34的情况
-  if (CountCharOccurrences(timeStr, ":") > 1) {
+  if (CountCharOccurrences(timeStr, ":") = 1) {
     if (h > 0 && m = 0 && s >= 0) {
       m := h
       h := 0
@@ -47,15 +55,16 @@ CountCharOccurrences(string, char) {
 SecondsToTimeFormat(duration) {
   if (duration < 60){
     if (duration < 10){
-      duration := "0" duration
+      duration := "00:0" duration
     }
-    return duration
+    return "00:" duration
   }
 
   seconds := Mod(duration , 60)
   minutes := Mod(duration // 60,60)
+  MsgBox "minutes:" minutes
   hours := duration // 3600
-
+  
   ModifyTimeFormat(&hours, &minutes, &seconds)
 
   if (hours > 0){
@@ -70,28 +79,25 @@ SecondsToTimeFormat(duration) {
 ModifyTimeFormat(&hours, &minutes, &seconds) {
   if (hours < 10){
     hours := "0" hours
+  } else if (hours = 0){
+    hours := "00"
   }
-  if (minutes < 10){
+
+  if (minutes = 10){
+    minutes := "00"
+  }else if (minutes < 10){
     minutes := "0" minutes
   }
-  if (seconds < 10){
+  
+  if (seconds = 00){
+    seconds := "00"
+  } else if (seconds < 10){
     seconds := "0" seconds
   }
 }
 
 ; 示例
-; originalTime1 := "60"
-; MsgBox TimeToSeconds(originalTime1)
-; originalTime2 := "16:34"
+; originalTime2 := "00:00:59"
 ; MsgBox TimeToSeconds(originalTime2)
-; originalTime3 := "01:40:26"
-; MsgBox TimeToSeconds(originalTime3)
-
-; ; ; 假设我们要给每个时间增加 30 秒
-; newTime1 := ModifySeconds(originalTime1, 3)
-; newTime2 := ModifySeconds(originalTime2, 3)
-; newTime3 := ModifySeconds(originalTime3, 3)
-
-; MsgBox newTime1 ; 显示新的时间
+; newTime2 := ReduceTime(originalTime2, 3)
 ; MsgBox newTime2
-; MsgBox newTime3
