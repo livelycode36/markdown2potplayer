@@ -2,14 +2,14 @@
 
 log_toggle := false
 
-GetProgramName(program_path){
+GetNameForPath(program_path){
   ; 获取程序的路径
   SplitPath program_path, &name
   return name
 }
 SearchProgram(target_app_path) {
   ; 程序正在运行
-  if (WinExist("ahk_exe " . GetProgramName(target_app_path))) {
+  if (WinExist("ahk_exe " . GetNameForPath(target_app_path))) {
       return true
   } else {
       return false
