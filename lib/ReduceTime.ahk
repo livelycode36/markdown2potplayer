@@ -62,7 +62,6 @@ SecondsToTimeFormat(duration) {
 
   seconds := Mod(duration , 60)
   minutes := Mod(duration // 60,60)
-  MsgBox "minutes:" minutes
   hours := duration // 3600
   
   ModifyTimeFormat(&hours, &minutes, &seconds)

@@ -84,7 +84,7 @@ obsidian2potplayer
 
 - **不要修改方框内的数据，仅修改下划线中的数据（接下来不在重复说明此处）**
 
-按键盘的` Ctrl + S`，保存修改
+按键盘的` Ctrl + S`，保存修改，重启脚本
 
 
 
@@ -94,13 +94,13 @@ obsidian2potplayer
 
 指定笔记软件的 软件名称，如使用的是Obsidian，则不需要修改
 
-按键盘的` Ctrl + S`，保存修改
+按键盘的` Ctrl + S`，保存修改，重启脚本
 
 
 
 **修改3**
 
-![image-20231216151830721](./assets/image-20231216151830721.png)
+![image-20231216233913459](./assets/image-20231216233913459.png)
 
 此处是**粘贴模板**的修改，一共有`5`项。
 
@@ -110,10 +110,10 @@ obsidian2potplayer
 
 这5项，在配置文件中，不是哪个位置都可以用
 
-- `tittle`这一项，只能用`{name}`、`{time}`
+- `title`这一项，只能用`{name}`、`{time}`
 
-- `template`这一项，只能用`{enter}`、`{tittle}`
-- `image_template`这一项，只能用`{image}`、`{enter}`、`{tittle}`
+- `template`这一项，只能用`{enter}`、`{title}`
+- `image_template`这一项，只能用`{image}`、`{enter}`、`{title}`
 
 
 
@@ -127,24 +127,24 @@ obsidian2potplayer
 
 
 
-示例：
+### 示例1
 
 我想要`Alt+G`是这个效果
 
-![Paste image 1702380631731image](./assets/Paste%20image%201702380631731image.png)
+![image-20231216234628300](./assets/image-20231216234628300.png)
 
 此处应该这么填
 
 1. 先确定**回链中的[]内的名称**
 
 ```ini
-tittle={name}=>{time}
+title={name} | {time}
 ```
 
 2. 再确定**整个模板template的数据**
 
 ```ini
-template=```Video{enter}title: {tittle}{enter}```{enter}
+template=```Video{enter}title: {title}{enter}```{enter}
 ```
 
 最终效果
@@ -160,13 +160,30 @@ app_name=Obsidian.exe
 url_protocol=markdown2potplayer://open
 
 [MarkDown]
-path_is_encode=1
-tittle={name}=>{time}
-template=```Video{enter}title: {tittle}{enter}```{enter}
-image_template={enter}image:{image}{enter}tittle:{tittle}{enter}
+path_is_encode=0
+remove_suffix_of_video_file=1
+title={name} | {time}
+template=```Video{enter}title: {title}{enter}```{enter}
+image_template={enter}image:{image}{enter}title:{title}{enter}
 ```
 
-按键盘的`Ctrl + S`，保存修改
+按键盘的`Ctrl + S`，保存修改，重启脚本
+
+
+
+### 示例2
+
+我想要`Ctrl+Alt+G`是这个效果
+
+![image-20231216235029002](./assets/image-20231216235029002.png)
+
+此处应该这么填
+
+```ini
+image_template={enter}```video{enter}title:{title}{enter}image:{image}{enter}```{enter}
+```
+
+按键盘的`Ctrl + S`，保存修改，重启脚本
 
 
 
@@ -210,9 +227,7 @@ image_template={enter}image:{image}{enter}tittle:{tittle}{enter}
 
 示例：我希望时间戳，每次粘贴都减少3秒，修改为`reduce_time=3`
 
-按键盘的 `Ctrl + S`，保存修改
-
-重启脚本
+按键盘的 `Ctrl + S`，保存修改，重启脚本
 
 
 
@@ -254,17 +269,15 @@ path_is_encode=`0`的值是0，关闭编码
 
 path_is_encode=`1`，非0则开启编码
 
-提示：开启编码兼容性好一点
 
 
-
-**关闭编码**
+**关闭编码的效果**
 
 ![image-20231214195533699](./assets/image-20231214195533699.png)
 
 注意
 
-- 目前发现的bug：关闭编码之后，假如视频的路径中有`空格`，在obsidian的预览模式，回链`不会渲染为链接`，所以即使关闭编码也会将空格进行编码
+- 目前发现的bug：关闭编码之后，假如视频的路径中有`空格`，在obsidian的预览模式，回链`不会渲染为链接`，所以即使关闭编码也会将空格进行编码。如果不想空格也被编码，可以去掉文件中的空格 或 使用`-`、`_`等替代空格
 - 可能还有其他符号也有类似的问题，但暂未发现
 
 
