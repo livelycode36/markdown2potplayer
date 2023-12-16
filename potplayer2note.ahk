@@ -14,7 +14,8 @@ url_protocol := IniRead("config.ini", "Note", "url_protocol")
 markdown_template := IniRead("config.ini", "MarkDown", "template")
 markdown_image_template := IniRead("config.ini", "MarkDown", "image_template")
 markdown_tittle := IniRead("config.ini", "MarkDown", "tittle")
-path_is_encode := IniRead("config.ini", "MarkDown", "path_is_encode")
+markdown_path_is_encode := IniRead("config.ini", "MarkDown", "path_is_encode")
+markdown_remove_suffix_of_video_file := IniRead("config.ini", "MarkDown", "remove_suffix_of_video_file")
 
 running_count := 0
 clipboard_has_screenshot := 0
@@ -172,7 +173,11 @@ Paste2NoteApp(template){
 
 GenerateMarkdownLink(media_path, media_time, markdown_tittle){
     ; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
-    markdown_tittle := StrReplace(markdown_tittle, "{name}",GetNameForPath(media_path))
+    name := GetNameForPath(media_path)
+    if (markdown_remove_suffix_of_video_file != "0"){
+        name := RemoveSuffix(name)
+    }
+    markdown_tittle := StrReplace(markdown_tittle, "{name}",name)
     markdown_tittle := StrReplace(markdown_tittle, "{time}",media_time)
 
     markdown_link := url_protocol "?path=" ProcessUrl(media_path) "&time=" media_time
@@ -180,10 +185,19 @@ GenerateMarkdownLink(media_path, media_time, markdown_tittle){
     return result
 }
 
+RemoveSuffix(name){
+    index_of := InStr(name, ".")
+    if (index_of = 0){
+        return name
+    }
+    result := SubStr(name, 1,index_of-1)
+    return result
+}
+
 ; 路径地址处理
 ProcessUrl(media_path){
     ; 进行Url编码
-    if (path_is_encode != "0"){
+    if (markdown_path_is_encode != "0"){
         media_path := UrlEncode(media_path)
     }
     ; 但是 obidian中的potplayer回链路径有空格，在obsidian的预览模式【无法渲染】，所以将空格进行Url编码
