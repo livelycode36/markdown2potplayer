@@ -100,33 +100,36 @@ obsidian2potplayer
 
 **修改3**
 
-![image-20231214152203535](./assets/image-20231214152203535.png)
+![image-20231216151830721](.\assets\image-20231216151830721.png)
 
-此处是**粘贴模板**的修改，一共有4项。
+此处是**粘贴模板**的修改，一共有`5`项。
 
 
 
 注意：
 
-这4项，在配置文件中，不是哪个位置都可以用
+这5项，在配置文件中，不是哪个位置都可以用
+
+- `tittle`这一项，只能用`{name}`、`{time}`
 
 - `template`这一项，只能用`{enter}`、`{tittle}`
-- `tittle`这一项，只能用`{name}`、`{time}`
+- `image_template`这一项，只能用`{image}`、`{enter}`、`{tittle}`
 
 
 
 逐一说明：
 
 - `{enter}`代表回车键
-- `{title}`**代表整个markdown格式的链接**，例如`[百度](https://www.baidu.com)`也就是说，此处是markdown格式的potplayer回链
 - `{name}`回链展示的名称，也就是[内的数据]：代表视频的文件名称
 - `{time}`回链展示的名称，也就是[内的数据]：代表当前播放视频的时间
+- `{title}`**代表整个markdown格式的链接**，例如`[百度](https://www.baidu.com)`也就是说，此处是markdown格式的potplayer回链
+- `{image}`代表**图片粘贴的位置**
 
 
 
 示例：
 
-我想要这个效果
+我想要`Alt+G`是这个效果
 
 ![Paste image 1702380631731image](./assets/Paste%20image%201702380631731image.png)
 
@@ -141,7 +144,7 @@ tittle={name}=>{time}
 2. 再确定**整个模板template的数据**
 
 ```ini
-template=```ad-Video{enter}title: {tittle}{enter}```{enter}
+template=```Video{enter}title: {tittle}{enter}```{enter}
 ```
 
 最终效果
@@ -151,12 +154,16 @@ template=```ad-Video{enter}title: {tittle}{enter}```{enter}
 path=D:\PotPlayer64\PotPlayerMini64.exe
 is_stop=0
 reduce_time=0
+
 [Note]
 app_name=Obsidian.exe
 url_protocol=markdown2potplayer://open
+
 [MarkDown]
-template=```ad-Video{enter}title: {tittle}{enter}```{enter}
+path_is_encode=1
 tittle={name}=>{time}
+template=```Video{enter}title: {tittle}{enter}```{enter}
+image_template={enter}image:{image}{enter}tittle:{tittle}{enter}
 ```
 
 按键盘的`Ctrl + S`，保存修改
