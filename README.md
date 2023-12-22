@@ -5,16 +5,12 @@
 ```
 obsidian2potplayer
 ├─ config.ini【配置文件】
-├─ note2potplayer.ahk
-├─ note2potplayer.exe
 ├─ potplayer2note.ahk【脚本】
 ├─ README.md
 ├─ 安装包
 │  ├─ AutoHotkey_2.0.10_setup.exe
 │  └─ Notepad--v2.11.0-win10-portable.zip
 ├─ lib
-│  ├─ MyTool.ahk
-│  └─ ReduceTime.ahk
 ├─ assets
 ```
 
