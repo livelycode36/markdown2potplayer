@@ -7,6 +7,7 @@ GetNameForPath(program_path){
   SplitPath program_path, &name
   return name
 }
+
 SearchProgram(target_app_path) {
   ; 程序正在运行
   if (WinExist("ahk_exe " . GetNameForPath(target_app_path))) {
@@ -15,6 +16,21 @@ SearchProgram(target_app_path) {
       return false
   }
 }
+
+ActivateProgram(process_name){
+  if WinActive("ahk_exe " process_name){
+      return
+  }
+
+  if (WinExist("ahk_exe " process_name)) {
+      WinActivate ("ahk_exe " process_name)
+      Sleep 300 ; 给程序切换窗口的时间
+  } else {
+      MsgBox process_name " is not running"
+      Exit
+  }
+}
+
 IsPotplayerRunning(media_player_path){
   if SearchProgram(media_player_path)
       return true
@@ -26,6 +42,20 @@ IsPotplayerRunning(media_player_path){
 MyLog(message){
   if log_toggle
       MsgBox message
+}
+
+; 安全的递归
+global running_count := 0
+SafeRecursion(){
+  global running_count
+  running_count++
+  ToolTip("正在重试，第" running_count "次尝试...")
+  SetTimer () => ToolTip(), -1000
+  if (running_count > 10) {
+    running_count := 0
+    MsgBox "error: Replication failed!"
+    Exit
+  }
 }
 
 UrlEncode(str, sExcepts := "-_.", enc := "UTF-8")

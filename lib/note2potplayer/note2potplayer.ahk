@@ -23,21 +23,21 @@ ReceivParameter(){
 
   ; 如果没有参数，显示提示信息
   if (paramCount = 0) {
-      MsgBox "请提供至少一个参数。"
-      ExitApp
+    MsgBox "请提供至少一个参数。"
+    ExitApp
   }
 
   ; 循环遍历参数并显示在控制台
   for n, param in A_Args{
-      return param
+    return param
   }
 }
 
 InitOpenWindowParameter(potplayer_path){
   if (IsPotplayerRunning(potplayer_path)) {
-      return "/current"
+    return "/current"
   } else {
-      return "/new"
+    return "/new"
   }
 }
 
@@ -54,10 +54,10 @@ ParseUrl(url){
 
   ; 1.1 遍历键值对，存储到字典中
   for index, pair in parameters {
-      parts := StrSplit(pair, "=")
-      key := parts[1]
-      value := parts[2]
-      parameters_map[key] := value
+    parts := StrSplit(pair, "=")
+    key := parts[1]
+    value := parts[2]
+    parameters_map[key] := value
   }
   
   ; 2. 跳转Potplayer
