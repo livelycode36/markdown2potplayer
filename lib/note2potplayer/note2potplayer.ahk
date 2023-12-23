@@ -61,9 +61,9 @@ ParseUrl(url){
 
   ; 1.1 遍历键值对，存储到字典中
   for index, pair in parameters {
-    parts := StrSplit(pair, "=")
-    key := parts[1]
-    value := parts[2]
+    index_of := InStr(pair, "=")
+    key := SubStr(pair, 1, index_of - 1)
+    value := SubStr(pair, index_of + 1)
     parameters_map[key] := value
   }
   
@@ -72,13 +72,17 @@ ParseUrl(url){
   media_path := parameters_map["path"]
   media_time := parameters_map["time"]
 
-  ; 3. 判断路径是否经过URL编码
-  if !(InStr(media_path,"/") || InStr(media_path,"\")) { ; 被URL编码后的路径，没有路径分隔符
+  ; 2.1 如果是B站视频，无需处理
+  if (InStr(media_path,"https://www.bilibili.com/video/")){
+
+    ; 3. 本地路径的视频，判断路径是否经过URL编码
+    ; 被URL编码后的路径，没有路径分隔符
+  } else if !(InStr(media_path,"/") || InStr(media_path,"\")) {
     media_path := UrlDecode(media_path)
   }
 
   run_command := potplayer_path . " `"" . media_path . "`" /seek=" . media_time . " " . open_window_parameter
-  
+
   try
     Run run_command
   catch Error as err
