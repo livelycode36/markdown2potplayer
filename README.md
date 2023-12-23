@@ -197,6 +197,15 @@ image_template={enter}```video{enter}title:{title}{enter}image:{image}{enter}```
 
 # 高级设置
 
+## 播放B站视频
+
+1. Potplayer需要提前安装插件：[chen310/BilibiliPotPlayer](https://github.com/chen310/BilibiliPotPlayer)
+
+2. 按照插件的使用文档，在potplayer中播放视频
+3. 使用快捷键打时间戳即可
+
+
+
 ## 调整时间的格式
 
 这里

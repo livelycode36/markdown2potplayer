@@ -20,7 +20,7 @@ markdown_remove_suffix_of_video_file := IniRead("config.ini", "MarkDown", "remov
 
 RegisterUrlProtocol()
 
-#HotIf WinActive("ahk_exe " . potplayer_name) or WinActive("ahk_exe " . note_app_name)
+#HotIf WinActive("ahk_exe" potplayer_name) or WinActive("ahk_exe" note_app_name)
 {
     ; 【定义热键，默认：Alt+G】
     ; 如何定义热键参考官方文档：https://wyagd001.github.io/v2/docs/Hotkeys.htm
@@ -121,11 +121,20 @@ RenderEnter(template){
     return result
 }
 
+; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
 GenerateMarkdownLink(markdown_title, media_path, media_time){
-    ; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
-    name := GetNameForPath(media_path)
-    if (markdown_remove_suffix_of_video_file != "0"){
-        name := RemoveSuffix(name)
+    ; B站的视频
+    if (InStr(media_path,"https://www.bilibili.com/video/")){
+        ; 正常播放的情况
+        name := StrReplace(GetPotplayerTitle(), " - PotPlayer", "")
+        
+        ; 视频没有播放，已经停止的情况
+        if name == "PotPlayer"{
+            name := GetFileNameInPath(media_path)
+        }
+    } else{
+        ; 本地视频
+        name := GetFileNameInPath(media_path)
     }
     markdown_title := StrReplace(markdown_title, "{name}",name)
     markdown_title := StrReplace(markdown_title, "{time}",media_time)
@@ -133,6 +142,14 @@ GenerateMarkdownLink(markdown_title, media_path, media_time){
     markdown_link := url_protocol "?path=" ProcessUrl(media_path) "&time=" media_time
     result := "[" markdown_title "](" markdown_link ")"
     return result
+}
+
+GetFileNameInPath(path){
+    name := GetNameForPath(path)
+    if (markdown_remove_suffix_of_video_file != "0"){
+        name := RemoveSuffix(name)
+    }
+    return name
 }
 
 RenderImage(markdown_image_template, media_path, media_time, image){
