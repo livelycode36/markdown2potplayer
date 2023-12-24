@@ -208,5 +208,5 @@ SendImage2NoteApp(image){
     Send "{v}"
     Send "{LCtrl up}"
     ; 给Obsidian图片处理插件的时间
-    Sleep 500
+    Sleep 1000
 }
