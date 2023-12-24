@@ -3,6 +3,7 @@
 #Include "%A_ScriptDir%\lib\MyTool.ahk"
 #Include "%A_ScriptDir%\lib\ReduceTime.ahk"
 #Include "%A_ScriptDir%\lib\ImageTemplateParser.ahk"
+#Include "%A_ScriptDir%\lib\PotplayerControl.ahk"
 
 potplayer_path := IniRead("config.ini", "PotPlayer", "path")
 is_stop := IniRead("config.ini", "PotPlayer", "is_stop")
@@ -46,7 +47,7 @@ Potplayer2Obsidian(){
     media_time := GetMediaTime()
     
     markdown_link := RenderMarkdownTemplate(markdown_template, media_path, media_time)
-    StopMedia()
+    PauseMedia()
 
     SendText2NoteApp(markdown_link)
 }
@@ -65,30 +66,26 @@ Potplayer2ObsidianImage(){
     media_time := GetMediaTime()
     image := SaveImage()
 
-    StopMedia()
+    PauseMedia()
 
     RenderImage(markdown_image_template, media_path, media_time, image)
 }
 
 GetMediaPath(){
-    hotkey := "!,"
-
-    return PressDownHotkey(hotkey)
+    return PressDownHotkey(GetMediaPathToClipboard)
 }
 GetMediaTime(){
-    hotkey := "!."
-    time := PressDownHotkey(hotkey)
+    time := PressDownHotkey(GetMediaTimestampToClipboard)
 
     if (reduce_time != "0") {
         time := ReduceTime(time,reduce_time)
     }
     return time
 }
-PressDownHotkey(hotkey){
-    ActivateProgram(potplayer_name)
+PressDownHotkey(potplayer_control){
     ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
     A_Clipboard := ""
-    Send hotkey
+    potplayer_control()
     ClipWait 1,0
     result := A_Clipboard
     ; MyLog "剪切板的值是：" . result
@@ -97,17 +94,15 @@ PressDownHotkey(hotkey){
     if (result == "") {
         SafeRecursion()
         ; 无限重试！
-        result := PressDownHotkey(hotkey)
+        result := PressDownHotkey(potplayer_control)
     }
     return result
 }
 
-StopMedia(){
+PauseMedia(){
     if (is_stop != "0") {
-        ActivateProgram(potplayer_name)
-        Send "{Space}"
+        Pause()
     }
-    ActivateProgram(note_app_name)
 }
 
 RenderTitle(markdown_template, markdown_title, media_path, media_time){
@@ -197,14 +192,10 @@ SendText2NoteApp(text){
 }
 
 SaveImage(){
-    ActivateProgram(potplayer_name)
     A_Clipboard := ""
-    Send "{LCtrl down}"
-    Send "{c}"
-    Send "{LCtrl up}"
+    SaveImageToClipboard()
     if !ClipWait(2,1){
         SafeRecursion()
-        image := SaveImage()
     }
     return ClipboardAll()
 }
@@ -217,5 +208,5 @@ SendImage2NoteApp(image){
     Send "{v}"
     Send "{LCtrl up}"
     ; 给Obsidian图片处理插件的时间
-    Sleep 800
+    Sleep 500
 }
