@@ -2,15 +2,25 @@
 #SingleInstance force
 
 ; SetWorkingDir对#Include无效，只能这样引用lib库
-#Include "%A_ScriptDir%\..\MyTool.ahk"
+; #Include "%A_ScriptDir%\..\MyTool.ahk"
+#Include "Tool.ahk"
 
 ; -1去掉自身"lib"，-2去掉自身"lib"和路径的"/"
 root_dir := SubStr(A_WorkingDir, 1, InStr(A_ScriptDir,"lib")-2)
-SetWorkingDir(root_dir)
+
 ; SetWorkingDir让IniRead读取根目录的配置文件
+SetWorkingDir(root_dir)
 potplayer_path := IniRead("config.ini", "PotPlayer", "path" , )
 
 open_window_parameter := InitOpenWindowParameter(potplayer_path)
+
+InitOpenWindowParameter(potplayer_path){
+  if (IsPotplayerRunning(potplayer_path)) {
+    return "/current"
+  } else {
+    return "/new"
+  }
+}
 
 main()
 
@@ -40,17 +50,10 @@ ReceivParameter(){
   }
 }
 
-InitOpenWindowParameter(potplayer_path){
-  if (IsPotplayerRunning(potplayer_path)) {
-    return "/current"
-  } else {
-    return "/new"
-  }
-}
-
 ParseUrl(url){
-  ;url := "mk-potplayer://open?type=1&aaa=123&bbb=456"
+  ;url := "jv://open?path=https://www.bilibili.com/video/123456/?spm_id_from=..search-card.all.click&time=00:01:53.824"
   ; MsgBox url
+  url := UrlDecode(url)
   
   index_of := InStr(url, "?")
   parameters_of_url := SubStr(url, index_of + 1)
@@ -59,27 +62,25 @@ ParseUrl(url){
   parameters := StrSplit(parameters_of_url, "&")
   parameters_map := Map()
 
-  ; 1.1 遍历键值对，存储到字典中
+  ; 1.1 普通解析
   for index, pair in parameters {
     index_of := InStr(pair, "=")
-    key := SubStr(pair, 1, index_of - 1)
-    value := SubStr(pair, index_of + 1)
-    parameters_map[key] := value
+    if (index_of > 0) {
+      key := SubStr(pair, 1, index_of - 1)
+      value := SubStr(pair, index_of + 1)
+      parameters_map[key] := value
+    }
   }
   
+  ; 1.2 对path参数特殊处理，因为路径中可能是网址
+  path := SubStr(parameters_of_url,1, InStr(parameters_of_url, "&time=") -1)
+  path := StrReplace(path, "path=", "")
+  parameters_map["path"] := path
+
   ; 2. 跳转Potplayer
   ; D:\PotPlayer64\PotPlayerMini64.exe "D:\123.mp4" /seek=00:01:53.824 /new
   media_path := parameters_map["path"]
   media_time := parameters_map["time"]
-
-  ; 2.1 如果是B站视频，无需处理
-  if (InStr(media_path,"https://www.bilibili.com/video/")){
-
-    ; 3. 本地路径的视频，判断路径是否经过URL编码
-    ; 被URL编码后的路径，没有路径分隔符
-  } else if !(InStr(media_path,"/") || InStr(media_path,"\")) {
-    media_path := UrlDecode(media_path)
-  }
 
   run_command := potplayer_path . " `"" . media_path . "`" /seek=" . media_time . " " . open_window_parameter
 
