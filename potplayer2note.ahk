@@ -181,9 +181,9 @@ ProcessUrl(media_path){
 
 SendText2NoteApp(text){
     ActivateProgram(note_app_name)
-    A_Clipboard := ""  ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
+    A_Clipboard := ""
     A_Clipboard := text
-    ClipWait 2,0   ; 等待剪贴板中出现文本.
+    ClipWait 2,0
     Send "{LCtrl down}"
     Send "{v}"
     Send "{LCtrl up}"
@@ -207,6 +207,6 @@ SendImage2NoteApp(image){
     Send "{LCtrl down}"
     Send "{v}"
     Send "{LCtrl up}"
-    ; 给Obsidian图片处理插件的时间
+    ; 给Obsidian图片插件处理图片的时间
     Sleep 1000
 }
