@@ -1,19 +1,11 @@
 #Requires AutoHotkey v2.0
 #SingleInstance force
+#Include lib\Tool.ahk
+#Include sqlite\SqliteControl.ahk
 
-; SetWorkingDir对#Include无效，只能这样引用lib库
-; #Include "%A_ScriptDir%\..\MyTool.ahk"
-#Include "Tool.ahk"
-
-; -1去掉自身"lib"，-2去掉自身"lib"和路径的"/"
-root_dir := SubStr(A_WorkingDir, 1, InStr(A_ScriptDir,"lib")-2)
-
-; SetWorkingDir让IniRead读取根目录的配置文件
-SetWorkingDir(root_dir)
-potplayer_path := IniRead("config.ini", "PotPlayer", "path" , )
+potplayer_path := GetKeyName("path")
 
 open_window_parameter := InitOpenWindowParameter(potplayer_path)
-
 InitOpenWindowParameter(potplayer_path){
   if (IsPotplayerRunning(potplayer_path)) {
     return "/current"
@@ -22,16 +14,20 @@ InitOpenWindowParameter(potplayer_path){
   }
 }
 
-main()
-
-main(){
+AppMain()
+AppMain(){
   CallbackPotplayer()
 }
 
 ; 【主逻辑】Potplayer的回调函数（回链）
 CallbackPotplayer(){
   url := ReceivParameter()
-  ParseUrl(url)
+  if url{
+    ParseUrl(url)
+  }else{
+    MsgBox "至少传递1个参数"
+  }
+  ExitApp
 }
 
 ReceivParameter(){
@@ -40,13 +36,12 @@ ReceivParameter(){
 
   ; 如果没有参数，显示提示信息
   if (paramCount = 0) {
-    MsgBox "请提供至少一个参数。"
-    ExitApp
+      return false
   }
 
   ; 循环遍历参数并显示在控制台
   for n, param in A_Args{
-    return param
+      return param
   }
 }
 
@@ -93,5 +88,4 @@ ParseUrl(url){
     } else {
       throw err
     }
-  ExitApp
 }
