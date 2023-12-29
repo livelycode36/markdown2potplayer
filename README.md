@@ -168,22 +168,6 @@ image:{image}
 
 
 
-## 自定义快捷键
-
-修改源码，首先参考官方文档，如何自定义快捷键[热键 - 定义 & 使用 | AutoHotkey v2](https://wyagd001.github.io/v2/docs/Hotkeys.htm)
-
-1. 使用文本编辑器，修改源码。因为使用的编码是UTF-8，windows默认的记事本，会有些许兼容问题，推荐使用文本编辑器
-
-![image-20231214153644817](./assets/image-20231214153644817.png)
-
-![Paste image 1702381039256image](./assets/Paste%20image%201702381039256image.png)
-
-![image-20231214153755169](./assets/image-20231214153755169.png)
-
-![image-20231214153916537](./assets/image-20231214153916537.png)
-
-
-
 ## 自定义跳转协议
 
 适合自定义协议的人使用【谨慎】

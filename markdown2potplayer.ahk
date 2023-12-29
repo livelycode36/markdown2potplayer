@@ -11,7 +11,6 @@
 main()
 
 main(){
-    ; =======图标=========
     TraySetIcon("lib/icon.png", 1, false)
     
     InitSqlite()
@@ -19,44 +18,45 @@ main(){
     RefreshConfig()
 
     RegisterUrlProtocol(url_protocol)
+
+    RegisterHotKey()
 }
 
 RefreshConfig(){
     global
-    potplayer_path := GetKeyName("path")
-    is_stop := GetKeyName("is_stop")
-    reduce_time := GetKeyName("reduce_time")
+    potplayer_path := GetKey("path")
+    is_stop := GetKey("is_stop")
+    reduce_time := GetKey("reduce_time")
     potplayer_name := GetNameForPath(potplayer_path)
-    note_app_name := GetKeyName("app_name")
-    markdown_template := GetKeyName("template")
-    markdown_image_template := GetKeyName("image_template")
-    markdown_title := GetKeyName("title")
-    markdown_path_is_encode := GetKeyName("path_is_encode")
-    markdown_remove_suffix_of_video_file := GetKeyName("remove_suffix_of_video_file")
-    url_protocol := GetKeyName("url_protocol")
+    note_app_name := GetKey("app_name")
+    markdown_template := GetKey("template")
+    markdown_image_template := GetKey("image_template")
+    markdown_title := GetKey("title")
+    markdown_path_is_encode := GetKey("path_is_encode")
+    markdown_remove_suffix_of_video_file := GetKey("remove_suffix_of_video_file")
+    url_protocol := GetKey("url_protocol")
+    hotkey_backlink := GetKey("hotkey_backlink") " Up"
+    hk_iamge_backlink := GetKey("hotkey_iamge_backlink") " Up"
 }
 
-#HotIf CheckCurrentProgram()
-{
-    ; 【定义热键，默认：Alt+G】
-    ; 如何定义热键参考官方文档：https://wyagd001.github.io/v2/docs/Hotkeys.htm
-    !g up::{
-        ; 在笔记软件中按快捷键没有问题。但是在Potplayer中按快捷键，会出现问题：Potplayer的快捷键被触发了，解决办法是：等待快捷键释放，然后再执行
-        KeyWait "Alt","T2"
-        KeyWait "g","T2"
+RegisterHotKey(){
+    HotIf CheckCurrentProgram
+    Hotkey hotkey_backlink, Potplayer2Obsidian
+    Hotkey hk_iamge_backlink, Potplayer2ObsidianImage
+}
 
-        Potplayer2Obsidian()
+RefreshHotkey(old_hotkey,new_hotkey,callback){
+    ; 防止无效的快捷键产生报错，中断程序
+    try{
+        Hotkey old_hotkey " Up", "off"
+        Hotkey new_hotkey " Up" ,callback
     }
-    ^!g up::{
-        KeyWait "Control","T2"
-        KeyWait "Alt","T2"
-        KeyWait "g","T2"
-        
-        Potplayer2ObsidianImage()
+    catch Error as err{
+
     }
 }
 
-CheckCurrentProgram(){
+CheckCurrentProgram(*){
     programs := potplayer_name "`n" note_app_name
     Loop Parse programs, "`n"{
         program := A_LoopField
@@ -70,7 +70,9 @@ CheckCurrentProgram(){
 }
 
 ; 【主逻辑】将Potplayer的播放链接粘贴到Obsidian中
-Potplayer2Obsidian(){
+Potplayer2Obsidian(*){
+    ReleaseCommonUseKeyboard()
+
     media_path := GetMediaPath()
     media_time := GetMediaTime()
     
@@ -88,7 +90,9 @@ RenderMarkdownTemplate(markdown_template, media_path, media_time){
 }
 
 ; 【主逻辑】粘贴图像
-Potplayer2ObsidianImage(){
+Potplayer2ObsidianImage(*){
+    ReleaseCommonUseKeyboard()
+
     media_path := GetMediaPath()
     media_time := GetMediaTime()
     image := SaveImage()
@@ -123,6 +127,7 @@ PressDownHotkey(potplayer_control){
         ; 无限重试！
         result := PressDownHotkey(potplayer_control)
     }
+    running_count := 0
     return result
 }
 
@@ -223,6 +228,7 @@ SaveImage(){
     if !ClipWait(2,1){
         SafeRecursion()
     }
+    running_count := 0
     return ClipboardAll()
 }
 SendImage2NoteApp(image){

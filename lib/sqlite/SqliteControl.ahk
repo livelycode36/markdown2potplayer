@@ -6,22 +6,21 @@ db_file_path := "config.db"
 table_name := "config"
 
 InitSqlite() {
-  if CheckTable(table_name) {
-    return
-  }
-
-  DB := OpenLocalDB()
-  ; 创建 config 表
-  SQL_CreateTable := 
-  "CREATE TABLE IF NOT EXISTS " table_name " ("
-  . " key TEXT PRIMARY KEY,"
-  . " value TEXT"
-  . " );"
-
-  if !DB.Exec(SQL_CreateTable) {
-    MsgBox("无法创建表 " table_name "`n错误信息: " DB.ErrorMsg)
+  if !TableExist(table_name) {
+    DB := OpenLocalDB()
+    ; 创建 config 表
+    SQL_CreateTable := 
+    "CREATE TABLE IF NOT EXISTS " table_name " ("
+    . " key TEXT PRIMARY KEY,"
+    . " value TEXT"
+    . " );"
+  
+    if !DB.Exec(SQL_CreateTable) {
+      MsgBox("无法创建表 " table_name "`n错误信息: " DB.ErrorMsg)
+      DB.CloseDB()
+      ExitApp
+    }
     DB.CloseDB()
-    ExitApp
   }
 
   ; 初始化插入数据
@@ -44,22 +43,29 @@ InitSqlite() {
   . "`n"
   . "视频:{title}"
   . "`n"
+  config_data["hotkey_backlink"] := "!g"
+  config_data["hotkey_iamge_backlink"] := "^!g"
 
+  DB := OpenLocalDB()
   ; 插入数据
-  DB.Exec("BEGIN TRANSACTION;")
   for key, value in config_data {
-    SQL_Insert := "INSERT OR REPLACE INTO " table_name " (key, value) VALUES ('" key "', '" value "');"
-    if !DB.Exec(SQL_Insert) {
-      MsgBox("无法插入数据: " key "`n错误信息: " . DB.ErrorMsg)
-      DB.Exec("ROLLBACK TRANSACTION;")
-      DB.CloseDB()
+    ; 检查 config 表中是否存在 key 值
+    SQL_Check_Key := "SELECT COUNT(*) FROM " table_name " WHERE key = '" key "'"
+    Result := ""
+    If !DB.GetTable(SQL_Check_Key, &Result){
+      MsgBox "打开数据表" table_name "失败！"
       ExitApp
     }
-  }
-  DB.Exec("COMMIT TRANSACTION;")
-  DB.CloseDB()
 
-  ; MsgBox("初始化数据库 config.db 完成。")
+    ; 如果 key 不存在，则插入
+    If Result.RowCount = 0 || Result.Rows[1][1] = 0{
+      SQL := "INSERT INTO config (key, value) VALUES ('" key "', '" value "')"
+      If !DB.Exec(SQL)
+        ExitApp
+    }
+  }
+  ; 关闭数据库
+  DB.CloseDB()
 }
 
 OpenLocalDB(){
@@ -74,7 +80,7 @@ OpenLocalDB(){
   return DB
 }
 
-CheckTable(table_name){
+TableExist(table_name){
   DB := OpenLocalDB()
 
   ; 检查 config 表是否存在
@@ -97,7 +103,7 @@ CheckTable(table_name){
   }
 }
 
-GetKeyName(key){
+GetKey(key){
   DB := OpenLocalDB()
 
   ; 读取 key 为 'app_name' 的值
