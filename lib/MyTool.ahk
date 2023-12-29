@@ -76,9 +76,26 @@ SafeRecursion(){
   SetTimer () => ToolTip(), -1000
   if (running_count > 5) {
     running_count := 0
-    MsgBox "error: Replication failed!"
+    MsgBox "error: failed!"
     Exit
   }
+}
+
+; 等待释放指定按键
+ReleaseKeyboard(keyName){
+  if GetKeyState(keyName){
+      if KeyWait(keyName,"T2") == 0{
+          SafeRecursion()
+          ReleaseKeyboard(keyName)
+      }
+  }
+  running_count := 0
+}
+
+ReleaseCommonUseKeyboard(){
+  ReleaseKeyboard("Control")
+  ReleaseKeyboard("Shift")
+  ReleaseKeyboard("Alt")
 }
 
 UrlEncode(str, sExcepts := "-_.", enc := "UTF-8") {
