@@ -16,8 +16,9 @@ PostCommand(msg_type,wParam,lParam){
 
 GetPotplayerHwnd(){
     if WinExist("ahk_exe" potplayer_name) == 0{
-        MsgBox "PotPlayer is not running"
-        Exit
+        throw "PotPlayer is not running"
+        ; MsgBox "PotPlayer is not running"
+        ; Exit
     }
     ids := WinGetList("ahk_exe" potplayer_name)
     hwnd := ""
