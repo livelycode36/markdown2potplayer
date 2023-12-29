@@ -1,27 +1,42 @@
 #Requires AutoHotkey v2.0
-#Include "%A_ScriptDir%\lib\note2potplayer\RegisterUrlProtocol.ahk"
-#Include "%A_ScriptDir%\lib\MyTool.ahk"
-#Include "%A_ScriptDir%\lib\ReduceTime.ahk"
-#Include "%A_ScriptDir%\lib\ImageTemplateParser.ahk"
-#Include "%A_ScriptDir%\lib\PotplayerControl.ahk"
+#SingleInstance force
+#Include "lib\note2potplayer\RegisterUrlProtocol.ahk"
+#Include "lib\MyTool.ahk"
+#Include "lib\ReduceTime.ahk"
+#Include "lib\ImageTemplateParser.ahk"
+#Include "lib\PotplayerControl.ahk"
+#Include "lib\sqlite\SqliteControl.ahk"
+#Include "lib\gui.ahk"
 
-potplayer_path := IniRead("config.ini", "PotPlayer", "path")
-is_stop := IniRead("config.ini", "PotPlayer", "is_stop")
-reduce_time := IniRead("config.ini", "PotPlayer", "reduce_time")
+main()
 
-potplayer_name := GetNameForPath(potplayer_path)
+main(){
+    ; =======图标=========
+    TraySetIcon("lib/icon.png", 1, false)
+    
+    InitSqlite()
+    
+    RefreshConfig()
 
-note_app_name := IniRead("config.ini", "Note", "app_name")
+    RegisterUrlProtocol(url_protocol)
+}
 
-markdown_template := IniRead("config.ini", "MarkDown", "template")
-markdown_image_template := IniRead("config.ini", "MarkDown", "image_template")
-markdown_title := IniRead("config.ini", "MarkDown", "title")
-markdown_path_is_encode := IniRead("config.ini", "MarkDown", "path_is_encode")
-markdown_remove_suffix_of_video_file := IniRead("config.ini", "MarkDown", "remove_suffix_of_video_file")
+RefreshConfig(){
+    global
+    potplayer_path := GetKeyName("path")
+    is_stop := GetKeyName("is_stop")
+    reduce_time := GetKeyName("reduce_time")
+    potplayer_name := GetNameForPath(potplayer_path)
+    note_app_name := GetKeyName("app_name")
+    markdown_template := GetKeyName("template")
+    markdown_image_template := GetKeyName("image_template")
+    markdown_title := GetKeyName("title")
+    markdown_path_is_encode := GetKeyName("path_is_encode")
+    markdown_remove_suffix_of_video_file := GetKeyName("remove_suffix_of_video_file")
+    url_protocol := GetKeyName("url_protocol")
+}
 
-RegisterUrlProtocol()
-
-#HotIf WinActive("ahk_exe" potplayer_name) or WinActive("ahk_exe" note_app_name)
+#HotIf CheckCurrentProgram()
 {
     ; 【定义热键，默认：Alt+G】
     ; 如何定义热键参考官方文档：https://wyagd001.github.io/v2/docs/Hotkeys.htm
@@ -41,6 +56,19 @@ RegisterUrlProtocol()
     }
 }
 
+CheckCurrentProgram(){
+    programs := potplayer_name "`n" note_app_name
+    Loop Parse programs, "`n"{
+        program := A_LoopField
+        if program{
+            if WinActive("ahk_exe" program){
+                return true
+            }
+        }
+    }
+    return false
+}
+
 ; 【主逻辑】将Potplayer的播放链接粘贴到Obsidian中
 Potplayer2Obsidian(){
     media_path := GetMediaPath()
@@ -56,7 +84,6 @@ RenderMarkdownTemplate(markdown_template, media_path, media_time){
     if (InStr(markdown_template, "{title}") != 0){
         markdown_template := RenderTitle(markdown_template, markdown_title, media_path, media_time)
     }
-    markdown_template := RenderEnter(markdown_template)
     return markdown_template
 }
 
@@ -108,11 +135,6 @@ PauseMedia(){
 RenderTitle(markdown_template, markdown_title, media_path, media_time){
     markdown_link := GenerateMarkdownLink(markdown_title, media_path, media_time)
     result := StrReplace(markdown_template, "{title}",markdown_link)
-    return result
-}
-
-RenderEnter(template){
-    result := StrReplace(template, "{enter}","`n")
     return result
 }
 
@@ -180,7 +202,7 @@ ProcessUrl(media_path){
 }
 
 SendText2NoteApp(text){
-    ActivateProgram(note_app_name)
+    ActivateNoteProgram(note_app_name)
     A_Clipboard := ""
     A_Clipboard := text
     ClipWait 2,0
@@ -192,6 +214,10 @@ SendText2NoteApp(text){
 }
 
 SaveImage(){
+    if GetPlayStatus() == "Stopped" {
+        MsgBox "视频尚未播放，无法截图！"
+        Exit
+    }
     A_Clipboard := ""
     SaveImageToClipboard()
     if !ClipWait(2,1){
@@ -200,7 +226,7 @@ SaveImage(){
     return ClipboardAll()
 }
 SendImage2NoteApp(image){
-    ActivateProgram(note_app_name)
+    ActivateNoteProgram(note_app_name)
     A_Clipboard := ""
     A_Clipboard := ClipboardAll(image)
     ClipWait 2,1

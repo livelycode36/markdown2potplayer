@@ -1,0 +1,63 @@
+#Requires Autohotkey v2
+#Include sqlite/SqliteControl.ahk
+#Include ../markdown2potplayer.ahk
+
+myGui := Gui()
+
+myGui.Add("Text", "x8 y16 w132 h23 +0x200", "potplayer播放器的路径")
+Edit_potplayer := myGui.AddEdit("x160 y16 w215 h25", GetKeyName("path"))
+Button_potplayer := myGui.AddButton("x384 y16 w103 h23", "选择potplayer")
+Button_potplayer.OnEvent("Click",SelectPotplayerProgram)
+SelectPotplayerProgram(*){
+  SelectedFile := FileSelect(1, , "Open a file", "Text Documents (*.exe)")
+  if SelectedFile{
+    edit_potplayer.Value := SelectedFile
+  }
+}
+Button_potplayer.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("path",edit_potplayer.Value))
+
+
+myGui.Add("Text", "x80 y48 w63 h23 +0x200", "减少的时间")
+Edit_reduce_time := myGui.AddEdit( "x160 y48 w120 h21", GetKeyName("reduce_time"))
+Edit_reduce_time.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("reduce_time",Edit_reduce_time.Value))
+
+myGui.Add("Text", "x40 y80 w109 h23 +0x200", "笔记软件的程序名称")
+Edit_note_app_name := myGui.AddEdit("x160 y80 w162 h63 +Multi", GetKeyName("app_name"))
+myGui.Add("Text", "x160 y152 w123 h23", "多个笔记软件每行一个")
+Edit_note_app_name.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("app_name",Edit_note_app_name.Value))
+
+myGui.Add("Text", "x88 y184 w63 h23", "回链的名称")
+Edit_title := myGui.AddEdit("x160 y184 w148 h21", GetKeyName("title"))
+Edit_title.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("title",Edit_title.Value))
+
+myGui.Add("Text", "x104 y216 w51 h23", "回链模板")
+Edit_makrdown_template := myGui.AddEdit("x160 y216 w149 h60 +Multi", GetKeyName("template"))
+Edit_makrdown_template.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("template",Edit_makrdown_template.Value))
+
+myGui.Add("Text", "x80 y288 w77 h23", "视频回链模板")
+Edit_image_tempalte := myGui.AddEdit("x160 y288 w151 h79 +Multi", GetKeyName("image_template"))
+Edit_image_tempalte.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("image_template",Edit_image_tempalte.Value))
+
+CheckBox_is_stop := myGui.AddCheckbox("x160 y368 w69 h23", "是否暂停")
+CheckBox_is_stop.Value := GetKeyName("is_stop")
+CheckBox_is_stop.OnEvent("Click", (*) => UpdateOrIntertAndRefreshConfig("is_stop",CheckBox_is_stop.Value))
+
+CheckBox_remove_suffix_of_video_file := myGui.AddCheckbox("x160 y392 w156 h23", "本地视频移除文件后缀名")
+CheckBox_remove_suffix_of_video_file.Value := GetKeyName("remove_suffix_of_video_file")
+CheckBox_remove_suffix_of_video_file.OnEvent("Click", (*) => UpdateOrIntertAndRefreshConfig("remove_suffix_of_video_file",CheckBox_remove_suffix_of_video_file.Value))
+
+CheckBox_path_is_encode := myGui.AddCheckbox("x160 y416 w120 h23", "路径是否编码")
+CheckBox_path_is_encode.Value := GetKeyName("path_is_encode")
+checkBox_path_is_encode.OnEvent("Click", (*) => UpdateOrIntertAndRefreshConfig("path_is_encode",checkBox_path_is_encode.Value))
+
+myGui.Add("Text", "x56 y448 w100 h36", "修改协议【谨慎】`n此项重启生效")
+Edit_url_protocol := myGui.AddEdit("x160 y448 w146 h21", GetKeyName("url_protocol"))
+Edit_url_protocol.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("url_protocol",Edit_url_protocol.Value))
+
+myGui.OnEvent('Close', (*) => myGui.Hide())
+myGui.OnEvent('Escape', (*) => myGui.Hide())
+myGui.Title := "markdown2potpalyer"
+
+; =======托盘菜单=========
+myMenu := A_TrayMenu
+myMenu.Add("&Open", (*) => myGui.Show("w492 h481"))

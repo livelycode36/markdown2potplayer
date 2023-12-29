@@ -1,13 +1,11 @@
 #Requires AutoHotkey v2.0
 
-url_protocol := IniRead("config.ini", "Note", "url_protocol")
-
 ; 注册协议
-RegisterUrlProtocol(){
+RegisterUrlProtocol(url_protocol){
     protocol_name := GetUrlProtocolName(url_protocol)
     RegistrationUrlProtocol(protocol_name)
 }
-  
+
 GetUrlProtocolName(url_protocol){
     index_of := InStr(url_protocol, ":")
     if (index_of = 0){

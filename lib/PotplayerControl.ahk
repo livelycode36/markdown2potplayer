@@ -45,5 +45,19 @@ SaveImageToClipboard(){
     SendCommand(COMMAND_TYPE,10223,0)
 }
 Pause(){
-    PostCommand(COMMAND_TYPE,20000,0)
+    status := GetPlayStatus()
+    if (status == "Running"){
+        PostCommand(COMMAND_TYPE,20000,0)
+    }
+}
+GetPlayStatus(){
+    status := SendCommand(REQUEST_TYPE,20486,0)
+    switch status {
+        case -1:
+            return "Stopped"
+        case 1:
+            return "Paused"
+        case 2:
+            return "Running"
+    }
 }
