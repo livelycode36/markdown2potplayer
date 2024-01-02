@@ -61,7 +61,7 @@ Update_Hk_Backlink(*){
   UpdateOrIntertAndRefreshConfig("hotkey_backlink",hk_backlink.Value)
 }
 
-myGui.Add("Text", "x72 y528 w84 h23 +0x200", "图片回链快捷键")
+myGui.Add("Text", "x72 y528 w84 h23 +0x200", "图片+回链快捷键")
 hk_image_backlink := myGui.Add("Hotkey", "x160 y528 w156 h21", GetKey("hotkey_iamge_backlink"))
 hk_image_backlink.OnEvent("Change", Update_Hk_Image_Backlink)
 Update_Hk_Image_Backlink(*){
@@ -76,4 +76,12 @@ myGui.Title := "markdown2potpalyer"
 
 ; =======托盘菜单=========
 myMenu := A_TrayMenu
+
 myMenu.Add("&Open", (*) => myGui.Show("w498 h574"))
+myMenu.Default := "&Open"
+myMenu.ClickCount := 2
+
+myMenu.Rename("&Open" , "打开")
+myMenu.Rename("E&xit" , "退出")
+myMenu.Rename("&Pause Script" , "暂停脚本")
+myMenu.Rename("&Suspend Hotkeys" , "暂停热键")
