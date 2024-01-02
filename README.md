@@ -2,21 +2,7 @@
 
 ## 1 前置准备
 
-下载release中的压缩包
-
-
-
-### 1.1 安装AutoHotKey
-
-![image-20231214150217034](./assets/image-20231214150217034.png)
-
-一路下一步，然后删掉
-
-![image-20231214150233075](./assets/image-20231214150233075.png)
-
-### 1.2 修改配置
-
-1. 运行脚本文件：`markdown2potplayer.ahk`
+1. 运行脚本文件：`markdown2potplayer`
 2. 双击右下角的托盘图标![image-20231229163509526](./assets/image-20231229163509526.png)
 
 ![image-20231229003909741](./assets/image-20231229003909741.png)

@@ -52,7 +52,8 @@ RefreshHotkey(old_hotkey,new_hotkey,callback){
         Hotkey new_hotkey " Up" ,callback
     }
     catch Error as err{
-
+        ; 热键设置无效
+        Exit
     }
 }
 
