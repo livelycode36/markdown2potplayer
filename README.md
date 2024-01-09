@@ -115,22 +115,6 @@ image:{image}
 
 
 
-## 开机启动
-
-参考：https://blog.csdn.net/liuyukuan/article/details/121526961
-
-1. 按 Win + E ，打开 资源管理器
-
-2. 在顶部的地址栏中，输入如下地址，回车进入这个文件夹
-
-`C:%homepath%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`也就是这个路径`C:\Users\你电脑的用户名\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`
-
-3. 将脚本`potplayer2note.ahk`，在这个文件夹中，`创建快捷方式`
-
-![image-20231214154221176](./assets/image-20231214154221176.png)
-
-【去掉开机自启】：把脚本的快捷方式删了就ok
-
 ## 视频文件的后缀名
 
 控制名称中是否包含文件名的后缀
