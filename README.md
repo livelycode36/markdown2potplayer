@@ -145,3 +145,15 @@ image:{image}
 修改的是此处
 
 ![image-20231214154748461](./assets/image-20231214154748461.png)
+
+
+
+# 鸣谢
+
+感谢
+
+- [金](https://github.com/fireflysss)
+- [YIRU69](https://github.com/YIRU69)
+- 蚕子
+
+给予的帮助与建议！
