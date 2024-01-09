@@ -1,6 +1,7 @@
 #Requires Autohotkey v2
 #Include sqlite/SqliteControl.ahk
 #Include ../markdown2potplayer.ahk
+#Include BootUp.ahk
 
 myGui := Gui()
 
@@ -49,27 +50,31 @@ CheckBox_path_is_encode := myGui.AddCheckbox("x160 y416 w120 h23", "路径是否
 CheckBox_path_is_encode.Value := GetKey("path_is_encode")
 checkBox_path_is_encode.OnEvent("Click", (*) => UpdateOrIntertAndRefreshConfig("path_is_encode",checkBox_path_is_encode.Value))
 
-myGui.Add("Text", "x56 y448 w100 h36", "修改协议【谨慎】`n此项重启生效")
-Edit_url_protocol := myGui.AddEdit("x160 y448 w146 h21", GetKey("url_protocol"))
+CheckBox_bootup := myGui.Add("CheckBox", "x160 y440 w120 h23", "开机启动")
+CheckBox_bootup.Value := get_boot_up()
+CheckBox_bootup.OnEvent("Click", (*) => adaptive_bootup())
+
+myGui.Add("Text", "x56 y469 w100 h36", "修改协议【谨慎】`n此项重启生效")
+Edit_url_protocol := myGui.AddEdit("x160 y469 w146 h21", GetKey("url_protocol"))
 Edit_url_protocol.OnEvent("LoseFocus",(*) => UpdateOrIntertAndRefreshConfig("url_protocol",Edit_url_protocol.Value))
 
-myGui.Add("Text", "x93 y496 w63 h23 +0x200", "回链快捷键")
-hk_backlink := myGui.Add("Hotkey", "x160 y496 w155 h21", GetKey("hotkey_backlink"))
+myGui.Add("Text", "x93 y506 w63 h23 +0x200", "回链快捷键")
+hk_backlink := myGui.Add("Hotkey", "x160 y506 w155 h21", GetKey("hotkey_backlink"))
 hk_backlink.OnEvent("Change", Update_Hk_Backlink)
 Update_Hk_Backlink(*){
   RefreshHotkey(GetKey("hotkey_backlink"),hk_backlink.Value,Potplayer2Obsidian)
   UpdateOrIntertAndRefreshConfig("hotkey_backlink",hk_backlink.Value)
 }
 
-myGui.Add("Text", "x72 y528 w84 h23 +0x200", "图片+回链快捷键")
-hk_image_backlink := myGui.Add("Hotkey", "x160 y528 w156 h21", GetKey("hotkey_iamge_backlink"))
+myGui.Add("Text", "x72 y538 w84 h23 +0x200", "图片+回链快捷键")
+hk_image_backlink := myGui.Add("Hotkey", "x160 y538 w156 h21", GetKey("hotkey_iamge_backlink"))
 hk_image_backlink.OnEvent("Change", Update_Hk_Image_Backlink)
 Update_Hk_Image_Backlink(*){
   RefreshHotkey(GetKey("hotkey_iamge_backlink"),hk_image_backlink.Value,Potplayer2ObsidianImage)
   UpdateOrIntertAndRefreshConfig("hotkey_iamge_backlink",hk_image_backlink.Value)
 }
 
-myGui.Add("Link", "x440 y552 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer`">查看更新</a>")
+myGui.Add("Link", "x434 y561 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer`">查看更新</a>")
 myGui.OnEvent('Close', (*) => myGui.Hide())
 myGui.OnEvent('Escape', (*) => myGui.Hide())
 myGui.Title := "markdown2potpalyer"
@@ -77,7 +82,7 @@ myGui.Title := "markdown2potpalyer"
 ; =======托盘菜单=========
 myMenu := A_TrayMenu
 
-myMenu.Add("&Open", (*) => myGui.Show("w498 h574"))
+myMenu.Add("&Open", (*) => myGui.Show("w500 h590"))
 myMenu.Default := "&Open"
 myMenu.ClickCount := 2
 
