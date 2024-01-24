@@ -127,7 +127,7 @@ GetKey(key){
   DB.CloseDB()
 }
 
-UpdateOrIntertAndRefreshConfig(key, value){
+UpdateOrIntert(key, value){
   DB := OpenLocalDB()
 
   ; 插入或更新配置项
@@ -138,6 +138,4 @@ UpdateOrIntertAndRefreshConfig(key, value){
       ExitApp
   }
   DB.CloseDB()
-
-  RefreshConfig()
 }

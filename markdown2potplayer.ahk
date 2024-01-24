@@ -4,61 +4,48 @@
 #Include "lib\MyTool.ahk"
 #Include "lib\ReduceTime.ahk"
 #Include "lib\ImageTemplateParser.ahk"
-#Include "lib\PotplayerControl.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
 #Include "lib\gui.ahk"
+
+#Include lib\entity\Config.ahk
+#Include lib\PotplayerController.ahk
 
 main()
 
 main(){
+    global
     TraySetIcon("lib/icon.png", 1, false)
     
     InitSqlite()
-    
-    RefreshConfig()
 
-    RegisterUrlProtocol(url_protocol)
+    app_config := Config()
+    potplayer_controller := PotplayerController(app_config.PotplayerProcessName)
+
+    RegisterUrlProtocol(app_config.UrlProtocol)
 
     RegisterHotKey()
 }
 
-RefreshConfig(){
-    global
-    potplayer_path := GetKey("path")
-    is_stop := GetKey("is_stop")
-    reduce_time := GetKey("reduce_time")
-    potplayer_name := GetNameForPath(potplayer_path)
-    note_app_name := GetKey("app_name")
-    markdown_template := GetKey("template")
-    markdown_image_template := GetKey("image_template")
-    markdown_title := GetKey("title")
-    markdown_path_is_encode := GetKey("path_is_encode")
-    markdown_remove_suffix_of_video_file := GetKey("remove_suffix_of_video_file")
-    url_protocol := GetKey("url_protocol")
-    hotkey_backlink := GetKey("hotkey_backlink") " Up"
-    hk_iamge_backlink := GetKey("hotkey_iamge_backlink") " Up"
-}
-
 RegisterHotKey(){
     HotIf CheckCurrentProgram
-    Hotkey hotkey_backlink, Potplayer2Obsidian
-    Hotkey hk_iamge_backlink, Potplayer2ObsidianImage
+    Hotkey app_config.HotkeyBacklink, Potplayer2Obsidian
+    Hotkey app_config.HkIamgeBacklink, Potplayer2ObsidianImage
 }
 
 RefreshHotkey(old_hotkey,new_hotkey,callback){
-    ; 防止无效的快捷键产生报错，中断程序
     try{
         Hotkey old_hotkey " Up", "off"
         Hotkey new_hotkey " Up" ,callback
     }
     catch Error as err{
         ; 热键设置无效
+        ; 防止无效的快捷键产生报错，中断程序
         Exit
     }
 }
 
 CheckCurrentProgram(*){
-    programs := potplayer_name "`n" note_app_name
+    programs := app_config.PotplayerProcessName "`n" app_config.NoteAppName
     Loop Parse programs, "`n"{
         program := A_LoopField
         if program{
@@ -77,7 +64,7 @@ Potplayer2Obsidian(*){
     media_path := GetMediaPath()
     media_time := GetMediaTime()
     
-    markdown_link := RenderMarkdownTemplate(markdown_template, media_path, media_time)
+    markdown_link := RenderMarkdownTemplate(app_config.MarkdownTemplate, media_path, media_time)
     PauseMedia()
 
     SendText2NoteApp(markdown_link)
@@ -85,7 +72,7 @@ Potplayer2Obsidian(*){
 
 RenderMarkdownTemplate(markdown_template, media_path, media_time){
     if (InStr(markdown_template, "{title}") != 0){
-        markdown_template := RenderTitle(markdown_template, markdown_title, media_path, media_time)
+        markdown_template := RenderTitle(markdown_template, app_config.MarkdownTitle, media_path, media_time)
     }
     return markdown_template
 }
@@ -100,24 +87,25 @@ Potplayer2ObsidianImage(*){
 
     PauseMedia()
 
-    RenderImage(markdown_image_template, media_path, media_time, image)
+    RenderImage(app_config.MarkdownImageTemplate, media_path, media_time, image)
 }
 
 GetMediaPath(){
-    return PressDownHotkey(GetMediaPathToClipboard)
+    return PressDownHotkey(potplayer_controller.GetMediaPathToClipboard)
 }
 GetMediaTime(){
-    time := PressDownHotkey(GetMediaTimestampToClipboard)
+    time := PressDownHotkey(potplayer_controller.GetMediaTimestampToClipboard)
 
-    if (reduce_time != "0") {
-        time := ReduceTime(time,reduce_time)
+    if (app_config.ReduceTime != "0") {
+        time := ReduceTime(time, app_config.ReduceTime)
     }
     return time
 }
-PressDownHotkey(potplayer_control){
+PressDownHotkey(operate_potplayer){
     ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
     A_Clipboard := ""
-    potplayer_control()
+    ; 调用函数会丢失this，将对象传入，以便不会丢失this => https://wyagd001.github.io/v2/docs/Objects.htm#Custom_Classes_method
+    operate_potplayer(potplayer_controller)
     ClipWait 1,0
     result := A_Clipboard
     ; MyLog "剪切板的值是：" . result
@@ -126,14 +114,14 @@ PressDownHotkey(potplayer_control){
     if (result == "") {
         SafeRecursion()
         ; 无限重试！
-        result := PressDownHotkey(potplayer_control)
+        result := PressDownHotkey(operate_potplayer)
     }
     running_count := 0
     return result
 }
 
 PauseMedia(){
-    if (is_stop != "0") {
+    if (app_config.IsStop != "0") {
         Pause()
     }
 }
@@ -149,7 +137,7 @@ GenerateMarkdownLink(markdown_title, media_path, media_time){
     ; B站的视频
     if (InStr(media_path,"https://www.bilibili.com/video/")){
         ; 正常播放的情况
-        name := StrReplace(GetPotplayerTitle(), " - PotPlayer", "")
+        name := StrReplace(GetPotplayerTitle(app_config.PotplayerProcessName), " - PotPlayer", "")
         
         ; 视频没有播放，已经停止的情况
         if name == "PotPlayer"{
@@ -162,14 +150,14 @@ GenerateMarkdownLink(markdown_title, media_path, media_time){
     markdown_title := StrReplace(markdown_title, "{name}",name)
     markdown_title := StrReplace(markdown_title, "{time}",media_time)
 
-    markdown_link := url_protocol "?path=" ProcessUrl(media_path) "&time=" media_time
+    markdown_link := app_config.UrlProtocol "?path=" ProcessUrl(media_path) "&time=" media_time
     result := "[" markdown_title "](" markdown_link ")"
     return result
 }
 
 GetFileNameInPath(path){
     name := GetNameForPath(path)
-    if (markdown_remove_suffix_of_video_file != "0"){
+    if (app_config.MarkdownRemoveSuffixOfVideoFile != "0"){
         name := RemoveSuffix(name)
     }
     return name
@@ -198,7 +186,7 @@ RemoveSuffix(name){
 ; 路径地址处理
 ProcessUrl(media_path){
     ; 进行Url编码
-    if (markdown_path_is_encode != "0"){
+    if (app_config.MarkdownPathIsEncode != "0"){
         media_path := UrlEncode(media_path)
     }
     ; 但是 obidian中的potplayer回链路径有空格，在obsidian的预览模式【无法渲染】，所以将空格进行Url编码
@@ -208,7 +196,7 @@ ProcessUrl(media_path){
 }
 
 SendText2NoteApp(text){
-    ActivateNoteProgram(note_app_name)
+    ActivateNoteProgram(app_config.NoteAppName)
     A_Clipboard := ""
     A_Clipboard := text
     ClipWait 2,0
@@ -220,12 +208,12 @@ SendText2NoteApp(text){
 }
 
 SaveImage(){
-    if GetPlayStatus() == "Stopped" {
+    if potplayer_controller.GetPlayStatus() == "Stopped" {
         MsgBox "视频尚未播放，无法截图！"
         Exit
     }
     A_Clipboard := ""
-    SaveImageToClipboard()
+    potplayer_controller.SaveImageToClipboard()
     if !ClipWait(2,1){
         SafeRecursion()
     }
@@ -233,7 +221,7 @@ SaveImage(){
     return ClipboardAll()
 }
 SendImage2NoteApp(image){
-    ActivateNoteProgram(note_app_name)
+    ActivateNoteProgram(app_config.NoteAppName)
     A_Clipboard := ""
     A_Clipboard := ClipboardAll(image)
     ClipWait 2,1

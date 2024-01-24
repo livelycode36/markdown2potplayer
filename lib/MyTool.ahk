@@ -2,8 +2,8 @@
 
 log_toggle := false
 
+; 在路径中，获取程序的名称
 GetNameForPath(program_path){
-  ; 获取程序的路径
   SplitPath program_path, &name
   return name
 }
@@ -51,8 +51,8 @@ IsPotplayerRunning(media_player_path){
 ; 获取Potplayer的标题
 ; 获取失败的原因：因为Potplayer的exe可能存在多个线程，而WinGetTitle其中一个线程的标题，结果可能为空字符串
 ; 参考：https://stackoverflow.com/questions/54570212/why-is-my-call-to-wingettitle-returning-an-empty-string
-GetPotplayerTitle(){
-  ids := WinGetList("ahk_exe" potplayer_name)
+GetPotplayerTitle(potplayer_process_name){
+  ids := WinGetList("ahk_exe" potplayer_process_name)
   for id in ids{
       title := WinGetTitle("ahk_id" id)
       if title == ""
@@ -134,4 +134,10 @@ UrlDecode(Url, Enc := "UTF-8") {
     Url := StrReplace(Url, "`%" code, StrGet(var, Enc))
   }
   Return Url
+}
+
+Assert(condition, exception_message){
+  if (!condition){
+      throw exception_message
+  }
 }
