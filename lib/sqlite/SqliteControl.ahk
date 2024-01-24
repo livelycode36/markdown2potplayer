@@ -24,48 +24,38 @@ InitSqlite() {
   }
 
   ; 初始化插入数据
-  config_data := Map()
-  config_data["path"] := "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe"
-  config_data["is_stop"] := "0"
-  config_data["reduce_time"] := "0"
-  config_data["app_name"] := "Obsidian.exe"
-  config_data["url_protocol"] := "jv://open"
-  config_data["path_is_encode"] := "0"
-  config_data["remove_suffix_of_video_file"] := "1"
-  config_data["title"] := "{name} | {time}"
-  config_data["template"] := 
-  "`n"
-  . "视频:{title}"
-  . "`n"
-  config_data["image_template"] := 
-  "`n"
-  . "图片:{image}"
-  . "`n"
-  . "视频:{title}"
-  . "`n"
-  config_data["hotkey_backlink"] := "!g"
-  config_data["hotkey_iamge_backlink"] := "^!g"
+  config_data := {
+    path: "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe",
+    is_stop: "0",
+    reduce_time: "0",
+    app_name: "Obsidian.exe",
+    url_protocol: "jv://open",
+    path_is_encode: "0",
+    remove_suffix_of_video_file: "1",
+    title: "{name} | {time}",
+    template: 
+      "`n"
+      . "视频:{title}"
+      . "`n",
+    image_template:
+      "`n"
+      . "图片:{image}"
+      . "`n"
+      . "视频:{title}"
+      . "`n",
+    hotkey_backlink: "!g",
+    hotkey_iamge_backlink: "^!g"
+  }
 
   DB := OpenLocalDB()
   ; 插入数据
-  for key, value in config_data {
-    ; 检查 config 表中是否存在 key 值
-    SQL_Check_Key := "SELECT COUNT(*) FROM " table_name " WHERE key = '" key "'"
-    Result := ""
-    If !DB.GetTable(SQL_Check_Key, &Result){
-      MsgBox "打开数据表" table_name "失败！"
-      ExitApp
+  for key, value in config_data.OwnProps() {
+    if CheckKeyExist(key) {
+      continue
     }
 
-    ; 如果 key 不存在，则插入
-    If Result.RowCount = 0 || Result.Rows[1][1] = 0{
-      SQL := "INSERT INTO config (key, value) VALUES ('" key "', '" value "')"
-      If !DB.Exec(SQL)
-        ExitApp
-    }
+    UpdateOrIntert(key, value)
   }
-  ; 关闭数据库
-  DB.CloseDB()
 }
 
 OpenLocalDB(){
@@ -100,6 +90,26 @@ TableExist(table_name){
   } else {
     ; MsgBox("表 " table_name " 不存在。")
     return false
+  }
+}
+
+CheckKeyExist(key){
+  DB := OpenLocalDB()
+
+  SQL_Check_Key := "SELECT COUNT(*) FROM " table_name " WHERE key = '" key "'"
+  Result := ""
+  If !DB.GetTable(SQL_Check_Key, &Result){
+    MsgBox "打开数据表" table_name "失败！"
+    ExitApp
+  }
+
+  DB.CloseDB()
+
+  ; 如果 key 不存在
+  If Result.RowCount = 0 || Result.Rows[1][1] = 0{
+    return false
+  } else {
+    return true
   }
 }
 

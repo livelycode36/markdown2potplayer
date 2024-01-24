@@ -5,10 +5,10 @@
 #Include "lib\ReduceTime.ahk"
 #Include "lib\ImageTemplateParser.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
-#Include "lib\gui.ahk"
 
 #Include lib\entity\Config.ahk
 #Include lib\PotplayerController.ahk
+#Include lib\gui\GuiController.ahk
 
 main()
 
@@ -20,6 +20,8 @@ main(){
 
     app_config := Config()
     potplayer_controller := PotplayerController(app_config.PotplayerProcessName)
+
+    InitGui(app_config)
 
     RegisterUrlProtocol(app_config.UrlProtocol)
 
