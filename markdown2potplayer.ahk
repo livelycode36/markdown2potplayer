@@ -249,14 +249,19 @@ Potplayer2ObsidianFragment(HotkeyName){
         ; 通知用户
         ToolTip("已经记录起点的时间！请再次按下快捷键，记录终点的时间。按Esc取消")
         SetTimer () => ToolTip(), -2000
-        Hotkey("Esc",cancel)
+        
+        HotIf CheckCurrentProgram
+        Hotkey("Escape Up",cancel,"On")
         cancel(*){
+            ; 重置计数器
             PressHotkeyCount := 0
-            Hotkey("Esc", "off")
+            Hotkey("Escape Up", "off")
         }
     } else if (PressHotkeyCount == 2){
         Assert(fragment_start_time == "", "未设置起点时间，无法生成该片段的链接！")
-        Hotkey("Esc", "off")
+        ; 重置计数器
+        PressHotkeyCount := 0
+        Hotkey("Escape Up", "off")
 
         ; 第二次按下快捷键，记录时间
         fragment_end_time := GetMediaTime()
@@ -269,9 +274,6 @@ Potplayer2ObsidianFragment(HotkeyName){
             ; 释放内存
             temp := ""
         }
-
-        ; 重置计数器
-        PressHotkeyCount := 0
 
         media_path := GetMediaPath()
         

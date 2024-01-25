@@ -71,17 +71,19 @@ InitGui(app_config){
     app_config.HotkeyIamgeBacklink := GuiCtrlObj.Value
   }
   
+  ; 回显: ab片段快捷键
   hk_ab_fragment.Value := app_config.HotkeyAbFragment
   hk_ab_fragment.OnEvent("Change", Update_Hk_Ab_Fragment)
   Update_Hk_Ab_Fragment(GuiCtrlObj, Info){
-    RefreshHotkey(app_config.HotkeyAbFragment, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    RefreshHotkey(app_config.HotkeyAbFragment, GuiCtrlObj.Value, Potplayer2ObsidianFragment)
     app_config.HotkeyAbFragment := GuiCtrlObj.Value
   }
 
+  ; 回显: ab循环快捷键
   hk_ab_circulation.Value := app_config.HotkeyAbCirculation
   hk_ab_circulation.OnEvent("Change", Update_Hk_Ab_Circulation)
   Update_Hk_Ab_Circulation(GuiCtrlObj, Info){
-    RefreshHotkey(app_config.HotkeyAbCirculation, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    RefreshHotkey(app_config.HotkeyAbCirculation, GuiCtrlObj.Value, Potplayer2ObsidianFragment)
     app_config.HotkeyAbCirculation := GuiCtrlObj.Value
   }
 
