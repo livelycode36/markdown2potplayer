@@ -1,5 +1,5 @@
 #Requires Autohotkey v2
-#Include Gui.ahk
+#Include Gui.ahk ; 加载Gui
 #Include ..\BootUp.ahk
 #Include ..\..\markdown2potplayer.ahk
 
@@ -58,19 +58,33 @@ InitGui(app_config){
   ; 回显: 回链快捷键
   hk_backlink.Value := app_config.HotkeyBacklink
   hk_backlink.OnEvent("Change", Update_Hk_Backlink)
-  Update_Hk_Backlink(*){
-    RefreshHotkey(app_config.HotkeyBacklink, hk_backlink.Value, Potplayer2Obsidian)
-    app_config.HotkeyBacklink := hk_backlink.Value
+  Update_Hk_Backlink(GuiCtrlObj, Info){
+    RefreshHotkey(app_config.HotkeyBacklink, GuiCtrlObj.Value, Potplayer2Obsidian)
+    app_config.HotkeyBacklink := GuiCtrlObj.Value
   }
   
   ; 回显: 图片+回链快捷键
-  hk_image_backlink.Value := app_config.HkIamgeBacklink
+  hk_image_backlink.Value := app_config.HotkeyIamgeBacklink
   hk_image_backlink.OnEvent("Change", Update_Hk_Image_Backlink)
-  Update_Hk_Image_Backlink(*){
-    RefreshHotkey(app_config.HkIamgeBacklink, hk_image_backlink.Value, Potplayer2ObsidianImage)
-    app_config.HkIamgeBacklink := hk_image_backlink.Value
+  Update_Hk_Image_Backlink(GuiCtrlObj, Info){
+    RefreshHotkey(app_config.HotkeyIamgeBacklink, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    app_config.HotkeyIamgeBacklink := GuiCtrlObj.Value
   }
   
+  hk_ab_fragment.Value := app_config.HotkeyAbFragment
+  hk_ab_fragment.OnEvent("Change", Update_Hk_Ab_Fragment)
+  Update_Hk_Ab_Fragment(GuiCtrlObj, Info){
+    RefreshHotkey(app_config.HotkeyAbFragment, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    app_config.HotkeyAbFragment := GuiCtrlObj.Value
+  }
+
+  hk_ab_circulation.Value := app_config.HotkeyAbCirculation
+  hk_ab_circulation.OnEvent("Change", Update_Hk_Ab_Circulation)
+  Update_Hk_Ab_Circulation(GuiCtrlObj, Info){
+    RefreshHotkey(app_config.HotkeyAbCirculation, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    app_config.HotkeyAbCirculation := GuiCtrlObj.Value
+  }
+
   ; =======界面设置=========
   myGui.OnEvent('Close', (*) => myGui.Hide())
   myGui.OnEvent('Escape', (*) => myGui.Hide())
@@ -79,7 +93,7 @@ InitGui(app_config){
   ; =======托盘菜单=========
   myMenu := A_TrayMenu
   
-  myMenu.Add("&Open", (*) => myGui.Show("w500 h590"))
+  myMenu.Add("&Open", (*) => myGui.Show("w500 h666"))
   myMenu.Default := "&Open"
   myMenu.ClickCount := 2
   
