@@ -62,4 +62,21 @@ class PotplayerController {
                 return "Running"
         }
     }
+    GetCurrentSecondsTime(){
+        return Integer(this.SendCommand(this.REQUEST_TYPE,20484,0)/1000)
+    }
+    SetCurrentSecondsTime(seconds){
+        if (seconds < 0){
+            seconds := 0
+        }
+        this.PostCommand(this.REQUEST_TYPE,20485, seconds * 1000)
+    }
+
+    SetStartPointOfTheABCycle(){
+        this.PostCommand(this.COMMAND_TYPE,10249,0)
+    }
+
+    SetEndPointOfTheABCycle(){
+        this.PostCommand(this.COMMAND_TYPE,10250,0)
+    }
 }
