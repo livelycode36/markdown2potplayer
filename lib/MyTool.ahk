@@ -137,7 +137,8 @@ UrlDecode(Url, Enc := "UTF-8") {
 }
 
 Assert(condition, exception_message){
-  if (!condition){
-      throw exception_message
+  if (condition){
+    MsgBox exception_message
+    Exit
   }
 }

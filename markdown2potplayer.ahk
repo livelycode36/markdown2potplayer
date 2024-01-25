@@ -30,13 +30,16 @@ main(){
 
 RegisterHotKey(){
     HotIf CheckCurrentProgram
-    Hotkey app_config.HotkeyBacklink, Potplayer2Obsidian
-    Hotkey app_config.HkIamgeBacklink, Potplayer2ObsidianImage
+    Hotkey app_config.HotkeyBacklink " Up", Potplayer2Obsidian
+    Hotkey app_config.HotkeyIamgeBacklink " Up", Potplayer2ObsidianImage
+    Hotkey app_config.HotkeyAbFragment " Up", Potplayer2ObsidianFragment
+    Hotkey app_config.HotkeyAbCirculation " Up", Potplayer2ObsidianFragment
 }
 
 RefreshHotkey(old_hotkey,new_hotkey,callback){
     try{
         Hotkey old_hotkey " Up", "off"
+        HotIf CheckCurrentProgram
         Hotkey new_hotkey " Up" ,callback
     }
     catch Error as err{
@@ -124,7 +127,7 @@ PressDownHotkey(operate_potplayer){
 
 PauseMedia(){
     if (app_config.IsStop != "0") {
-        Pause()
+        potplayer_controller.Pause()
     }
 }
 
@@ -210,10 +213,8 @@ SendText2NoteApp(text){
 }
 
 SaveImage(){
-    if potplayer_controller.GetPlayStatus() == "Stopped" {
-        MsgBox "视频尚未播放，无法截图！"
-        Exit
-    }
+    Assert(potplayer_controller.GetPlayStatus() == "Stopped" , "视频尚未播放，无法截图！")
+
     A_Clipboard := ""
     potplayer_controller.SaveImageToClipboard()
     if !ClipWait(2,1){
@@ -232,4 +233,61 @@ SendImage2NoteApp(image){
     Send "{LCtrl up}"
     ; 给Obsidian图片插件处理图片的时间
     Sleep 1000
+}
+
+; 【A-B片段、循环】
+PressHotkeyCount := 0
+Potplayer2ObsidianFragment(HotkeyName){
+    global
+    ReleaseCommonUseKeyboard()
+
+    PressHotkeyCount += 1
+
+    if (PressHotkeyCount == 1){
+        ; 第一次按下快捷键，记录时间
+        fragment_start_time := GetMediaTime()
+        ; 通知用户
+        ToolTip("已经记录起点的时间！请再次按下快捷键，记录终点的时间。按Esc取消")
+        SetTimer () => ToolTip(), -2000
+        Hotkey("Esc",cancel)
+        cancel(*){
+            PressHotkeyCount := 0
+            Hotkey("Esc", "off")
+        }
+    } else if (PressHotkeyCount == 2){
+        Assert(fragment_start_time == "", "未设置起点时间，无法生成该片段的链接！")
+        Hotkey("Esc", "off")
+
+        ; 第二次按下快捷键，记录时间
+        fragment_end_time := GetMediaTime()
+
+        ; 如果终点时间小于起点时间，就交换两个时间
+        if (TimeToSeconds(fragment_end_time) < TimeToSeconds(fragment_start_time)){
+            temp := fragment_start_time
+            fragment_start_time := fragment_end_time
+            fragment_end_time := temp
+            ; 释放内存
+            temp := ""
+        }
+
+        ; 重置计数器
+        PressHotkeyCount := 0
+
+        media_path := GetMediaPath()
+        
+        if fragment_start_time == fragment_end_time{
+            fragment_time := fragment_start_time
+        }else if HotkeyName == app_config.HotkeyAbFragment " Up"{
+            fragment_time := fragment_start_time "-" fragment_end_time
+        }else if HotkeyName == app_config.HotkeyAbCirculation " Up"{
+            fragment_time := fragment_start_time "∞" fragment_end_time
+        }
+        
+        ; 生成片段链接
+        markdown_link := RenderMarkdownTemplate(app_config.MarkdownTemplate, media_path, fragment_time)
+        PauseMedia()
+
+        ; 发送到Obsidian
+        SendText2NoteApp(markdown_link)
+    }
 }

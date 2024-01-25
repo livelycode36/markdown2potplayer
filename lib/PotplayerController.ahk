@@ -18,7 +18,7 @@ class PotplayerController {
     }
 
     GetPotplayerHwnd(){
-        Assert(WinExist("ahk_exe" this._PotplayerProcessName), "PotPlayer is not running")
+        Assert(!WinExist("ahk_exe" this._PotplayerProcessName), "PotPlayer is not running")
 
         ids := WinGetList("ahk_exe" this._PotplayerProcessName)
         hwnd := ""
