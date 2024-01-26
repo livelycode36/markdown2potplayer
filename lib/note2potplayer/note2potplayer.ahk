@@ -5,7 +5,7 @@
 #Include ..\PotplayerController.ahk
 #Include ..\ReduceTime.ahk
 
-; init
+; 1. init
 potplayer_path := GetKeyName("path")
 open_window_parameter := InitOpenWindowParameter(potplayer_path)
 potplayer_control := PotplayerController(GetNameForPath(potplayer_path))
@@ -18,6 +18,7 @@ InitOpenWindowParameter(potplayer_path){
   }
 }
 
+; 2. 主逻辑
 AppMain()
 AppMain(){
   CallbackPotplayer()
@@ -149,6 +150,11 @@ JumpToAbFragment(media_path, media_time){
 
   ; 3. 检查结束时间
   while (flag_ab_fragment) {
+    ; 异常情况：用户关闭Potplayer
+    if (!IsPotplayerRunning(potplayer_path)) {
+      break
+    }
+
     ; 异常情况：用户停止播放视频
     if (potplayer_control.GetPlayStatus() != "Running") {
       break
@@ -180,7 +186,6 @@ JumpToAbCirculation(media_path, media_time){
   ; 2. 跳转
   JumpToTimestamp(media_path, start_time)
 
-
   WaitForPotplayerToFinishLoadingTheVideo
 
   ; 3. 设置A-B循环起点
@@ -192,13 +197,13 @@ JumpToAbCirculation(media_path, media_time){
 }
 
 WaitForPotplayerToFinishLoadingTheVideo(){
-  ; 如果Potplayer已经打开，则等待Potplayer跳转完成
+  ; 如果Potplayer已经打开，则等待Potplayer跳转到下一个视频
   if(IsPotplayerRunning(potplayer_path)){
     ; 1 获取Potplayer的窗口句柄
-    ids := WinGetList("ahk_exe" GetNameForPath(potplayer_path))
+    ids := WinGetList("ahk_exe " GetNameForPath(potplayer_path))
     hwnd := ""
     for id in ids{
-        title := WinGetTitle("ahk_id" id)
+        title := WinGetTitle("ahk_id " id)
         if (InStr(title, "PotPlayer")){
             hwnd := id
             break
@@ -206,12 +211,12 @@ WaitForPotplayerToFinishLoadingTheVideo(){
     }
 
     ; 2 等待Potplayer加载视频，从上一个视频，跳转到下一个视频，窗口的命名会发生变化 => PotPlayer - 123.mp4 => Potplayer => PotPlayer - 456.mp4
-    while (WinGetTitle("ahk_id" hwnd) != "PotPlayer") {
+    while (WinGetTitle("ahk_id " hwnd) != "PotPlayer") {
       Sleep 100
     }
   }
 
-  ; 跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
+  ; 新开Potplayer、已开Potplayer跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
   while (potplayer_control.GetPlayStatus() != "Running") {
     Sleep 1000
   }

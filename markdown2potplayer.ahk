@@ -54,7 +54,7 @@ CheckCurrentProgram(*){
     Loop Parse programs, "`n"{
         program := A_LoopField
         if program{
-            if WinActive("ahk_exe" program){
+            if WinActive("ahk_exe " program){
                 return true
             }
         }
