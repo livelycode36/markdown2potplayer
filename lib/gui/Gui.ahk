@@ -27,7 +27,7 @@ Edit_image_tempalte := myGui.Add("Edit", "x160 y288 w151 h79 +Multi", "`n图片:
 
 CheckBox_is_stop := myGui.Add("CheckBox", "x160 y368 w69 h23", "是否暂停")
 CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y388 w150 h23", "本地视频移除文件后缀名")
-CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y416 w120 h23", "路径是否编码")
+CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y416 w120 h23", "路径编码")
 CheckBox_bootup := myGui.Add("CheckBox", "x160 y440 w120 h23", "开机启动")
 
 myGui.Add("Text", "x56 y469 w100 h36", "修改协议【谨慎】`n此项重启生效")
