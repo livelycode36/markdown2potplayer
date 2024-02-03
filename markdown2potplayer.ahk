@@ -190,6 +190,10 @@ RemoveSuffix(name){
 
 ; 路径地址处理
 ProcessUrl(media_path){
+    ; 全系urlencode的bug：如果路径中存在"\["会让，在【ob的预览模式】下(回链会被ob自动urlencode)，"\"离奇消失变为,"["；例如：G:\BaiduSyncdisk\123\[456] 在bug下变为：G:\BaiduSyncdisk\123[456] <= 丢失了"\"
+    ; 所以先将"\["替换为"%5C["（\的urlencode编码%5C）。变为：G:\BaiduSyncdisk\123%5C[456]
+    media_path := StrReplace(media_path, "\[", "%5C[")
+
     ; 进行Url编码
     if (app_config.MarkdownPathIsEncode != "0"){
         media_path := UrlEncode(media_path)
