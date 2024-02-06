@@ -43,11 +43,19 @@ InitSqlite() {
       . "`n"
       . "视频:{title}"
       . "`n",
+    ; 回链快捷键相关
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",
     hotkey_ab_fragment: "F1",
     hotkey_ab_circulation: "F2",
-    loop_ab_fragment: "0"
+    loop_ab_fragment: "0",
+    ; 映射Potplayer快捷键相关
+    hotkey_previous_frame: "",
+    hotkey_next_frame: "",
+    hotkey_forward: "",
+    hotkey_backward: "",
+    hotkey_play_or_pause: "",
+    hotkey_stop: ""
   }
 
   DB := OpenLocalDB()

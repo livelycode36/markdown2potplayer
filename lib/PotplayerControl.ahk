@@ -57,7 +57,7 @@ class PotplayerControl {
         }
         return "Undefined"
     }
-    Play(){
+    PlayOrPause(){
         this.PostCommand(this.COMMAND_TYPE,20001,0)
     }
     Pause(){
