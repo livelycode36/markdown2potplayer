@@ -55,12 +55,12 @@ Class Config{
         get => GetKey("url_protocol")
         set => UpdateOrIntert("url_protocol",Value)
     }
-
+    
+    ; ============回链快捷键相关================
     HotkeyBacklink{
         get => GetKey("hotkey_backlink")
         set => UpdateOrIntert("hotkey_backlink",Value)
     }
-
     HotkeyIamgeBacklink{
         get => GetKey("hotkey_iamge_backlink")
         set => UpdateOrIntert("hotkey_iamge_backlink",Value)
@@ -74,9 +74,33 @@ Class Config{
         get => GetKey("loop_ab_fragment")
         set => UpdateOrIntert("loop_ab_fragment",Value)
     }
-    
     HotkeyAbCirculation{
         get => GetKey("hotkey_ab_circulation")
         set => UpdateOrIntert("hotkey_ab_circulation",Value)
+    }
+    ; ============映射Potplayer快捷键相关================
+    HotkeyPreviousFrame{
+        get => GetKey("hotkey_previous_frame")
+        set => UpdateOrIntert("hotkey_previous_frame",Value)
+    }
+    HotkeyNextFrame{
+        get => GetKey("hotkey_next_frame")
+        set => UpdateOrIntert("hotkey_next_frame",Value)
+    }
+    HotkeyForward{
+        get => GetKey("hotkey_forward")
+        set => UpdateOrIntert("hotkey_forward",Value)
+    }
+    HotkeyBackward{
+        get => GetKey("hotkey_backward")
+        set => UpdateOrIntert("hotkey_backward",Value)
+    }
+    HotkeyPlayOrPause{
+        get => GetKey("hotkey_play_or_pause")
+        set => UpdateOrIntert("hotkey_play_or_pause",Value)
+    }
+    HotkeyStop{
+        get => GetKey("hotkey_stop")
+        set => UpdateOrIntert("hotkey_stop",Value)
     }
 }
