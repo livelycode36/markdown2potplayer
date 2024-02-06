@@ -79,6 +79,10 @@ InitGui(app_config){
     app_config.HotkeyAbFragment := GuiCtrlObj.Value
   }
 
+  ; 回显: 是否 循环ab片段
+  CheckBox_loop_ab_fragment.Value := app_config.LoopAbFragment
+  CheckBox_loop_ab_fragment.OnEvent("Click", (*) => app_config.LoopAbFragment := CheckBox_loop_ab_fragment.Value)
+
   ; 回显: ab循环快捷键
   hk_ab_circulation.Value := app_config.HotkeyAbCirculation
   hk_ab_circulation.OnEvent("Change", Update_Hk_Ab_Circulation)
@@ -95,7 +99,7 @@ InitGui(app_config){
   ; =======托盘菜单=========
   myMenu := A_TrayMenu
   
-  myMenu.Add("&Open", (*) => myGui.Show("w500 h666"))
+  myMenu.Add("&Open", (*) => myGui.Show("w499 h636"))
   myMenu.Default := "&Open"
   myMenu.ClickCount := 2
   
