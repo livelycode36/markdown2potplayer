@@ -212,11 +212,33 @@ JumpToAbCirculation(media_path, media_time){
 
 WaitForPotplayerToFinishLoadingTheVideo(video_name){
   hwnd := potplayer.GetPotplayerHwnd()
-  while (true) {
-    if ((WinGetTitle("ahk_id " hwnd) == (video_name " - PotPlayer"))
-      && (potplayer.GetPlayStatus() == "Running")){
-      break
+  ; 判断当前potplayer播放器的状态
+  potplayer_is_open := GetPotplayerStatus(hwnd)
+  if(potplayer_is_open){
+    ; 等待Potplayer加载视频，从上一个视频，跳转到下一个视频，窗口的命名会发生变化 => PotPlayer - 123.mp4 => Potplayer => PotPlayer - 456.mp4
+    while (true) {
+      if(WinGetTitle("ahk_id " hwnd) == "PotPlayer"){
+        break
+      }
+      Sleep 100
     }
-    Sleep 100
+    
+    ; 跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
+    ; 新开Potplayer、已开Potplayer跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
+    while (potplayer.GetPlayStatus() != "Running") {
+      Sleep 1000
+    }
+  }else{
+    ; 新开Potplayer跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
+    while (true) {
+      if(InStr(WinGetTitle("ahk_id " hwnd),video_name)
+        && (potplayer.GetPlayStatus() == "Running")){
+        break
+      }
+      Sleep 1000
+    }
   }
+}
+GetPotplayerStatus(hwnd){
+  return WinGetTitle("ahk_id " hwnd) != "PotPlayer"
 }

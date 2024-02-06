@@ -8,7 +8,7 @@
 
 #Include lib\entity\Config.ahk
 #Include lib\PotplayerControl.ahk
-#Include lib\gui\GuiController.ahk
+#Include lib\gui\GuiControl.ahk
 
 main()
 
@@ -19,9 +19,9 @@ main(){
     InitSqlite()
 
     app_config := Config()
-    potplayer_controller := PotplayerControl(app_config.PotplayerProcessName)
+    potplayer_control := PotplayerControl(app_config.PotplayerProcessName)
 
-    InitGui(app_config)
+    InitGui(app_config, potplayer_control)
 
     RegisterUrlProtocol(app_config.UrlProtocol)
 
@@ -34,13 +34,29 @@ RegisterHotKey(){
     Hotkey app_config.HotkeyIamgeBacklink " Up", Potplayer2ObsidianImage
     Hotkey app_config.HotkeyAbFragment " Up", Potplayer2ObsidianFragment
     Hotkey app_config.HotkeyAbCirculation " Up", Potplayer2ObsidianFragment
+    Hotkey app_config.HotkeyPreviousFrame " Up", (*) => potplayer_control.PreviousFrame()
+    Hotkey app_config.HotkeyNextFrame " Up", (*) => potplayer_control.NextFrame()
+    Hotkey app_config.HotkeyForward " Up", (*) => potplayer_control.Forward()
+    Hotkey app_config.HotkeyBackward " Up", (*) => potplayer_control.Backward()
+    Hotkey app_config.HotkeyPlayOrPause " Up", (*) => potplayer_control.PlayOrPause()
+    Hotkey app_config.HotkeyStop " Up", (*) => potplayer_control.Stop()
 }
 
 RefreshHotkey(old_hotkey,new_hotkey,callback){
     try{
-        Hotkey old_hotkey " Up", "off"
-        HotIf CheckCurrentProgram
-        Hotkey new_hotkey " Up" ,callback
+        ; 取消热键
+        if new_hotkey == ""{
+            if(old_hotkey != ""){
+                Hotkey old_hotkey " Up", "off"
+            }
+        } else{
+            ; 重新设置热键
+            if(old_hotkey != ""){
+                Hotkey old_hotkey " Up", "off"
+            }
+            HotIf CheckCurrentProgram
+            Hotkey new_hotkey " Up", callback
+        }
     }
     catch Error as err{
         ; 热键设置无效
@@ -96,10 +112,10 @@ Potplayer2ObsidianImage(*){
 }
 
 GetMediaPath(){
-    return PressDownHotkey(potplayer_controller.GetMediaPathToClipboard)
+    return PressDownHotkey(potplayer_control.GetMediaPathToClipboard)
 }
 GetMediaTime(){
-    time := PressDownHotkey(potplayer_controller.GetMediaTimestampToClipboard)
+    time := PressDownHotkey(potplayer_control.GetMediaTimestampToClipboard)
 
     if (app_config.ReduceTime != "0") {
         time := ReduceTime(time, app_config.ReduceTime)
@@ -110,7 +126,7 @@ PressDownHotkey(operate_potplayer){
     ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
     A_Clipboard := ""
     ; 调用函数会丢失this，将对象传入，以便不会丢失this => https://wyagd001.github.io/v2/docs/Objects.htm#Custom_Classes_method
-    operate_potplayer(potplayer_controller)
+    operate_potplayer(potplayer_control)
     ClipWait 1,0
     result := A_Clipboard
     ; MyLog "剪切板的值是：" . result
@@ -127,7 +143,7 @@ PressDownHotkey(operate_potplayer){
 
 PauseMedia(){
     if (app_config.IsStop != "0") {
-        potplayer_controller.PlayPause()
+        potplayer_control.PlayPause()
     }
 }
 
@@ -144,7 +160,7 @@ GenerateMarkdownLink(markdown_title, media_path, media_time){
         ; 正常播放的情况
         name := StrReplace(GetPotplayerTitle(app_config.PotplayerProcessName), " - PotPlayer", "")
         
-        ; 视频没有播放，已经停止的情况
+        ; 视频没有播放，已经停止的情况，不是暂停是停止
         if name == "PotPlayer"{
             name := GetFileNameInPath(media_path)
         }
@@ -180,7 +196,7 @@ RenderImage(markdown_image_template, media_path, media_time, image){
 }
 
 RemoveSuffix(name){
-    index_of := InStr(name, ".")
+    index_of := InStr(name, ".",,-1)
     if (index_of = 0){
         return name
     }
@@ -218,10 +234,10 @@ SendText2NoteApp(text){
 }
 
 SaveImage(){
-    Assert(potplayer_controller.GetPlayStatus() == "Stopped" , "视频尚未播放，无法截图！")
+    Assert(potplayer_control.GetPlayStatus() == "Stopped" , "视频尚未播放，无法截图！")
 
     A_Clipboard := ""
-    potplayer_controller.SaveImageToClipboard()
+    potplayer_control.SaveImageToClipboard()
     if !ClipWait(2,1){
         SafeRecursion()
     }
