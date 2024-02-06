@@ -5,9 +5,12 @@
 ;AHKv2converter credit to github.com/mmikeww/AHK-v2-script-converter
 
 myGui := Gui()
-myGui.Add("Text", "x24 y16 w132 h23", "potplayer播放器的路径")
-Edit_potplayer := myGui.Add("Edit", "x160 y16 w215 h25", "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe")
-Button_potplayer := myGui.Add("Button", "x384 y16 w103 h23", "选择potplayer")
+Tab := myGui.Add("Tab3", "x0 y0 w503 h640", ["回链设置", "Potplayer控制"])
+Tab.UseTab(1)
+
+myGui.Add("Text", "x24 y24 w132 h23", "potplayer播放器的路径")
+Edit_potplayer := myGui.Add("Edit", "x160 y22 w215 h25", "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe")
+Button_potplayer := myGui.Add("Button", "x384 y22 w103 h23", "选择potplayer")
 
 myGui.Add("Text", "x91 y48 w63 h23", "减少的时间")
 Edit_reduce_time := myGui.Add("Edit", "x160 y48 w120 h21", "0")
@@ -41,7 +44,26 @@ hk_image_backlink := myGui.Add("Hotkey", "x160 y536 w156 h21", "^!g")
 
 myGui.Add("Text", "x80 y566 w79 h16", "A-B片段快捷键")
 hk_ab_fragment := myGui.Add("Hotkey", "x160 y562 w156 h21","F1")
-myGui.Add("Text", "x80 y592 w79 h16", "A-B循环快捷键")
-hk_ab_circulation := myGui.Add("Hotkey", "x160 y592 w156 h21","F2")
+CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y584 w120 h23", "循环播放片段")
 
-myGui.Add("Link", "x448 y648 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer`">查看更新</a>")
+myGui.Add("Text", "x80 y610 w79 h16", "A-B循环快捷键")
+hk_ab_circulation := myGui.Add("Hotkey", "x160 y609 w156 h21")
+
+Tab.UseTab(2)
+myGui.Add("Text", "x112 y24 w39 h23", "上一帧")
+myGui.Add("Hotkey", "x152 y24 w120 h21")
+myGui.Add("Text", "x112 y48 w38 h23", "下一帧")
+myGui.Add("Hotkey", "x152 y48 w120 h21")
+myGui.Add("Text", "x120 y80 w27 h23", "前进")
+myGui.Add("Hotkey", "x152 y80 w120 h21")
+myGui.Add("Text", "x120 y104 w25 h23", "后退")
+myGui.Add("Hotkey", "x152 y104 w120 h21")
+myGui.Add("Text", "x120 y128 w26 h23", "播放")
+myGui.Add("Hotkey", "x152 y128 w120 h21")
+myGui.Add("Text", "x120 y152 w25 h23", "暂停")
+myGui.Add("Hotkey", "x152 y152 w120 h21")
+myGui.Add("Text", "x120 y176 w24 h21", "停止")
+myGui.Add("Hotkey", "x152 y176 w120 h21")
+
+Tab.UseTab()
+myGui.Add("Link", "x448 y616 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer`">查看更新</a>")

@@ -69,6 +69,12 @@ Class Config{
         get => GetKey("hotkey_ab_fragment")
         set => UpdateOrIntert("hotkey_ab_fragment",Value)
     }
+
+    LoopAbFragment{
+        get => GetKey("loop_ab_fragment")
+        set => UpdateOrIntert("loop_ab_fragment",Value)
+    }
+    
     HotkeyAbCirculation{
         get => GetKey("hotkey_ab_circulation")
         set => UpdateOrIntert("hotkey_ab_circulation",Value)

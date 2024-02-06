@@ -2,13 +2,13 @@
 #SingleInstance force
 #Include ..\MyTool.ahk
 #Include sqlite\SqliteControl.ahk
-#Include ..\PotplayerController.ahk
+#Include ..\PotplayerControl.ahk
 #Include ..\ReduceTime.ahk
 
 ; 1. init
 potplayer_path := GetKeyName("path")
 open_window_parameter := InitOpenWindowParameter(potplayer_path)
-potplayer_control := PotplayerController(GetNameForPath(potplayer_path))
+potplayer := PotplayerControl(GetNameForPath(potplayer_path))
 
 InitOpenWindowParameter(potplayer_path){
   if (IsPotplayerRunning(potplayer_path)) {
@@ -90,7 +90,11 @@ ParseUrl(url){
 
   ; 情况2：时间戳片段 00:01:53-00:02:53
   if(IsAbFragment(media_time)){
-    JumpToAbFragment(media_path, media_time)
+    if(GetKeyName("loop_ab_fragment")){
+      JumpToAbCirculation(media_path, media_time)
+    }else{
+      JumpToAbFragment(media_path, media_time)
+    }
     ExitApp()
   }
 
@@ -138,7 +142,7 @@ JumpToAbFragment(media_path, media_time){
   ; 2. 跳转
   JumpToTimestamp(media_path, start_time)
   
-  WaitForPotplayerToFinishLoadingTheVideo()
+  WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
 
   flag_ab_fragment := true
 
@@ -156,14 +160,14 @@ JumpToAbFragment(media_path, media_time){
     }
 
     ; 异常情况：用户停止播放视频
-    if (potplayer_control.GetPlayStatus() != "Running") {
+    if (potplayer.GetPlayStatus() != "Running") {
       break
     }
 
     ; 正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间
-    current_time := potplayer_control.GetCurrentSecondsTime()
+    current_time := potplayer.GetCurrentSecondsTime()
     if (current_time >= TimeToSeconds(end_time)) {
-      potplayer_control.Pause()
+      potplayer.PlayPause()
       Hotkey "Esc", "off"
       break
     }
@@ -179,45 +183,40 @@ IsAbCirculation(media_time){
 }
 JumpToAbCirculation(media_path, media_time){
   ; 1. 解析时间戳
-  index_of := InStr(media_time, "∞")
+  time_separator := ["∞", "-"]
+
+  index_of := ""
+  Loop time_separator.Length{
+    index_of := InStr(media_time, time_separator[A_Index])
+    if(index_of > 0){
+      break
+    }
+  }
+  Assert(index_of == "", "时间戳格式错误")
+
   start_time := SubStr(media_time, 1, index_of - 1)
   end_time := SubStr(media_time, index_of + 1)
 
   ; 2. 跳转
   JumpToTimestamp(media_path, start_time)
 
-  WaitForPotplayerToFinishLoadingTheVideo
+  WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
 
   ; 3. 设置A-B循环起点
-  potplayer_control.SetStartPointOfTheABCycle()
+  potplayer.SetStartPointOfTheABCycle()
 
   ; 4. 设置A-B循环终点
-  potplayer_control.SetCurrentSecondsTime(TimeToSeconds(end_time))
-  potplayer_control.SetEndPointOfTheABCycle()
+  potplayer.SetCurrentSecondsTime(TimeToSeconds(end_time))
+  potplayer.SetEndPointOfTheABCycle()
 }
 
-WaitForPotplayerToFinishLoadingTheVideo(){
-  ; 如果Potplayer已经打开，则等待Potplayer跳转到下一个视频
-  if(IsPotplayerRunning(potplayer_path)){
-    ; 1 获取Potplayer的窗口句柄
-    ids := WinGetList("ahk_exe " GetNameForPath(potplayer_path))
-    hwnd := ""
-    for id in ids{
-        title := WinGetTitle("ahk_id " id)
-        if (InStr(title, "PotPlayer")){
-            hwnd := id
-            break
-        }
+WaitForPotplayerToFinishLoadingTheVideo(video_name){
+  hwnd := potplayer.GetPotplayerHwnd()
+  while (true) {
+    if ((WinGetTitle("ahk_id " hwnd) == (video_name " - PotPlayer"))
+      && (potplayer.GetPlayStatus() == "Running")){
+      break
     }
-
-    ; 2 等待Potplayer加载视频，从上一个视频，跳转到下一个视频，窗口的命名会发生变化 => PotPlayer - 123.mp4 => Potplayer => PotPlayer - 456.mp4
-    while (WinGetTitle("ahk_id " hwnd) != "PotPlayer") {
-      Sleep 100
-    }
-  }
-
-  ; 新开Potplayer、已开Potplayer跳转到下一个视频，等待视频加载完成，检查播放器是否已经开始播放
-  while (potplayer_control.GetPlayStatus() != "Running") {
-    Sleep 1000
+    Sleep 100
   }
 }

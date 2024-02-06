@@ -7,7 +7,7 @@
 #Include "lib\sqlite\SqliteControl.ahk"
 
 #Include lib\entity\Config.ahk
-#Include lib\PotplayerController.ahk
+#Include lib\PotplayerControl.ahk
 #Include lib\gui\GuiController.ahk
 
 main()
@@ -19,7 +19,7 @@ main(){
     InitSqlite()
 
     app_config := Config()
-    potplayer_controller := PotplayerController(app_config.PotplayerProcessName)
+    potplayer_controller := PotplayerControl(app_config.PotplayerProcessName)
 
     InitGui(app_config)
 
@@ -127,7 +127,7 @@ PressDownHotkey(operate_potplayer){
 
 PauseMedia(){
     if (app_config.IsStop != "0") {
-        potplayer_controller.Pause()
+        potplayer_controller.PlayPause()
     }
 }
 
@@ -190,16 +190,17 @@ RemoveSuffix(name){
 
 ; 路径地址处理
 ProcessUrl(media_path){
-    ; 全系urlencode的bug：如果路径中存在"\["会让，在【ob的预览模式】下(回链会被ob自动urlencode)，"\"离奇消失变为,"["；例如：G:\BaiduSyncdisk\123\[456] 在bug下变为：G:\BaiduSyncdisk\123[456] <= 丢失了"\"
-    ; 所以先将"\["替换为"%5C["（\的urlencode编码%5C）。变为：G:\BaiduSyncdisk\123%5C[456]
-    media_path := StrReplace(media_path, "\[", "%5C[")
-
     ; 进行Url编码
     if (app_config.MarkdownPathIsEncode != "0"){
         media_path := UrlEncode(media_path)
+    }else{
+        ; 全系urlencode的bug：如果路径中存在"\["会让，在【ob的预览模式】下(回链会被ob自动urlencode)，"\"离奇消失变为,"["；例如：G:\BaiduSyncdisk\123\[456] 在bug下变为：G:\BaiduSyncdisk\123[456] <= 丢失了"\"
+        ; 所以先将"\["替换为"%5C["（\的urlencode编码%5C）。变为：G:\BaiduSyncdisk\123%5C[456]
+        media_path := StrReplace(media_path, "\[", "%5C[")
+        media_path := StrReplace(media_path, "\!", "%5C!")
+        ; 但是 obidian中的potplayer回链路径有空格，在obsidian的预览模式【无法渲染】，所以将空格进行Url编码
+        media_path := StrReplace(media_path, " ", "%20")
     }
-    ; 但是 obidian中的potplayer回链路径有空格，在obsidian的预览模式【无法渲染】，所以将空格进行Url编码
-    media_path := StrReplace(media_path, " ", "%20")
 
     return media_path
 }

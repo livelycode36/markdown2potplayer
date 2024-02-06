@@ -46,7 +46,8 @@ InitSqlite() {
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",
     hotkey_ab_fragment: "F1",
-    hotkey_ab_circulation: "F2"
+    hotkey_ab_circulation: "F2",
+    loop_ab_fragment: "0"
   }
 
   DB := OpenLocalDB()
