@@ -82,10 +82,18 @@ ParseUrl(url){
   media_path := parameters_map["path"]
   media_time := parameters_map["time"]
 
+  ; 情况0：是同一个视频进行跳转，之前可能设置了AB循环，所以此处先取消A-B循环
+  if(IsSameVideo(media_path)){
+    potplayer.CancelTheABCycle()
+  }
+
   ; 情况1：单个时间戳 00:01:53
   if(IsSingleTimestamp(media_time)){
-    JumpToTimestamp(media_path, media_time)
-    ExitApp()
+    if(IsSameVideo(media_path)){
+      potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time)) 
+    }else{
+      OpenPotplayerAndJumpToTimestamp(media_path, media_time)
+    }
   }
 
   ; 情况2：时间戳片段 00:01:53-00:02:53
@@ -95,14 +103,45 @@ ParseUrl(url){
     }else{
       JumpToAbFragment(media_path, media_time)
     }
-    ExitApp()
   }
 
   ; 情况3：时间戳循环 00:01:53∞00:02:53
   if(IsAbCirculation(media_time)){
     JumpToAbCirculation(media_path, media_time)
-    ExitApp()
   }
+
+  ExitApp()
+}
+
+; 解析时间片段字符串
+ParseTimeFragmentString(media_time){
+  ; 1. 解析时间戳
+  time_separator := ["∞", "-"]
+
+  index_of := ""
+  Loop time_separator.Length{
+    index_of := InStr(media_time, time_separator[A_Index])
+    if(index_of > 0){
+      break
+    }
+  }
+  Assert(index_of == "", "时间戳格式错误")
+
+  time := {}
+  time.start := SubStr(media_time, 1, index_of - 1)
+  time.end := SubStr(media_time, index_of + 1)
+  return time
+}
+
+; 判断当前播放的视频，是否是跳转的视频
+IsSameVideo(media_path){
+  if (IsPotplayerRunning(potplayer_path)) {
+    ; 判断当前播放的视频，是否是跳转的视频
+    if (InStr(WinGetTitle("ahk_id " potplayer.GetPotplayerHwnd()), GetNameForPath(media_path))) {
+      return true
+    }
+  }
+  return false
 }
 
 ; 字符串中不包含"-、∞"，则为单个时间戳
@@ -114,7 +153,7 @@ IsSingleTimestamp(media_time){
 }
 
 ; 使用时间戳跳转
-JumpToTimestamp(media_path, media_time){
+OpenPotplayerAndJumpToTimestamp(media_path, media_time){
   run_command := potplayer_path . " `"" . media_path . "`" /seek=" . media_time . " " . open_window_parameter
   try
     Run run_command
@@ -135,14 +174,21 @@ IsAbFragment(media_time){
 }
 JumpToAbFragment(media_path, media_time){
   ; 1. 解析时间戳
-  index_of := InStr(media_time, "-")
-  start_time := SubStr(media_time, 1, index_of - 1)
-  end_time := SubStr(media_time, index_of + 1)
+  time := ParseTimeFragmentString(media_time)
 
   ; 2. 跳转
-  JumpToTimestamp(media_path, start_time)
-  
-  WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
+  if(IsSameVideo(media_path)){
+    ; 跳转的时间
+    potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
+    ; 自动播放
+    if(potplayer.GetPlayStatus() != "Running") {
+      potplayer.PlayOrPause()
+      Sleep 200 ; 等待播放器播放，的反映时间
+    }
+  }else{
+    OpenPotplayerAndJumpToTimestamp(media_path, time.start)
+    WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
+  }
 
   flag_ab_fragment := true
 
@@ -164,9 +210,14 @@ JumpToAbFragment(media_path, media_time){
       break
     }
 
+    ; 异常情况：不是同一个视频 --> 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环
+    if (!IsSameVideo(media_path)) {
+      break
+    }
+
     ; 正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间
     current_time := potplayer.GetCurrentSecondsTime()
-    if (current_time >= TimeToSeconds(end_time)) {
+    if (current_time >= TimeToSeconds(time.end)) {
       potplayer.PlayPause()
       Hotkey "Esc", "off"
       break
@@ -182,31 +233,25 @@ IsAbCirculation(media_time){
     return false
 }
 JumpToAbCirculation(media_path, media_time){
-  ; 1. 解析时间戳
-  time_separator := ["∞", "-"]
-
-  index_of := ""
-  Loop time_separator.Length{
-    index_of := InStr(media_time, time_separator[A_Index])
-    if(index_of > 0){
-      break
-    }
-  }
-  Assert(index_of == "", "时间戳格式错误")
-
-  start_time := SubStr(media_time, 1, index_of - 1)
-  end_time := SubStr(media_time, index_of + 1)
+  time := ParseTimeFragmentString(media_time)
 
   ; 2. 跳转
-  JumpToTimestamp(media_path, start_time)
-
-  WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
+  if(IsSameVideo(media_path)){
+    potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
+    if(potplayer.GetPlayStatus() != "Running") {
+      potplayer.PlayOrPause()
+      Sleep 200 ; 等待播放器播放，的反映时间
+    }
+  }else{
+    OpenPotplayerAndJumpToTimestamp(media_path, time.start)
+    WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
+  }
 
   ; 3. 设置A-B循环起点
   potplayer.SetStartPointOfTheABCycle()
 
   ; 4. 设置A-B循环终点
-  potplayer.SetCurrentSecondsTime(TimeToSeconds(end_time))
+  potplayer.SetCurrentSecondsTime(TimeToSeconds(time.end))
   potplayer.SetEndPointOfTheABCycle()
 }
 

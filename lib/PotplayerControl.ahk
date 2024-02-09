@@ -62,7 +62,6 @@ class PotplayerControl {
     }
     Pause(){
         this.PostCommand(this.COMMAND_TYPE,20000,0)
-
     }
     PlayPause(){
         status := this.GetPlayStatus()
@@ -101,6 +100,7 @@ class PotplayerControl {
     GetMediaTimeMilliseconds(){
         return this.SendCommand(this.REQUEST_TYPE,20484,0)
     }
+    ; 受【选项-播放-时间跨度-如果存在关键帧数据则以关键帧为移动单位】的potplayer后处理影响不够精准，关掉此选项则非常精准
     SetMediaTimeMilliseconds(ms){
         this.PostCommand(this.REQUEST_TYPE,20485, ms)
     }
@@ -123,6 +123,12 @@ class PotplayerControl {
     }
     SetEndPointOfTheABCycle(){
         this.PostCommand(this.COMMAND_TYPE,10250,0)
+    }
+    CancelTheABCycle(){
+        ; 解除区段循环：起点
+        this.PostCommand(this.COMMAND_TYPE,10251,0)
+        ; 解除区段循环：终点
+        this.PostCommand(this.COMMAND_TYPE,10252,0)
     }
 }
 
