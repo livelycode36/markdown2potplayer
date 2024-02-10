@@ -36,21 +36,21 @@ RegisterHotKey(){
     Hotkey app_config.HotkeyAbCirculation " Up", Potplayer2ObsidianFragment
     Hotkey app_config.HotkeyPreviousFrame " Up", (*) => potplayer_control.PreviousFrame()
     Hotkey app_config.HotkeyNextFrame " Up", (*) => potplayer_control.NextFrame()
-    Hotkey app_config.HotkeyForward " Up", (*) => potplayer_control.Forward()
-    Hotkey app_config.HotkeyBackward " Up", (*) => potplayer_control.Backward()
+    Hotkey app_config.HotkeyForward " Up", (*) => Forward(app_config, potplayer_control)
+    Hotkey app_config.HotkeyBackward " Up", (*) => Backward(app_config, potplayer_control)
     Hotkey app_config.HotkeyPlayOrPause " Up", (*) => potplayer_control.PlayOrPause()
     Hotkey app_config.HotkeyStop " Up", (*) => potplayer_control.Stop()
 }
 
 RefreshHotkey(old_hotkey,new_hotkey,callback){
     try{
-        ; 取消热键
+        ; 情况1：用户删除热键
         if new_hotkey == ""{
             if(old_hotkey != ""){
                 Hotkey old_hotkey " Up", "off"
             }
         } else{
-            ; 重新设置热键
+            ; 情况2：用户重设热键
             if(old_hotkey != ""){
                 Hotkey old_hotkey " Up", "off"
             }

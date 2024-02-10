@@ -109,18 +109,22 @@ InitGui(app_config, potplayer_control){
   }
 
   ; 回显: 快捷键 前进
+  Edit_forward_seconds.Value := app_config.ForwardSeconds
+  Edit_forward_seconds.OnEvent("Change",(*) => app_config.ForwardSeconds := Edit_forward_seconds.Value)
   hk_forward.Value := app_config.HotkeyForward
   hk_forward.OnEvent("Change", Update_Hk_Forward)
   Update_Hk_Forward(GuiCtrlObj, Info){
-    RefreshHotkey(app_config.HotkeyForward, GuiCtrlObj.Value, (*) => potplayer_control.Forward())
+    RefreshHotkey(app_config.HotkeyForward, GuiCtrlObj.Value, (*) => forward(app_config, potplayer_control))
     app_config.HotkeyForward := GuiCtrlObj.Value
   }
 
   ; 回显: 快捷键 后退
+  Edit_backward_seconds.Value := app_config.BackwardSeconds
+  Edit_backward_seconds.OnEvent("Change", (*) => app_config.BackwardSeconds := Edit_backward_seconds.Value)
   hk_backward.Value := app_config.HotkeyBackward
   hk_backward.OnEvent("Change", Update_Hk_Backward)
   Update_Hk_Backward(GuiCtrlObj, Info){
-    RefreshHotkey(app_config.HotkeyBackward, GuiCtrlObj.Value, (*) => potplayer_control.Backward())
+    RefreshHotkey(app_config.HotkeyBackward, GuiCtrlObj.Value, (*) => backward(app_config, potplayer_control))
     app_config.HotkeyBackward := GuiCtrlObj.Value
   }
 
@@ -156,4 +160,20 @@ InitGui(app_config, potplayer_control){
   myMenu.Rename("E&xit" , "退出")
   myMenu.Rename("&Pause Script" , "暂停脚本")
   myMenu.Rename("&Suspend Hotkeys" , "暂停热键")
+}
+
+Forward(app_config, potplayer_control){
+  if(app_config.ForwardSeconds != "" || app_config.ForwardSeconds != 0){
+    potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() + (app_config.ForwardSeconds * 1000)))
+  }else{
+    potplayer_control.Forward()
+  }
+}
+
+Backward(app_config, potplayer_control){
+  if(app_config.BackwardSeconds != "" || app_config.BackwardSeconds != 0){
+    potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() - (app_config.BackwardSeconds * 1000)))
+  }else{
+    potplayer_control.Backward()
+  }
 }

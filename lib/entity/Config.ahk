@@ -91,9 +91,17 @@ Class Config{
         get => GetKey("hotkey_forward")
         set => UpdateOrIntert("hotkey_forward",Value)
     }
+    ForwardSeconds{
+        get => GetKey("forward_seconds")
+        set => UpdateOrIntert("forward_seconds",Value)
+    }
     HotkeyBackward{
         get => GetKey("hotkey_backward")
         set => UpdateOrIntert("hotkey_backward",Value)
+    }
+    BackwardSeconds{
+        get => GetKey("backward_seconds")
+        set => UpdateOrIntert("backward_seconds",Value)
     }
     HotkeyPlayOrPause{
         get => GetKey("hotkey_play_or_pause")

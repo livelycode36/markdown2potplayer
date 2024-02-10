@@ -53,7 +53,9 @@ InitSqlite() {
     hotkey_previous_frame: "",
     hotkey_next_frame: "",
     hotkey_forward: "",
+    forward_seconds: "",
     hotkey_backward: "",
+    backward_seconds: "",
     hotkey_play_or_pause: "",
     hotkey_stop: ""
   }
