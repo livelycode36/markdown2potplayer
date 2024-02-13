@@ -136,8 +136,26 @@ ParseTimeFragmentString(media_time){
 ; 判断当前播放的视频，是否是跳转的视频
 IsSameVideo(media_path){
   if (IsPotplayerRunning(potplayer_path)) {
-    ; 判断当前播放的视频，是否是跳转的视频
-    if (InStr(WinGetTitle("ahk_id " potplayer.GetPotplayerHwnd()), GetNameForPath(media_path))) {
+    
+    ; 判断网络视频
+    if(InStr(media_path,"http")){
+      potplayer_media_path := GetPotplayerMediaPath()
+      if(InStr(media_path,potplayer_media_path)){
+        return true
+      }
+
+      GetPotplayerMediaPath(){
+        A_Clipboard := ""
+        potplayer.GetMediaPathToClipboard()
+        ClipWait 1,0
+        media_path := A_Clipboard
+        return media_path
+      }
+    }
+    
+    ; 判断本地视频
+    potplayer_title := WinGetTitle("ahk_id " potplayer.GetPotplayerHwnd())
+    if (InStr(potplayer_title, GetNameForPath(media_path))) {
       return true
     }
   }
