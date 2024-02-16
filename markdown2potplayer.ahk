@@ -3,7 +3,7 @@
 #Include "lib\note2potplayer\RegisterUrlProtocol.ahk"
 #Include "lib\MyTool.ahk"
 #Include "lib\ReduceTime.ahk"
-#Include "lib\ImageTemplateParser.ahk"
+#Include "lib\TemplateParser.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
 
 #Include lib\entity\Config.ahk
@@ -185,9 +185,10 @@ GetFileNameInPath(path){
 }
 
 RenderImage(markdown_image_template, media_path, media_time, image){
-    image_templates := ImageTemplateConvertedToImagesTemplates(markdown_image_template)
+    identifier := "{image}"
+    image_templates := TemplateConvertedToTemplates(markdown_image_template, identifier)
     For index, image_template in image_templates{
-        if (image_template == "{image}"){
+        if (image_template == identifier){
             SendImage2NoteApp(image)
         } else {
             SendText2NoteApp(RenderMarkdownTemplate(image_template, media_path, media_time))
@@ -222,7 +223,8 @@ ProcessUrl(media_path){
 }
 
 SendText2NoteApp(text){
-    ActivateNoteProgram(app_config.NoteAppName)
+    selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
+    ActivateProgram(selected_note_program)
     A_Clipboard := ""
     A_Clipboard := text
     ClipWait 2,0
@@ -245,7 +247,8 @@ SaveImage(){
     return ClipboardAll()
 }
 SendImage2NoteApp(image){
-    ActivateNoteProgram(app_config.NoteAppName)
+    selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
+    ActivateProgram(selected_note_program)
     A_Clipboard := ""
     A_Clipboard := ClipboardAll(image)
     ClipWait 2,1
