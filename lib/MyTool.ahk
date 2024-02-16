@@ -17,14 +17,15 @@ SearchProgram(target_app_path) {
   }
 }
 
-ActivateNoteProgram(note_app_names){
+SelectedNoteProgram(note_app_names){
   Loop Parse note_app_names, "`n"{
     note_program := A_LoopField
     if (WinExist("ahk_exe " note_program)) {
-      ActivateProgram(note_program)
-      return
+      return note_program
     }
   }
+  MsgBox "note software not found"
+  Exit
 }
 
 ActivateProgram(process_name){

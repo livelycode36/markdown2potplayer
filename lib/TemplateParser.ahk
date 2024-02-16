@@ -1,12 +1,18 @@
 #Requires AutoHotkey v2.0
 
-; 将用户的图像模板，例如：{image}{enter}title:{title}，以{image}分割，转为数组 => ["{image}","{enter}title:{title}"]
-ImageTemplateConvertedToImagesTemplates(image_template){
-    if (image_template == "{image}"){
-      templates := ["{image}"]
+/**
+ * 使用指定的分隔符将字符串分成子字符串数组.并将分隔符补回去
+ * 例如：{image}{enter}title:{title}，以{image}分割，转为数组 => ["{image}","{enter}title:{title}"]
+ * 
+ * @param template 用户模板
+ * @param identifier 分隔符
+ */
+TemplateConvertedToTemplates(template, identifier){
+    if (template == identifier){
+      templates := [identifier]
       return templates
     } else {
-      tempaltes := StrSplit(image_template, "{image}")
+      tempaltes := StrSplit(template, identifier)
   
       For index, value in tempaltes{
         ; 当{image}在开头 及 末尾时，该项为null，所以它(null等于{images})本身就是{images}，不需要补{images}
@@ -27,19 +33,19 @@ ImageTemplateConvertedToImagesTemplates(image_template){
         }
     
         ; 将非{image}的项后，加上{image}。因为是以{image}分割，所以给个数组项的后一项，都是{image}，将{imgae}给它补回去
-        if (value != "{image}"){
-          tempaltes.InsertAt(index + 1, "{image}")
+        if (value != identifier){
+          tempaltes.InsertAt(index + 1, identifier)
         }
       }
 
       ; 修正：当{image}在开头 及 末尾时，该项为null
       For index, value in tempaltes{
         if (value == "" && index == 1){
-            tempaltes[1] := "{image}"
+            tempaltes[1] := identifier
         }
 
         if (value == "" && index == tempaltes.Length){
-            tempaltes[tempaltes.Length] := "{image}"
+            tempaltes[tempaltes.Length] := identifier
         }
       }
 
