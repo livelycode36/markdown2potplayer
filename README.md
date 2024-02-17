@@ -34,6 +34,17 @@
 
 # 高级设置
 
+## 关于notion
+
+1. notion是运行在浏览器中，目前浏览器众多
+2. 暂时支持如下
+   1. 微软Edge：msedge.exe
+   2. 谷歌：chrome.exe
+   3. 360极速版：360chrome.exe
+   4. 火狐：firefox.exe
+
+
+
 ## 模板的修改
 
 ![image-20231229004156479](./assets/image-20231229004156479.png)

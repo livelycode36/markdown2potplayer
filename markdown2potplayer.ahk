@@ -5,6 +5,7 @@
 #Include "lib\ReduceTime.ahk"
 #Include "lib\TemplateParser.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
+#Include lib\socket\Socket.ahk
 
 #Include lib\entity\Config.ahk
 #Include lib\PotplayerControl.ahk
@@ -23,9 +24,51 @@ main(){
 
     InitGui(app_config, potplayer_control)
 
+    InitServer()
+
     RegisterUrlProtocol(app_config.UrlProtocol)
 
     RegisterHotKey()
+}
+
+InitServer(){
+    sock := winsock("server",callback,"IPV4")
+    sock.Bind("0.0.0.0",33660)
+    sock.Listen()
+
+    callback(sock, event, err) {
+        if (event = "accept") {
+            ; 接受新的连接
+            sock.Accept(&addr, &newsock)
+            newsock.RegisterEvents()  ; 注册事件以非阻塞方式接收数据
+        }
+        else if (event = "read") {
+            If !(buf := sock.Recv()).size
+                return
+            
+            html_body := '<h1>open potplayer...</h1>'
+            httpResponse := "HTTP/1.1 200 0K`r`n"
+            . "Content-Type: text/html; charset=UTF-8`r`n"
+            . "Content-Length: " StrLen(html_body) "`r`n"
+            . "`r`n"
+            httpResponse := httpResponse html_body
+            strbuf := Buffer(StrPut(httpResponse,"UTF-8"))
+            StrPut(httpResponse,strbuf,"UTF-8")
+            sock.Send(strbuf)
+            sock.Close()
+            
+            Sleep 1000
+            Send "^w"
+
+            ; 得到回链
+            request := strget(buf,"UTF-8")
+            RegExMatch(request, "GET /(.+?) HTTP/1.1", &match)
+            backlink := match[1]
+        
+            ; 打开potplayer
+            Run(A_ScriptDir "\lib\note2potplayer\note2potplayer.exe " backlink,,"Hide",,)
+        }
+    }
 }
 
 RegisterHotKey(){
@@ -88,7 +131,11 @@ Potplayer2Obsidian(*){
     markdown_link := RenderMarkdownTemplate(app_config.MarkdownTemplate, media_path, media_time)
     PauseMedia()
 
-    SendText2NoteApp(markdown_link)
+    if(IsWordProgram()){
+        SendText2wordApp(markdown_link)
+    }else{
+        SendText2NoteApp(markdown_link)
+    }
 }
 
 RenderMarkdownTemplate(markdown_template, media_path, media_time){
@@ -148,13 +195,33 @@ PauseMedia(){
 }
 
 RenderTitle(markdown_template, markdown_title, media_path, media_time){
-    markdown_link := GenerateMarkdownLink(markdown_title, media_path, media_time)
-    result := StrReplace(markdown_template, "{title}",markdown_link)
+    markdown_link_data := GenerateMarkdownLinkData(markdown_title, media_path, media_time)
+    ; 生成word链接
+    if(IsWordProgram()){
+        word_link := "<a href='http://127.0.0.1:33660/" markdown_link_data.link "'>"  markdown_link_data.title "</a>"
+        result := StrReplace(markdown_template, "{title}",word_link)
+        result := StrReplace(result, "`n","<br/>")
+    }else{
+        ; 生成MarkDown链接
+        markdown_link := GenerateMarkdownLink(markdown_link_data.title, markdown_link_data.link)
+        result := StrReplace(markdown_template, "{title}",markdown_link)
+    }
     return result
 }
 
+IsWordProgram(){
+    return SelectedNoteProgram(app_config.NoteAppName) == "wps.exe"
+}
+IsNotionProgram(){
+    target_program := StrLower(SelectedNoteProgram(app_config.NoteAppName))
+    return  target_program == "msedge.exe" 
+    || target_program == "chrome.exe"
+    || target_program == "360chrome.exe"
+    || target_program == "firefox.exe"
+}
+
 ; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
-GenerateMarkdownLink(markdown_title, media_path, media_time){
+GenerateMarkdownLinkData(markdown_title, media_path, media_time){
     ; B站的视频
     if (InStr(media_path,"https://www.bilibili.com/video/")){
         ; 正常播放的情况
@@ -172,7 +239,19 @@ GenerateMarkdownLink(markdown_title, media_path, media_time){
     markdown_title := StrReplace(markdown_title, "{time}",media_time)
 
     markdown_link := app_config.UrlProtocol "?path=" ProcessUrl(media_path) "&time=" media_time
-    result := "[" markdown_title "](" markdown_link ")"
+    
+    result := {}
+    result.title := markdown_title
+    result.link := markdown_link
+    return result
+}
+
+GenerateMarkdownLink(markdown_title, markdown_link){
+    if(IsNotionProgram()){
+        result := "[" markdown_title "](http://127.0.0.1:33660/" markdown_link ")"
+    }else{
+        result := "[" markdown_title "](" markdown_link ")"
+    }
     return result
 }
 
@@ -225,9 +304,37 @@ ProcessUrl(media_path){
 SendText2NoteApp(text){
     selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
     ActivateProgram(selected_note_program)
+
     A_Clipboard := ""
     A_Clipboard := text
     ClipWait 2,0
+    Send "{LCtrl down}"
+    Send "{v}"
+    Send "{LCtrl up}"
+    ; 粘贴文字需要等待一下obsidian有延迟，不然会出现粘贴的文字【消失】
+    Sleep 300
+}
+SendText2wordApp(text){
+    selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
+    ActivateProgram(selected_note_program)
+
+    result := DllCall("user32.dll\OpenClipboard")
+    If(result = 0){
+        MsgBox "OpenClipboard failed"
+        return
+    }
+    DllCall("user32.dll\EmptyClipboard")
+    DllCall("user32.dll\SetClipboardData", "Int", 49350, "Ptr", StrBuf(text,"UTF-8"))
+    DllCall("user32.dll\CloseClipboard")
+
+    StrBuf(str, encoding) {
+        ; 计算所需的大小并分配缓冲.
+        buf := Buffer(StrPut(str, encoding))
+        ; 复制或转换字符串.
+        StrPut(str, buf, encoding)
+        return buf
+    }
+
     Send "{LCtrl down}"
     Send "{v}"
     Send "{LCtrl up}"
@@ -313,7 +420,11 @@ Potplayer2ObsidianFragment(HotkeyName){
         markdown_link := RenderMarkdownTemplate(app_config.MarkdownTemplate, media_path, fragment_time)
         PauseMedia()
 
-        ; 发送到Obsidian
-        SendText2NoteApp(markdown_link)
+        ; 发送到笔记软件
+        if(IsWordProgram()){
+            SendText2wordApp(markdown_link)
+        }else{
+            SendText2NoteApp(markdown_link)
+        }
     }
 }
