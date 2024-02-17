@@ -31,42 +31,52 @@ main(){
     RegisterHotKey()
 }
 
-InitServer(){
-    sock := winsock("server",callback,"IPV4")
-    sock.Bind("0.0.0.0",33660)
+InitServer() {
+    sock := winsock("server", callback, "IPV4")
+    sock.Bind("0.0.0.0", 33660)
     sock.Listen()
 
     callback(sock, event, err) {
-        if (event = "accept") {
-            ; 接受新的连接
-            sock.Accept(&addr, &newsock)
-            newsock.RegisterEvents()  ; 注册事件以非阻塞方式接收数据
-        }
-        else if (event = "read") {
-            If !(buf := sock.Recv()).size
-                return
-            
-            html_body := '<h1>open potplayer...</h1>'
-            httpResponse := "HTTP/1.1 200 0K`r`n"
-            . "Content-Type: text/html; charset=UTF-8`r`n"
-            . "Content-Length: " StrLen(html_body) "`r`n"
-            . "`r`n"
-            httpResponse := httpResponse html_body
-            strbuf := Buffer(StrPut(httpResponse,"UTF-8"))
-            StrPut(httpResponse,strbuf,"UTF-8")
-            sock.Send(strbuf)
-            sock.Close()
-            
-            Sleep 1000
-            Send "^w"
+        if (sock.name = "server") || instr(sock.name, "serving-") {
+            if (event = "accept") {
+                sock.Accept(&addr, &newsock) ; pass &addr param to extract addr of connected machine
+            } else if (event = "close") {
+            } else if (event = "read") {
+                If !(buf := sock.Recv()).size
+                    return
 
-            ; 得到回链
-            request := strget(buf,"UTF-8")
-            RegExMatch(request, "GET /(.+?) HTTP/1.1", &match)
-            backlink := match[1]
-        
-            ; 打开potplayer
-            Run(A_ScriptDir "\lib\note2potplayer\note2potplayer.exe " backlink,,"Hide",,)
+                ; 返回html
+                html_body := '<h1>open potplayer...</h1>'
+                httpResponse := "HTTP/1.1 200 0K`r`n"
+                    . "Content-Type: text/html; charset=UTF-8`r`n"
+                    . "Content-Length: " StrLen(html_body) "`r`n"
+                    . "`r`n"
+                httpResponse := httpResponse html_body
+                strbuf := Buffer(StrPut(httpResponse, "UTF-8"))
+                StrPut(httpResponse, strbuf, "UTF-8")
+                sock.Send(strbuf)
+                sock.ConnectFinish()
+
+                ; 得到回链
+                request := strget(buf, "UTF-8")
+                RegExMatch(request, "GET /(.+?) HTTP/1.1", &match)
+                if (match == "") {
+                    return
+                }
+                backlink := match[1]
+                if (!InStr(backlink, "path=")) {
+                    return
+                }
+
+                ; 打开potplayer
+                cmd := A_ScriptDir "\lib\note2potplayer\note2potplayer.exe " backlink
+                Run(cmd,,"Hide",,)
+                Send "^w"
+
+                ; 我真无语，Run命令会阻塞socket库，且autohotkey没有多线程，只能用这种方法，让socket库继续运行
+                Run(A_ScriptDir "\markdown2potplayer.exe")
+                ExitApp
+            }
         }
     }
 }
@@ -210,7 +220,8 @@ RenderTitle(markdown_template, markdown_title, media_path, media_time){
 }
 
 IsWordProgram(){
-    return SelectedNoteProgram(app_config.NoteAppName) == "wps.exe"
+    target_program := SelectedNoteProgram(app_config.NoteAppName)
+    return target_program == "wps.exe" || target_program == "winword.exe"
 }
 IsNotionProgram(){
     target_program := StrLower(SelectedNoteProgram(app_config.NoteAppName))
@@ -270,7 +281,12 @@ RenderImage(markdown_image_template, media_path, media_time, image){
         if (image_template == identifier){
             SendImage2NoteApp(image)
         } else {
-            SendText2NoteApp(RenderMarkdownTemplate(image_template, media_path, media_time))
+            rendered_template := RenderMarkdownTemplate(image_template, media_path, media_time)
+            if(IsWordProgram() && InStr(image_template,"{title}")){
+                SendText2wordApp(rendered_template)
+            }else{
+                SendText2NoteApp(rendered_template)
+            }
         }
     }
 }
@@ -317,29 +333,7 @@ SendText2NoteApp(text){
 SendText2wordApp(text){
     selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
     ActivateProgram(selected_note_program)
-
-    result := DllCall("user32.dll\OpenClipboard")
-    If(result = 0){
-        MsgBox "OpenClipboard failed"
-        return
-    }
-    DllCall("user32.dll\EmptyClipboard")
-    DllCall("user32.dll\SetClipboardData", "Int", 49350, "Ptr", StrBuf(text,"UTF-8"))
-    DllCall("user32.dll\CloseClipboard")
-
-    StrBuf(str, encoding) {
-        ; 计算所需的大小并分配缓冲.
-        buf := Buffer(StrPut(str, encoding))
-        ; 复制或转换字符串.
-        StrPut(str, buf, encoding)
-        return buf
-    }
-
-    Send "{LCtrl down}"
-    Send "{v}"
-    Send "{LCtrl up}"
-    ; 粘贴文字需要等待一下obsidian有延迟，不然会出现粘贴的文字【消失】
-    Sleep 300
+    Run(A_ScriptDir "\lib\word\word.exe " text,,"Hide",,)
 }
 
 SaveImage(){

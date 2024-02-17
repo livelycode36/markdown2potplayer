@@ -145,6 +145,7 @@ cb(sock, event, err) {
             
 
             sock.Send(strbuf)
+            sock.Close()
             
             print_gui("Client sends to server:`r`n"
                     . "======================`r`n"
@@ -180,7 +181,15 @@ cb(sock, event, err) {
             
             buf_string := strget(buf,"UTF-8")
             RegExMatch(buf_string, "GET /(.+?) HTTP/1.1", &match)
+            
+            if (match == "") {
+                return
+            }
             backlink := match[1]
+            
+            if (backlink == "favicon.ico") {
+                return
+            }
 
             print_gui("======================`r`n"
                     . "Server recieved from client:`r`n"
@@ -190,13 +199,11 @@ cb(sock, event, err) {
             ; 标准响应头
             get_req := "HTTP/1.1 200 0K`r`n"
             . "Content-Type: text/html`r`n"
-            . "Content-Length: 30`r`n"
+            . "Content-Length: 26`r`n"
             . "`r`n"
             get_req := get_req '<h1>open potplayer...</h1>'
             strbuf := Buffer(StrPut(get_req,"UTF-8"))
             StrPut(get_req,strbuf,"UTF-8")
-            sock.Send(strbuf)
-            Sleep 1000
             Send "^w"
             ; 使用命令访问指定网址
             ; Run("D:\Code\project\autohotkey\markdown2potplayer\lib\note2potplayer\note2potplayer.exe jv://open?path=d:\test.mp4",,"Hide",,)
