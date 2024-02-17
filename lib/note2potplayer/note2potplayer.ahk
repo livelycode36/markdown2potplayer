@@ -83,14 +83,18 @@ ParseUrl(url){
   media_time := parameters_map["time"]
 
   ; 情况0：是同一个视频进行跳转，之前可能设置了AB循环，所以此处先取消A-B循环
-  if(IsSameVideo(media_path)){
-    potplayer.CancelTheABCycle()
+  if(IsPotplayerRunning(potplayer_path)){
+    if(IsSameVideo(media_path)){
+      potplayer.CancelTheABCycle()
+    }
   }
 
   ; 情况1：单个时间戳 00:01:53
   if(IsSingleTimestamp(media_time)){
-    if(IsSameVideo(media_path)){
-      potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time)) 
+    if(IsPotplayerRunning(potplayer_path)){
+      if(IsSameVideo(media_path)){
+        potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time)) 
+      }
     }else{
       OpenPotplayerAndJumpToTimestamp(media_path, media_time)
     }
@@ -135,8 +139,6 @@ ParseTimeFragmentString(media_time){
 
 ; 判断当前播放的视频，是否是跳转的视频
 IsSameVideo(media_path){
-  if (IsPotplayerRunning(potplayer_path)) {
-    
     ; 判断网络视频
     if(InStr(media_path,"http")){
       potplayer_media_path := GetPotplayerMediaPath()
@@ -158,8 +160,6 @@ IsSameVideo(media_path){
     if (InStr(potplayer_title, GetNameForPath(media_path))) {
       return true
     }
-  }
-  return false
 }
 
 ; 字符串中不包含"-、∞"，则为单个时间戳
@@ -173,9 +173,9 @@ IsSingleTimestamp(media_time){
 ; 使用时间戳跳转
 OpenPotplayerAndJumpToTimestamp(media_path, media_time){
   run_command := potplayer_path . " `"" . media_path . "`" /seek=" . media_time . " " . open_window_parameter
-  try
+  try{
     Run run_command
-  catch Error as err
+  } catch Error as err
     if err.Extra{
       MsgBox "错误：" err.Extra
       MsgBox run_command
@@ -195,13 +195,15 @@ JumpToAbFragment(media_path, media_time){
   time := ParseTimeFragmentString(media_time)
 
   ; 2. 跳转
-  if(IsSameVideo(media_path)){
-    ; 跳转的时间
-    potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
-    ; 自动播放
-    if(potplayer.GetPlayStatus() != "Running") {
-      potplayer.PlayOrPause()
-      Sleep 200 ; 等待播放器播放，的反映时间
+  if(IsPotplayerRunning(potplayer_path)){
+    if(IsSameVideo(media_path)){
+      ; 跳转的时间
+      potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
+      ; 自动播放
+      if(potplayer.GetPlayStatus() != "Running") {
+        potplayer.PlayOrPause()
+        Sleep 200 ; 等待播放器播放，的反映时间
+      }
     }
   }else{
     OpenPotplayerAndJumpToTimestamp(media_path, time.start)
@@ -274,6 +276,8 @@ JumpToAbCirculation(media_path, media_time){
 }
 
 WaitForPotplayerToFinishLoadingTheVideo(video_name){
+  WinWait("ahk_exe " GetNameForPath(potplayer_path))
+
   hwnd := potplayer.GetPotplayerHwnd()
   ; 判断当前potplayer播放器的状态
   potplayer_is_open := GetPotplayerStatus(hwnd)
