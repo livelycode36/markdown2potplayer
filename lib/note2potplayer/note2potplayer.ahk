@@ -44,17 +44,18 @@ ReceivParameter(){
       return false
   }
 
+  params := ""
   ; 循环遍历参数并显示在控制台
   for n, param in A_Args{
-      return param
+    params .= param " "
   }
+  return Trim(params)
 }
 
 ParseUrl(url){
   ;url := "jv://open?path=https://www.bilibili.com/video/123456/?spm_id_from=..search-card.all.click&time=00:01:53.824"
   ; MsgBox url
   url := UrlDecode(url)
-  
   index_of := InStr(url, "?")
   parameters_of_url := SubStr(url, index_of + 1)
 
@@ -93,11 +94,11 @@ ParseUrl(url){
   if(IsSingleTimestamp(media_time)){
     if(IsPotplayerRunning(potplayer_path)){
       if(IsSameVideo(media_path)){
-        potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time)) 
+        potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time))
+        return
       }
-    }else{
-      OpenPotplayerAndJumpToTimestamp(media_path, media_time)
     }
+    OpenPotplayerAndJumpToTimestamp(media_path, media_time)
   }
 
   ; 情况2：时间戳片段 00:01:53-00:02:53
