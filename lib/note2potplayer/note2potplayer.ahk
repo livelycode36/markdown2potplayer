@@ -99,22 +99,17 @@ ParseUrl(url){
       }
     }
     OpenPotplayerAndJumpToTimestamp(media_path, media_time)
-  }
-
-  ; 情况2：时间戳片段 00:01:53-00:02:53
-  if(IsAbFragment(media_time)){
+    ; 情况2：时间戳片段 00:01:53-00:02:53
+  } else if(IsAbFragment(media_time)){
     if(GetKeyName("loop_ab_fragment")){
       JumpToAbCirculation(media_path, media_time)
     }else{
       JumpToAbFragment(media_path, media_time)
     }
-  }
-
-  ; 情况3：时间戳循环 00:01:53∞00:02:53
-  if(IsAbCirculation(media_time)){
+    ; 情况3：时间戳循环 00:01:53∞00:02:53
+  } else if(IsAbCirculation(media_time)){
     JumpToAbCirculation(media_path, media_time)
   }
-
   ExitApp()
 }
 
@@ -195,21 +190,14 @@ JumpToAbFragment(media_path, media_time){
   ; 1. 解析时间戳
   time := ParseTimeFragmentString(media_time)
 
+  call_data := {}
+  call_data.potplayer_path := potplayer_path
+  call_data.media_path := media_path
+  call_data.time := time
+  
   ; 2. 跳转
-  if(IsPotplayerRunning(potplayer_path)){
-    if(IsSameVideo(media_path)){
-      ; 跳转的时间
-      potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
-      ; 自动播放
-      if(potplayer.GetPlayStatus() != "Running") {
-        potplayer.PlayOrPause()
-        Sleep 200 ; 等待播放器播放，的反映时间
-      }
-    }
-  }else{
-    OpenPotplayerAndJumpToTimestamp(media_path, time.start)
-    WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
-  }
+  CallPotplayer(call_data)
+  Sleep 500
 
   flag_ab_fragment := true
 
@@ -224,15 +212,11 @@ JumpToAbFragment(media_path, media_time){
     ; 异常情况：用户关闭Potplayer
     if (!IsPotplayerRunning(potplayer_path)) {
       break
-    }
-
-    ; 异常情况：用户停止播放视频
-    if (potplayer.GetPlayStatus() != "Running") {
+      ; 异常情况：用户停止播放视频
+    } else if (potplayer.GetPlayStatus() != "Running") {
       break
-    }
-
-    ; 异常情况：不是同一个视频 --> 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环
-    if (!IsSameVideo(media_path)) {
+      ; 异常情况：不是同一个视频 --> 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环
+    } else if (!IsSameVideo(media_path)) {
       break
     }
 
@@ -256,17 +240,13 @@ IsAbCirculation(media_time){
 JumpToAbCirculation(media_path, media_time){
   time := ParseTimeFragmentString(media_time)
 
+  call_data := {}
+  call_data.potplayer_path := potplayer_path
+  call_data.media_path := media_path
+  call_data.time := time
+  
   ; 2. 跳转
-  if(IsSameVideo(media_path)){
-    potplayer.SetCurrentSecondsTime(TimeToSeconds(time.start))
-    if(potplayer.GetPlayStatus() != "Running") {
-      potplayer.PlayOrPause()
-      Sleep 200 ; 等待播放器播放，的反映时间
-    }
-  }else{
-    OpenPotplayerAndJumpToTimestamp(media_path, time.start)
-    WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
-  }
+  CallPotplayer(call_data)
 
   ; 3. 设置A-B循环起点
   potplayer.SetStartPointOfTheABCycle()
@@ -276,12 +256,30 @@ JumpToAbCirculation(media_path, media_time){
   potplayer.SetEndPointOfTheABCycle()
 }
 
+CallPotplayer(call_data){
+  if(IsPotplayerRunning(call_data.potplayer_path)){
+    if(IsSameVideo(call_data.media_path)){
+      potplayer.SetCurrentSecondsTime(TimeToSeconds(call_data.time.start))
+      potplayer.Play()
+    }else{
+      ; 播放指定视频
+      PlayVideo(call_data.media_path, call_data.time.start)
+    }
+  }else{
+    PlayVideo(call_data.media_path, call_data.time.start)
+  }
+}
+PlayVideo(media_path, time_start){
+  OpenPotplayerAndJumpToTimestamp(media_path, time_start)
+  WaitForPotplayerToFinishLoadingTheVideo(GetNameForPath(media_path))
+  potplayer.Play()
+}
 WaitForPotplayerToFinishLoadingTheVideo(video_name){
   WinWait("ahk_exe " GetNameForPath(potplayer_path))
 
   hwnd := potplayer.GetPotplayerHwnd()
   ; 判断当前potplayer播放器的状态
-  potplayer_is_open := GetPotplayerStatus(hwnd)
+  potplayer_is_open := IsPotplayerOpen(hwnd)
   if(potplayer_is_open){
     ; 等待Potplayer加载视频，从上一个视频，跳转到下一个视频，窗口的命名会发生变化 => PotPlayer - 123.mp4 => Potplayer => PotPlayer - 456.mp4
     while (true) {
@@ -307,6 +305,6 @@ WaitForPotplayerToFinishLoadingTheVideo(video_name){
     }
   }
 }
-GetPotplayerStatus(hwnd){
+IsPotplayerOpen(hwnd){
   return WinGetTitle("ahk_id " hwnd) != "PotPlayer"
 }

@@ -60,8 +60,11 @@ class PotplayerControl {
     PlayOrPause(){
         this.PostCommand(this.COMMAND_TYPE,20001,0)
     }
-    Pause(){
-        this.PostCommand(this.COMMAND_TYPE,20000,0)
+    Play(){
+        status := this.GetPlayStatus()
+        if (status != "Running"){
+            this.PostCommand(this.COMMAND_TYPE,20000,0)
+        }
     }
     PlayPause(){
         status := this.GetPlayStatus()

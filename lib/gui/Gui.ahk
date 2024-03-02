@@ -68,4 +68,4 @@ myGui.Add("Text", "x120 y153 w24 h21", "停止")
 hk_stop := myGui.Add("Hotkey", "x152 y153 w120 h21")
 
 Tab.UseTab()
-myGui.Add("Link", "x444 y640 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer`">查看更新</a>")
+myGui.Add("Link", "x444 y640 w51 h17", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">查看更新</a>")
