@@ -95,6 +95,7 @@ ParseUrl(url){
     if(IsPotplayerRunning(potplayer_path)){
       if(IsSameVideo(media_path)){
         potplayer.SetCurrentSecondsTime(TimeToSeconds(media_time))
+        potplayer.Play()
         return
       }
     }
