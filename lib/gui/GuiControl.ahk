@@ -147,7 +147,7 @@ InitGui(app_config, potplayer_control){
   ; =======界面设置=========
   myGui.OnEvent('Close', (*) => myGui.Hide())
   myGui.OnEvent('Escape', (*) => myGui.Hide())
-  myGui.Title := "markdown2potpalyer - 0.1.8"
+  myGui.Title := "markdown2potpalyer - 0.1.9"
   
   ; =======托盘菜单=========
   myMenu := A_TrayMenu
