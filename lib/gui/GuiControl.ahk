@@ -29,12 +29,12 @@ InitGui(app_config, potplayer_control){
   Edit_title.OnEvent("LoseFocus",(*) => app_config.MarkdownTitle := Edit_title.Value)
   
   ; 回显：回链模板
-  Edit_makrdown_template.Value := app_config.MarkdownTemplate
-  Edit_makrdown_template.OnEvent("LoseFocus",(*) => app_config.MarkdownTemplate := Edit_makrdown_template.Value)
+  Edit_markdown_template.Value := app_config.MarkdownTemplate
+  Edit_markdown_template.OnEvent("LoseFocus",(*) => app_config.MarkdownTemplate := Edit_markdown_template.Value)
   
   ; 回显：图片回链模板
-  Edit_image_tempalte.Value := app_config.MarkdownImageTemplate
-  Edit_image_tempalte.OnEvent("LoseFocus",(*) => app_config.MarkdownImageTemplate := Edit_image_tempalte.Value)
+  Edit_image_template.Value := app_config.MarkdownImageTemplate
+  Edit_image_template.OnEvent("LoseFocus",(*) => app_config.MarkdownImageTemplate := Edit_image_template.Value)
   
   ; 回显：是否暂停
   CheckBox_is_stop.Value := app_config.IsStop
