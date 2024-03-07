@@ -23,10 +23,10 @@ myGui.Add("Text", "x88 y184 w63 h23", "回链的名称")
 Edit_title := myGui.Add("Edit", "x160 y184 w148 h21", "{name} | {time}")
 
 myGui.Add("Text", "x104 y216 w51 h23", "回链模板")
-Edit_makrdown_template := myGui.Add("Edit", "x160 y216 w149 h60 +Multi", "`n视频：{title}`n")
+Edit_markdown_template := myGui.Add("Edit", "x160 y216 w149 h60 +Multi", "`n视频：{title}`n")
 
 myGui.Add("Text", "x80 y288 w77 h23", "图片回链模板")
-Edit_image_tempalte := myGui.Add("Edit", "x160 y288 w151 h79 +Multi", "`n图片:{image}`n视频:{title}`n")
+Edit_image_template := myGui.Add("Edit", "x160 y288 w151 h79 +Multi", "`n图片:{image}`n视频:{title}`n")
 
 CheckBox_is_stop := myGui.Add("CheckBox", "x160 y368 w69 h23", "是否暂停")
 CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y388 w150 h23", "本地视频移除文件后缀名")
