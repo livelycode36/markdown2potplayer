@@ -117,7 +117,28 @@ RefreshHotkey(old_hotkey,new_hotkey,callback){
         Exit
     }
 }
-
+Forward(app_config, potplayer_control){
+    try{
+        if(app_config.ForwardSeconds != 0){
+            potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() + (app_config.ForwardSeconds * 1000)))
+        }else{
+            potplayer_control.Forward()
+        }
+    }catch Error as err{
+        MsgBox "Forward Seconds and Backward Seconds It can't be empty"
+    }
+}
+Backward(app_config, potplayer_control){
+    try{
+        if(app_config.BackwardSeconds != 0){
+            potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() - (app_config.BackwardSeconds * 1000)))
+        }else{
+            potplayer_control.Backward()
+        }
+    }catch Error as err{
+        MsgBox "Forward Seconds and Backward Seconds It can't be empty"
+    }
+}
 CheckCurrentProgram(*){
     programs := app_config.PotplayerProcessName "`n" app_config.NoteAppName
     Loop Parse programs, "`n"{

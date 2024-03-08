@@ -147,7 +147,7 @@ InitGui(app_config, potplayer_control){
   ; =======界面设置=========
   myGui.OnEvent('Close', (*) => myGui.Hide())
   myGui.OnEvent('Escape', (*) => myGui.Hide())
-  myGui.Title := "markdown2potpalyer - 0.1.9"
+  myGui.Title := "markdown2potpalyer - 0.2.0"
   
   ; =======托盘菜单=========
   myMenu := A_TrayMenu
@@ -156,24 +156,8 @@ InitGui(app_config, potplayer_control){
   myMenu.Default := "&Open"
   myMenu.ClickCount := 2
   
-  myMenu.Rename("&Open" , "打开")
-  myMenu.Rename("E&xit" , "退出")
-  myMenu.Rename("&Pause Script" , "暂停脚本")
-  myMenu.Rename("&Suspend Hotkeys" , "暂停热键")
-}
-
-Forward(app_config, potplayer_control){
-  if(app_config.ForwardSeconds != "" || app_config.ForwardSeconds != 0){
-    potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() + (app_config.ForwardSeconds * 1000)))
-  }else{
-    potplayer_control.Forward()
-  }
-}
-
-Backward(app_config, potplayer_control){
-  if(app_config.BackwardSeconds != "" || app_config.BackwardSeconds != 0){
-    potplayer_control.SetMediaTimeMilliseconds(Integer(potplayer_control.GetMediaTimeMilliseconds() - (app_config.BackwardSeconds * 1000)))
-  }else{
-    potplayer_control.Backward()
-  }
+  myMenu.Rename("&Open" , i18n_local.Gui_open)
+  myMenu.Rename("E&xit" , i18n_local.Gui_exit)
+  myMenu.Rename("&Pause Script" , i18n_local.Gui_pause_script)
+  myMenu.Rename("&Suspend Hotkeys" , i18n_local.Gui_suspend_hotkeys)
 }
