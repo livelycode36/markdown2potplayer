@@ -212,7 +212,7 @@ image:{image}
 
 - 因为potplayer自带最少是1秒，所以此处可以设置0.x秒
 - 注意：
-  - 填写`0`、或者`不填写`任意数，则调用potplayer中用户设置的时间跨度时间
+  - 填写`0`，则调用potplayer中用户设置的时间跨度时间。**不可以留空**
 
 
 
@@ -225,6 +225,16 @@ image:{image}
 ![image-20231214154748461](./assets/image-20231214154748461.png)
 
 
+
+## 多国语言
+
+1. 在这里有语言的代号：[LCID.ahk](./lib/gui/i18n/LCID.ahk)
+2. 这是示例
+   1. [en-US.ini](./lib/gui/i18n/en-US.ini)
+   2. [zh-CN.ini](./lib/gui/i18n/zh-CN.ini)
+
+- **注意：ini文件请使用使用系统的默认 ANSI 编码！**
+  - 参考：[IniRead| AutoHotkey v2](https://www.autohotkey.com/docs/v2/lib/IniRead.htm)
 
 # 鸣谢
 
