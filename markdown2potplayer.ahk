@@ -69,13 +69,9 @@ InitServer() {
                 }
 
                 ; 打开potplayer
-                cmd := A_ScriptDir "\lib\note2potplayer\note2potplayer.exe " backlink
-                Run(cmd,,"Hide",,)
+                Run(backlink)
+                ; 关闭 notion打开的网页标签
                 Send "^w"
-
-                ; 我真无语，Run命令会阻塞socket库，且autohotkey没有多线程，只能用这种方法，让socket库继续运行
-                Run(A_ScriptDir "\markdown2potplayer.exe")
-                ExitApp
             }
         }
     }
