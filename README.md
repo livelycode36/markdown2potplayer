@@ -7,7 +7,7 @@
 
 ## For English Users
 
-[](./doc/README_EN.md)
+[README_EN](./doc/README_EN.md)
 
 ## 1 前置准备
 
