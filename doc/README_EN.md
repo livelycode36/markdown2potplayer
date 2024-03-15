@@ -3,9 +3,9 @@
 ## 1. Preparation
 
 1. Run the script file: `markdown2potplayer`
-2. Double-click the tray icon in the bottom right corner ![image-20231229163509526](./assets/image-20231229163509526.png)
+2. Double-click the tray icon in the bottom right corner ![image-20231229163509526](../assets/image-20231229163509526.png)
 
-![image-20240126130251886](./assets/image-20240126130251886.png)
+![image-20240126130251886](../assets/image-20240126130251886.png)
 
 **Modification 1**: Update the path to Potplayer's main program to match your local path.
 
@@ -38,11 +38,11 @@
 
 3. **Please click on the link in Notion with the left mouse button, do not use the open in a new tab option, such as Ctrl + left mouse button or middle mouse button.**
 
-![image-20240217172403274](./assets/image-20240217172403274.png)
+![image-20240217172403274](../assets/image-20240217172403274.png)
 
 ## Modifying Templates
 
-![image-20231229004156479](./assets/image-20231229004156479.png)
+![image-20231229004156479](../assets/image-20231229004156479.png)
 
 There are `4` template items for **pasting templates**.
 
@@ -63,7 +63,7 @@ Explanation:
 
 I want the effect of `Alt+G` to be this:
 
-![image-20231216234628300](./assets/image-20231216234628300.png)
+![image-20231216234628300](../assets/image-20231216234628300.png)
 
 This should be filled in as follows:
 
@@ -83,13 +83,13 @@ title: {title}
 
 Final effect:
 
-![image-20231229004839082](./assets/image-20231229004839082.png)
+![image-20231229004839082](../assets/image-20231229004839082.png)
 
 ### Example 2
 
 I want the effect of `Ctrl+Alt+G` to be this:
 
-![image-20231216235029002](./assets/image-20231216235029002.png)
+![image-20231216235029002](../assets/image-20231216235029002.png)
 
 The video backlink template should be filled in as follows:
 
@@ -110,7 +110,7 @@ image:{image}
 
 Here:
 
-![image-20231214183647513](./assets/image-20231214183647513.png)
+![image-20231214183647513](../assets/image-20231214183647513.png)
 
 ## AB Segments
 
@@ -142,7 +142,7 @@ Use Potplayer's built-in "AB Section Loop" for **infinite playback**.
 
 Control whether the file name includes the file extension.
 
-![image-20231216154341755](./assets/image-20231216154341755.png)
+![image-20231216154341755](../assets/image-20231216154341755.png)
 
 ## URL Encoding
 
@@ -150,7 +150,7 @@ Control whether the video URL is encoded.
 
 **Effect of disabling encoding**:
 
-![image-20231214195533699](./assets/image-20231214195533699.png)
+![image-20231214195533699](../assets/image-20231214195533699.png)
 
 Note:
 
@@ -161,17 +161,17 @@ Note:
 
 ## Potplayer Shortcut Control
 
-![image-20240206221936051](./assets/image-20240206221936051.png)
+![image-20240206221936051](../assets/image-20240206221936051.png)
 
 Convenient for controlling Potplayer from the note-taking software.
 
 **Forward and backward precise to the `second`**:
 
-![img](./assets/ba221f08ea6fa4f224889186c12606d7.png)
+![img](../assets/ba221f08ea6fa4f224889186c12606d7.png)
 
 **Precise to 0.5 seconds, etc.**:
 
-![image-20240210192118660](./assets/image-20240210192118660.png)
+![image-20240210192118660](../assets/image-20240210192118660.png)
 
 - Since Potplayer's minimum is 1 second, you can set it to 0.x seconds here.
 - Note:
@@ -183,7 +183,7 @@ For those who use custom protocols (use with caution):
 
 Modify here:
 
-![image-20231214154748461](./assets/image-20231214154748461.png)
+![image-20231214154748461](../assets/image-20231214154748461.png)
 
 ## Multilingual Support
 
