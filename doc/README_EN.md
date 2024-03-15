@@ -7,9 +7,9 @@
 
 ![image-20240126130251886](../assets/image-20240126130251886.png)
 
-**Modification 1**: Update the path to Potplayer's main program to match your local path.
+**Modification 1**: Update the path to Potplayer's main program(potplayer 播放器的路径) to match your local path.
 
-**Modification 2**: Specify the name of your note-taking software.
+**Modification 2**: Specify the name of your note-taking software(笔记软件的程序名称).
 
 - `Note`: The backlink will only be pasted into one note-taking software, following the order from top to bottom.
 - For example, if both Obsidian and Typora are configured:
@@ -22,7 +22,7 @@
 2. Open Obsidian.
 3. Open Potplayer.
 
-4. When the note-taking software or Potplayer window is active, press the hotkey <b style="color:red">Alt+G (default)</b> to automatically paste the **video backlink** into Obsidian.
+4. When the note-taking software or Potplayer window is active, press the hotkey <b style="color:red">Alt+G (default)</b> to automatically paste the **video backlink** (视频回链) into Obsidian.
 5. When the note-taking software or Potplayer window is active, press the hotkey <b style="color:red">Ctrl+Alt+G (default)</b> to automatically paste the **image + video backlink** into Obsidian.
 
 # Advanced Settings
@@ -56,7 +56,7 @@ Explanation:
 
 - `{name}`: Represents the video file name, i.e., `[Video **Name**]`.
 - `{time}`: Represents the current playback time of the video, i.e., `[Video **Time**]`.
-- `{title}`: **Represents the entire Markdown format link**, e.g., `[Baidu](https://www.baidu.com)`. This means that this is the Markdown format backlink for Potplayer.
+- `{title}`: **Represents the entire Markdown format link**, e.g., `[google](https://www.google.com)`. This means that this is the Markdown format backlink for Potplayer.
 - `{image}`: Represents the **position for pasting the image**.
 
 ### Example 1
@@ -110,7 +110,7 @@ image:{image}
 
 Here:
 
-![image-20231214183647513](../assets/image-20231214183647513.png)
+![image-20231214183647513](../assets/en/potplayer_format_1710485389.png)
 
 ## AB Segments
 
@@ -187,10 +187,10 @@ Modify here:
 
 ## Multilingual Support
 
-1. Language codes can be found here: [LCID.ahk](./lib/gui/i18n/LCID.ahk).
+1. Language codes can be found here: [LCID.ahk](../lib/gui/i18n/LCID.ahk).
 2. Examples:
-   - [en-US.ini](./lib/gui/i18n/en-US.ini)
-   - [zh-CN.ini](./lib/gui/i18n/zh-CN.ini)
+   - [en-US.ini](../lib/gui/i18n/en-US.ini)
+   - [zh-CN.ini](../lib/gui/i18n/zh-CN.ini)
 
 - **Note: Please use the system's default ANSI encoding for the ini files!**
   - Reference: [IniRead | AutoHotkey v2](https://www.autohotkey.com/docs/v2/lib/IniRead.htm)
