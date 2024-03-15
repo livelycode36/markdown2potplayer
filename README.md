@@ -5,6 +5,9 @@
 ![image-20240210193023137](./assets/image-20240210193023137.png)
 
 
+## For English Users
+
+[README_EN](./doc/README_EN.md)
 
 ## 1 前置准备
 
