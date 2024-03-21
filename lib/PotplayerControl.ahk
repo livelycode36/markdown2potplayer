@@ -6,6 +6,7 @@ class PotplayerControl {
         this._PotplayerProcessName := potplayer_process_name
         this.COMMAND_TYPE := 273
         this.REQUEST_TYPE := 1024
+        this.hwnd := ""
     }
 
     SendCommand(msg_type,wParam,lParam){
@@ -20,16 +21,18 @@ class PotplayerControl {
     GetPotplayerHwnd(){
         Assert(!WinExist("ahk_exe " this._PotplayerProcessName), "PotPlayer is not running")
 
+        if (this.hwnd != ""){
+            return this.hwnd
+        }
+
         ids := WinGetList("ahk_exe " this._PotplayerProcessName)
-        hwnd := ""
         for id in ids{
             title := WinGetTitle("ahk_id " id)
             if (InStr(title, "PotPlayer")){
-                hwnd := id
-                break
+                this.hwnd := id
+                return id
             }
         }
-        return hwnd
     }
 
     ; 剪切板
