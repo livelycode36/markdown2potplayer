@@ -241,6 +241,20 @@ image:{image}
 - **注意：ini文件请使用使用系统的默认 ANSI 编码！**
   - 参考：[IniRead| AutoHotkey v2](https://www.autohotkey.com/docs/v2/lib/IniRead.htm)
 
+
+
+# 开发
+
+1. 克隆仓库
+2. 下载安装：[AutoHotkey](https://www.autohotkey.com/)的v2版本
+3. 打开AutoHotkey Dash，点击`Compile`按照提示安装`Ahk2Exe`
+4. 使用`Ahk2Exe`编译，如下文件
+   1. 主程序：`markdown2potplayer.ahk`
+   2. 控制potplayer：`\lib\note2potplayer\note2potplayer.ahk`
+   3. word文档链接的形式：`\lib\word\word.ahk`
+
+
+
 # 鸣谢
 
 感谢

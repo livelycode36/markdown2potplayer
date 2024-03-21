@@ -195,6 +195,20 @@ Modify here:
 - **Note: Please use the system's default ANSI encoding for the ini files!**
   - Reference: [IniRead | AutoHotkey v2](https://www.autohotkey.com/docs/v2/lib/IniRead.htm)
 
+
+
+# Development
+
+1. Clone the repository.
+2. Download and install the v2 version of [AutoHotkey](https://www.autohotkey.com/).
+3. Open AutoHotkey Dash, click on `Compile`, and follow the prompts to install `Ahk2Exe`.
+4. Compile using `Ahk2Exe` with the following files:
+   1. Main program: `markdown2potplayer.ahk`
+   2. PotPlayer control: `\lib\note2potplayer\note2potplayer.ahk`
+   3. Word document link format: `\lib\word\word.ahk`
+
+
+
 # Acknowledgments
 
 Special thanks to:
