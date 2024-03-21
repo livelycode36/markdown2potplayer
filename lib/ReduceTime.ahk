@@ -2,16 +2,13 @@
 
 ; 修改秒数并返回新的时间格式
 ReduceTime(originalTime, secondsToModify) {
-  seconds := TimeToSeconds(originalTime)
-
-  newSeconds := seconds - secondsToModify
+  newSeconds := TimestampToMilliSecond(originalTime) - (secondsToModify * 1000)
 
   if (newSeconds < 0){
     newSeconds := 0
   }
 
-  result := SecondsToTimeFormat(newSeconds)
-  return result GetMilliseconds(originalTime)
+  return MilliSecondToTimestamp(newSeconds)
 }
 
 GetMilliseconds(originalTime) {
@@ -22,81 +19,81 @@ GetMilliseconds(originalTime) {
   return ms
 }
 
-; 将时间字符串转换为秒
-TimeToSeconds(timeStr) {
-  RegExMatch(timeStr, "^((?<hours>\d+):)?((?<minutes>[0-5][0-9]):)?(?<seconds>[0-5][0-9])(\.(?<ms>\d+))?$", &matches)
-  h := matches.hours ? matches.hours : 0
-  m := matches.minutes ? matches.minutes : 0
-  s := matches.seconds ? matches.seconds : 0
-  ms := matches.seconds
-
-  ; 修正正则表达式的bug：当传入的数据是"16:34"，会出现h=16，m=0，s=34的情况
-  if (CountCharOccurrences(timeStr, ":") = 1) {
-    if (h > 0 && m = 0 && s >= 0) {
-      m := h
-      h := 0
-    }
+; 将时间字符串转换为毫秒
+TimestampToMilliSecond(timeStr) {
+  if (timeStr = "" ||
+      timeStr = "0") {
+      return 0
   }
+  parts := StrSplit(timeStr , ":")
+  milliseconds := 0
+
+  if(InStr(timeStr, ".") > 0) {
+      seconds_millis := StrSplit(parts[-1], ".")
+      parts[-1] := seconds_millis.Get(1)
+      milliseconds := Integer(seconds_millis.Get(2))
+  } else {
+      milliseconds := 0
+  }
+
+  Loop parts.Length
+      parts[A_Index] := Integer(parts[A_Index])
+
+  if(parts.Length = 1)
+      milliseconds += Integer(parts.Get(1)) * 1000
+  else if(parts.Length = 2)
+      milliseconds += (Integer(parts.Get(1)) * 60 + Integer(parts.Get(2))) * 1000
+  else if(parts.Length = 3)
+      milliseconds += (Integer(parts.Get(1)) * 3600 + Integer(parts.Get(2)) * 60 + Integer(parts.Get(3))) * 1000
   
-  result := (h * 3600) + (m * 60) + s
+  return milliseconds
+}
+; 测试不同的时间戳格式
+; timestamps := ['0.123', '1', '1:01', '1:01:01', '1:01:01.123']
+; Loop timestamps.Length
+;     MsgBox TimeToMilliSecond(timestamps[A_Index])
+
+; 将毫秒转换回原始格式
+MilliSecondToTimestamp(milliseconds){
+  if (milliseconds = "" ||
+      milliseconds = 0) {
+      return "0"
+  }
+
+  ; 1. 确定毫秒中包含多少完整的小时，然后从总毫秒数中减去这些小时对应的毫秒数
+  ; 2. 计算剩余毫秒数中包含多少完整的分钟，并同样从剩余毫秒数中减去
+  ; 3. 计算剩余毫秒数中包含多少完整的秒，并从剩余毫秒数中减去
+  ; 4. 剩余的就是不足一秒的毫秒数
+  hours := milliseconds // 3600000
+  remainder := Mod(milliseconds, 3600000)
+
+  minutes := remainder // 60000
+  remainder := Mod(remainder, 60000)
+
+  seconds := remainder // 1000
+  millis := Mod(remainder, 1000)
+  
+  ; MsgBox "Hours:" hours '`n' "minutes:" minutes '`n' "seconds:" seconds '`n' "millis:" millis
+
+  result := ""
+  if hours > 0
+      result .= Format("{:02}", hours) ":"
+
+  ; milliseconds >= 3600000 表示大于等于1小时，则显示分钟，无论分钟是否为0
+  if minutes > 0 || milliseconds >= 3600000
+      result .= Format("{:02}", minutes) ":"
+  
+  if seconds > 0 || milliseconds >= 60000
+      result .= Format("{:02}", seconds)
+  
+  if millis > 0 && milliseconds >= 1000
+      result .= "." Format("{:03}", millis)
+  ; 如果毫秒小于1000，则显示0.x毫秒
+  else if milliseconds < 1000
+      result .= "0." Format("{:03}", milliseconds)
   return result
 }
-
-; 查找字符串中`char`字符的总个数
-CountCharOccurrences(string, char) {
-  parts := StrSplit(string, char)
-  if parts.Length > 1 {
-    return parts.Length - 1
-  }
-  return parts.Length
-}
-
-; 将秒转换回原始格式
-SecondsToTimeFormat(duration) {
-  if (duration < 60){
-    if (duration < 10){
-      duration := "00:0" duration
-    }
-    return "00:" duration
-  }
-
-  seconds := Mod(duration , 60)
-  minutes := Mod(duration // 60,60)
-  hours := duration // 3600
-  
-  ModifyTimeFormat(&hours, &minutes, &seconds)
-
-  if (hours > 0){
-    return hours ":" minutes ":" seconds
-  }
-  else{
-    return minutes ":" seconds
-  }
-}
-
-; 修正秒数和分钟数的显示格式
-ModifyTimeFormat(&hours, &minutes, &seconds) {
-  if (hours = 0){
-    hours := "00"
-  } else if (hours < 10){
-    hours := "0" hours
-  }
-
-  if (minutes = 0){
-    minutes := "00"
-  }else if (minutes < 10){
-    minutes := "0" minutes
-  }
-  
-  if (seconds = 0){
-    seconds := "00"
-  } else if (seconds < 10){
-    seconds := "0" seconds
-  }
-}
-
-; 示例
-; originalTime2 := "00:00:59"
-; MsgBox TimeToSeconds(originalTime2)
-; newTime2 := ReduceTime(originalTime2, 3)
-; MsgBox newTime2
+; 测试不同的毫秒值
+; milliseconds_values := [123, 1000, 60000, 61000, 3600000,3661000, 3661123]
+; Loop milliseconds_values.Length
+;   MsgBox MilliSecondToTimestamp(milliseconds_values[A_Index])

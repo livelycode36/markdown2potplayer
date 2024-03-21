@@ -197,7 +197,7 @@ JumpToSingleTimestamp(path, time){
   if(potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped" 
     && IsSameVideo(potplayer.jump.path)){
-      potplayer.control.SetCurrentSecondsTime(TimeToSeconds(time))
+      potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(time))
       potplayer.control.Play()
   }else{
     OpenPotplayerAndJumpToTimestamp(path, time)
@@ -220,7 +220,7 @@ JumpToAbFragment(media_path, media_time_span){
     Hotkey "Esc", "off"
   }
 
-  duration := TimeToSeconds(potplayer.jump.time.end) - TimeToSeconds(potplayer.jump.time.start)
+  duration := TimestampToMilliSecond(potplayer.jump.time.end) - TimestampToMilliSecond(potplayer.jump.time.start)
   past := 0
   ; 3. 检查结束时间
   while (flag_ab_fragment) {
@@ -232,21 +232,21 @@ JumpToAbFragment(media_path, media_time_span){
       break
     }
     ; 异常情况：不是同一个视频
-    ; 1. 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环 else if (!IsSameVideo(media_path)) {break}
-    ; 2. 另一种思路：当前循环的时间超过了时间期间，就结束循环； +5是为了防止误差
-    else if (past >= duration + 5) {
+    ; - 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环 else if (!IsSameVideo(media_path)) {break}
+    ; - 另一种思路：当前循环的时间超过了时间期间，就结束循环； +5是为了防止误差
+    else if (past >= duration + 5000) {
       break
     }
 
     ; 正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间
-    current_time := potplayer.control.GetCurrentSecondsTime()
-    if (current_time >= TimeToSeconds(potplayer.jump.time.end)) {
+    current_time := potplayer.control.GetMediaTimeMilliseconds()
+    if (current_time >= TimestampToMilliSecond(potplayer.jump.time.end)) {
       potplayer.control.PlayPause()
       Hotkey "Esc", "off"
       break
     }
     Sleep 1000
-    past += 1
+    past += 1000
   }
 }
 
@@ -268,7 +268,7 @@ JumpToAbCirculation(media_path, media_time_span){
   potplayer.control.SetStartPointOfTheABCycle()
 
   ; 4. 设置A-B循环终点
-  potplayer.control.SetCurrentSecondsTime(TimeToSeconds(time.end))
+  potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(time.end))
   potplayer.control.SetEndPointOfTheABCycle()
 }
 
@@ -276,7 +276,7 @@ CallPotplayer(){
   if(potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped"
     && IsSameVideo(potplayer.jump.path)){
-    potplayer.control.SetCurrentSecondsTime(TimeToSeconds(potplayer.jump.time.start))
+    potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(potplayer.jump.time.start))
     potplayer.control.Play()
   }else{
     ; 播放指定视频

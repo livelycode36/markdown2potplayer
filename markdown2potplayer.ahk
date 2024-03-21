@@ -409,7 +409,7 @@ Potplayer2ObsidianFragment(HotkeyName){
         fragment_end_time := GetMediaTime()
 
         ; 如果终点时间小于起点时间，就交换两个时间
-        if (TimeToSeconds(fragment_end_time) < TimeToSeconds(fragment_start_time)){
+        if (TimestampToMilliSecond(fragment_end_time) < TimestampToMilliSecond(fragment_start_time)){
             temp := fragment_start_time
             fragment_start_time := fragment_end_time
             fragment_end_time := temp
