@@ -5,7 +5,7 @@
 db_file_path := "config.db"
 table_name := "config"
 
-InitSqlite() {
+InitConfigSqlite() {
   if !TableExist(table_name) {
     DB := OpenLocalDB()
     ; 创建 config 表
@@ -47,15 +47,17 @@ InitSqlite() {
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",
     hotkey_ab_fragment: "F1",
-    hotkey_ab_circulation: "F2",
+    ab_fragment_detection_delays: "1000",
     loop_ab_fragment: "0",
+    hotkey_ab_circulation: "F2",
+    
     ; 映射Potplayer快捷键相关
     hotkey_previous_frame: "",
     hotkey_next_frame: "",
     hotkey_forward: "",
-    forward_seconds: "",
+    forward_seconds: "0",
     hotkey_backward: "",
-    backward_seconds: "",
+    backward_seconds: "0",
     hotkey_play_or_pause: "",
     hotkey_stop: ""
   }

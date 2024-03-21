@@ -70,6 +70,11 @@ Class Config{
         set => UpdateOrIntert("hotkey_ab_fragment",Value)
     }
 
+    AbFragmentDetectionDelays{
+        get => GetKey("ab_fragment_detection_delays")
+        set => UpdateOrIntert("ab_fragment_detection_delays",Value)
+    }
+
     LoopAbFragment{
         get => GetKey("loop_ab_fragment")
         set => UpdateOrIntert("loop_ab_fragment",Value)

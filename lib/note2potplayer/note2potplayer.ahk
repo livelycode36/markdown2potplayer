@@ -6,6 +6,7 @@
 #Include ..\ReduceTime.ahk
 
 ; 1. init
+ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
 potplayer_path := GetKeyName("path")
 
 potplayer := {}
@@ -73,7 +74,7 @@ ParseUrl(url){
   parameters := StrSplit(parameters_of_url, "&")
   parameters_map := Map()
 
-  ; 1.1 普通解析
+  ; 1.1 常规解析
   for index, pair in parameters {
     index_of := InStr(pair, "=")
     if (index_of > 0) {
@@ -245,8 +246,8 @@ JumpToAbFragment(media_path, media_time_span){
       Hotkey "Esc", "off"
       break
     }
-    Sleep 1000
-    past += 1000
+    Sleep ab_fragment_detection_delays
+    past += ab_fragment_detection_delays
   }
 }
 
@@ -295,13 +296,8 @@ PlayVideo(media_path, time_start){
 WaitForPotplayerToFinishLoadingTheVideo(video_name){
   WinWaitActive("ahk_exe " GetNameForPath(potplayer_path))
 
-  hwnd := potplayer.control.GetPotplayerHwnd()
-
-  ; 给 WinGetTitle 函数留出时间，等待窗口标题的变化 PotPlayer - 123.mp4 => Potplayer => PotPlayer - 456.mp4
-  
-  
   while (true) {
-    if(WinGetTitle("ahk_id " hwnd) != "PotPlayer"
+    if(WinGetTitle("ahk_id " potplayer.control.GetPotplayerHwnd()) != "PotPlayer"
       && potplayer.control.GetPlayStatus() == "Running"){
       break
     }
