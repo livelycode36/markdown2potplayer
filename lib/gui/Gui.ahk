@@ -11,24 +11,24 @@ myGui := Gui()
 Tab := myGui.Add("Tab3", "x0 y0 w503 h661", [i18n_local.Gui_Tab_backlink_setting, i18n_local.Gui_Tab_potplayer_hotkey_setting])
 Tab.UseTab(1)
 
-myGui.Add("Text", "x56 y24 w132 h23", i18n_local.Gui_potplayer_path)
+myGui.Add("Text", "x40 y24 w132 h23", i18n_local.Gui_potplayer_path)
 Edit_potplayer := myGui.Add("Edit", "x160 y22 w215 h25", "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe")
 Button_potplayer := myGui.Add("Button", "x384 y22 w103 h23", i18n_local.Gui_choose_potplayer)
 
-myGui.Add("Text", "x56 y48 h23", i18n_local.Gui_reduce_time)
+myGui.Add("Text", "x40 y48 h23", i18n_local.Gui_reduce_time)
 Edit_reduce_time := myGui.Add("Edit", "x160 y48 w120 h21", "0")
 
-myGui.Add("Text", "x56 y80 w109 h23", i18n_local.Gui_note_names)
+myGui.Add("Text", "x40 y80 w109 h23", i18n_local.Gui_note_names)
 Edit_note_app_name := myGui.Add("Edit", "x160 y80 w162 h63 +Multi", "Obsidian.exe`nTypora.exe")
 myGui.Add("Text", "x160 y152 w123 h23", i18n_local.Gui_note_names_tips)
 
-myGui.Add("Text", "x56 y184 w63 h23", i18n_local.Gui_backlink_name)
+myGui.Add("Text", "x40 y184 w63 h23", i18n_local.Gui_backlink_name)
 Edit_title := myGui.Add("Edit", "x160 y184 w148 h21", "{name} | {time}")
 
-myGui.Add("Text", "x56 y216 w51 h23", i18n_local.Gui_backlink_template)
+myGui.Add("Text", "x40 y216 w51 h23", i18n_local.Gui_backlink_template)
 Edit_markdown_template := myGui.Add("Edit", "x160 y216 w149 h60 +Multi", "`n视频：{title}`n")
 
-myGui.Add("Text", "x56 y288 w77 h23", i18n_local.Gui_image_backlink_tempalte_name)
+myGui.Add("Text", "x40 y288 w77 h23", i18n_local.Gui_image_backlink_tempalte_name)
 Edit_image_template := myGui.Add("Edit", "x160 y288 w151 h79 +Multi", "`n图片:{image}`n视频:{title}`n")
 
 CheckBox_is_stop := myGui.Add("CheckBox", "x160 y368 w69 h23", i18n_local.Gui_is_stop)
@@ -36,23 +36,23 @@ CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y388 w150 h2
 CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y416 w120 h23", i18n_local.Gui_is_path_encode)
 CheckBox_bootup := myGui.Add("CheckBox", "x160 y440 w120 h23", i18n_local.Gui_bootup)
 
-myGui.Add("Text", "x56 y469 w105 h36", i18n_local.Gui_edit_url_protocol)
+myGui.Add("Text", "x40 y469 w105 h36", i18n_local.Gui_edit_url_protocol)
 Edit_url_protocol := myGui.Add("Edit", "x160 y470 w156 h21", "jv://open")
 
-myGui.Add("Text", "x56 y506 w105 h23", i18n_local.Gui_hotkey_backlink)
+myGui.Add("Text", "x40 y506 w105 h23", i18n_local.Gui_hotkey_backlink)
 hk_backlink := myGui.Add("Hotkey", "x160 y504 w156 h21", "!g")
 
-myGui.Add("Text", "x56 y538 w105 h23", i18n_local.Gui_hotkey_image_and_backlink)
+myGui.Add("Text", "x40 y538 w105 h32", i18n_local.Gui_hotkey_image_and_backlink)
 hk_image_backlink := myGui.Add("Hotkey", "x160 y536 w156 h21", "^!g")
 
-myGui.Add("Text", "x56 y566 w105", i18n_local.Gui_hotkey_ab_fragment)
+myGui.Add("Text", "x40 y566 w120 h23", i18n_local.Gui_hotkey_ab_fragment)
 hk_ab_fragment := myGui.Add("Hotkey", "x160 y562 w156 h21","F1")
-myGui.Add("Text", "x56 y584 w98 h23 +0x200", i18n_local.Gui_hotkey_ab_fragment_detection_delays)
+myGui.Add("Text", "x40 y584 w98 h23", i18n_local.Gui_hotkey_ab_fragment_detection_delays)
 Edit_ab_fragment_detection_delays := myGui.Add("Edit", "x160 y587 w120 h21","1000")
-myGui.Add("Text", "x288 y584 w31 h23 +0x200", "ms")
+myGui.Add("Text", "x288 y584 w31 h23", "ms")
 CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y608 w120 h23", i18n_local.Gui_is_loop_ab_fragment)
 
-myGui.Add("Text", "x56 y632 w105", i18n_local.Gui_hotkey_ab_circulation)
+myGui.Add("Text", "x40 y632 w105", i18n_local.Gui_hotkey_ab_circulation)
 hk_ab_circulation := myGui.Add("Hotkey", "x160 y632 w156 h21")
 
 Tab.UseTab(2)
