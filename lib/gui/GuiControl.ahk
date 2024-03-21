@@ -79,6 +79,10 @@ InitGui(app_config, potplayer_control){
     app_config.HotkeyAbFragment := GuiCtrlObj.Value
   }
 
+  ; 回显: ab片段检测延迟
+  Edit_ab_fragment_detection_delays.Value := app_config.AbFragmentDetectionDelays
+  Edit_ab_fragment_detection_delays.OnEvent("Change", (*) => app_config.AbFragmentDetectionDelays := Edit_ab_fragment_detection_delays.Value)
+
   ; 回显: 是否 循环ab片段
   CheckBox_loop_ab_fragment.Value := app_config.LoopAbFragment
   CheckBox_loop_ab_fragment.OnEvent("Click", (*) => app_config.LoopAbFragment := CheckBox_loop_ab_fragment.Value)
@@ -143,21 +147,4 @@ InitGui(app_config, potplayer_control){
     RefreshHotkey(app_config.HotkeyStop, GuiCtrlObj.Value, (*) => potplayer_control.Stop())
     app_config.HotkeyStop := GuiCtrlObj.Value
   }
-
-  ; =======界面设置=========
-  myGui.OnEvent('Close', (*) => myGui.Hide())
-  myGui.OnEvent('Escape', (*) => myGui.Hide())
-  myGui.Title := "markdown2potpalyer - 0.2.2"
-  
-  ; =======托盘菜单=========
-  myMenu := A_TrayMenu
-  
-  myMenu.Add("&Open", (*) => myGui.Show("w498 h660"))
-  myMenu.Default := "&Open"
-  myMenu.ClickCount := 2
-  
-  myMenu.Rename("&Open" , i18n_local.Gui_open)
-  myMenu.Rename("E&xit" , i18n_local.Gui_exit)
-  myMenu.Rename("&Pause Script" , i18n_local.Gui_pause_script)
-  myMenu.Rename("&Suspend Hotkeys" , i18n_local.Gui_suspend_hotkeys)
 }
