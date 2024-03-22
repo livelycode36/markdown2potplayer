@@ -121,7 +121,7 @@ ParseUrl(url){
 }
 
 ; 解析时间片段字符串
-ParseTimeFragmentString(media_time){
+TimeSpanToTime(media_time){
   ; 1. 解析时间戳
   time_separator := ["∞", "-"]
 
@@ -141,11 +141,11 @@ ParseTimeFragmentString(media_time){
 }
 
 ; 判断当前播放的视频，是否是跳转的视频
-IsSameVideo(media_path){
+IsSameVideo(jump_path){
     ; 判断网络视频
-    if(InStr(media_path,"http")){
-      potplayer_media_path := GetPotplayerpath()
-      if(InStr(media_path,potplayer_media_path)){
+    if(InStr(jump_path,"http")){
+      current_path := GetPotplayerpath()
+      if(InStr(jump_path,current_path)){
         return true
       }
 
@@ -153,14 +153,13 @@ IsSameVideo(media_path){
         A_Clipboard := ""
         potplayer.control.GetMediaPathToClipboard()
         ClipWait 1,0
-        media_path := A_Clipboard
-        return media_path
+        return A_Clipboard
       }
     }
     
     ; 判断本地视频
     potplayer_title := WinGetTitle("ahk_id " potplayer.control.GetOncePotplayerHwnd())
-    if (InStr(potplayer_title, GetNameForPath(media_path))) {
+    if (InStr(potplayer_title, GetNameForPath(jump_path))) {
       return true
     }
 }
@@ -207,7 +206,7 @@ JumpToSingleTimestamp(path, time){
 
 JumpToAbFragment(media_path, media_time_span){
   ; 1. 解析时间戳
-  potplayer.jump.time := ParseTimeFragmentString(media_time_span)
+  potplayer.jump.time := TimeSpanToTime(media_time_span)
   
   ; 2. 跳转
   CallPotplayer()
@@ -260,7 +259,7 @@ IsAbCirculation(time_span){
 JumpToAbCirculation(media_path, media_time_span){
   call_data := {}
   call_data.media_path := media_path
-  potplayer.jump.time := time := ParseTimeFragmentString(media_time_span)
+  potplayer.jump.time := time := TimeSpanToTime(media_time_span)
   
   ; 2. 跳转
   CallPotplayer()
