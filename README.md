@@ -123,6 +123,18 @@ image:{image}
 
 
 
+### 示例3
+
+**思源笔记的换行**请使用html的`<br/>`标签，参考：[#16](https://github.com/livelycode36/markdown2potplayer/issues/16)
+
+```html
+{title}<br/>
+{image}
+
+```
+
+
+
 
 ## 播放B站视频
 
