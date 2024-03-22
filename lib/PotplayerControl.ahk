@@ -18,12 +18,15 @@ class PotplayerControl {
         return PostMessage(msg_type,wParam,lParam,hwnd)
     }
 
-    GetPotplayerHwnd(){
-        Assert(!WinExist("ahk_exe " this._PotplayerProcessName), "PotPlayer is not running")
-
+    GetOncePotplayerHwnd(){
         if (this.hwnd != ""){
             return this.hwnd
         }
+        return this.GetPotplayerHwnd()
+    }
+
+    GetPotplayerHwnd(){
+        Assert(!WinExist("ahk_exe " this._PotplayerProcessName), "PotPlayer is not running")
 
         ids := WinGetList("ahk_exe " this._PotplayerProcessName)
         for id in ids{
