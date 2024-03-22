@@ -79,7 +79,8 @@ myGui.Add("Link", "x404 y664", "<a href=`"https://github.com/livelycode36/markdo
   ; =======界面设置=========
   myGui.OnEvent('Close', (*) => myGui.Hide())
   myGui.OnEvent('Escape', (*) => myGui.Hide())
-  myGui.Title := "markdown2potpalyer - 0.2.2"
+  version := "0.2.3"
+  myGui.Title := "markdown2potpalyer - " version
   
   ; =======托盘菜单=========
   myMenu := A_TrayMenu
