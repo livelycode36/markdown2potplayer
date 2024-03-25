@@ -30,7 +30,7 @@ Edit_markdown_template := myGui.Add("Edit", "x160 y184 w149 h48 +Multi", "`n视�
 myGui.Add("Text", "x40 y240 w77 h23", i18n_local.Gui_image_backlink_tempalte_name)
 Edit_image_template := myGui.Add("Edit", "x160 y239 w151 h66 +Multi", "`n图片:{image}`n视频:{title}`n")
 
-myGui.Add("Text", "x40 y310 w111 h23", i18n_local.Gui_send_image_delays)
+myGui.Add("Text", "x40 y310 w111", i18n_local.Gui_send_image_delays)
 Edit_send_image_delays := myGui.Add("Edit", "x160 y308 w120 h21")
 myGui.Add("Text", "x288 y310 w22 h23", "ms")
 
