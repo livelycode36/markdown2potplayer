@@ -373,7 +373,7 @@ SendImage2NoteApp(image){
     Send "{v}"
     Send "{LCtrl up}"
     ; 给Obsidian图片插件处理图片的时间
-    Sleep 1000
+    Sleep app_config.SendImageDelays
 }
 
 ; 【A-B片段、循环】
