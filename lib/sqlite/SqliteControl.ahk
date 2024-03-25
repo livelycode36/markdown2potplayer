@@ -25,6 +25,7 @@ InitConfigSqlite() {
 
   ; 初始化插入数据
   config_data := {
+    ; 其他微调设置
     path: "C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe",
     is_stop: "0",
     reduce_time: "0",
@@ -32,6 +33,8 @@ InitConfigSqlite() {
     url_protocol: "jv://open",
     path_is_encode: "0",
     remove_suffix_of_video_file: "1",
+    send_image_delays: "1000",
+    ; 回链的设置
     title: "{name} | {time}",
     template: 
       "`n"
@@ -43,6 +46,7 @@ InitConfigSqlite() {
       . "`n"
       . "视频:{title}"
       . "`n",
+    
     ; 回链快捷键相关
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",

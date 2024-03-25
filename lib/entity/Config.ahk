@@ -3,6 +3,7 @@
 #Include ../MyTool.ahk
 
 Class Config{
+    ; 其他微调设置
     PotplayerPath{
         get => GetKey("path")
         set => UpdateOrIntert("path",Value)
@@ -25,21 +26,6 @@ Class Config{
         get => GetKey("app_name")
         set => UpdateOrIntert("app_name",Value)
     }
-    
-    MarkdownTemplate{
-        get => GetKey("template")
-        set => UpdateOrIntert("template",Value)
-    }
-
-    MarkdownImageTemplate{
-        get => GetKey("image_template")
-        set => UpdateOrIntert("image_template",Value)
-    }
-
-    MarkdownTitle{
-        get => GetKey("title")
-        set => UpdateOrIntert("title",Value)
-    }
 
     MarkdownPathIsEncode{
         get => GetKey("path_is_encode")
@@ -55,7 +41,28 @@ Class Config{
         get => GetKey("url_protocol")
         set => UpdateOrIntert("url_protocol",Value)
     }
+
+    SendImageDelays{
+        get => GetKey("send_image_delays")
+        set => UpdateOrIntert("send_image_delays",Value)
+    }
     
+    ; ============回链的设置================
+    MarkdownTemplate{
+        get => GetKey("template")
+        set => UpdateOrIntert("template",Value)
+    }
+
+    MarkdownImageTemplate{
+        get => GetKey("image_template")
+        set => UpdateOrIntert("image_template",Value)
+    }
+
+    MarkdownTitle{
+        get => GetKey("title")
+        set => UpdateOrIntert("title",Value)
+    }
+
     ; ============回链快捷键相关================
     HotkeyBacklink{
         get => GetKey("hotkey_backlink")
@@ -83,6 +90,7 @@ Class Config{
         get => GetKey("hotkey_ab_circulation")
         set => UpdateOrIntert("hotkey_ab_circulation",Value)
     }
+
     ; ============映射Potplayer快捷键相关================
     HotkeyPreviousFrame{
         get => GetKey("hotkey_previous_frame")
