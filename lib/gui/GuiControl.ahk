@@ -16,10 +16,6 @@ InitGui(app_config, potplayer_control){
   }
   Button_potplayer.OnEvent("LoseFocus",(*) => app_config.PotplayerPath := edit_potplayer.Value)
   
-  ; 回显：减少的时间
-  Edit_reduce_time.Value := app_config.ReduceTime
-  Edit_reduce_time.OnEvent("LoseFocus",(*) => app_config.ReduceTime := Edit_reduce_time.Value)
-  
   ; 回显：笔记软件名称
   Edit_note_app_name.Value := app_config.NoteAppName
   Edit_note_app_name.OnEvent("LoseFocus",(*) => app_config.NoteAppName := Edit_note_app_name.Value)
@@ -35,26 +31,11 @@ InitGui(app_config, potplayer_control){
   ; 回显：图片回链模板
   Edit_image_template.Value := app_config.MarkdownImageTemplate
   Edit_image_template.OnEvent("LoseFocus",(*) => app_config.MarkdownImageTemplate := Edit_image_template.Value)
-  
-  ; 回显：是否暂停
-  CheckBox_is_stop.Value := app_config.IsStop
-  CheckBox_is_stop.OnEvent("Click", (*) => app_config.IsStop := CheckBox_is_stop.Value)
-  
-  CheckBox_remove_suffix_of_video_file.Value := app_config.MarkdownRemoveSuffixOfVideoFile
-  CheckBox_remove_suffix_of_video_file.OnEvent("Click", (*) => app_config.MarkdownRemoveSuffixOfVideoFile := CheckBox_remove_suffix_of_video_file.Value)
-  
-  ; 回显：路径是否编码
-  CheckBox_path_is_encode.Value := app_config.MarkdownPathIsEncode
-  checkBox_path_is_encode.OnEvent("Click", (*) => app_config.MarkdownPathIsEncode := checkBox_path_is_encode.Value)
-  
-  ; 回显: 是否开机启动
-  CheckBox_bootup.Value := get_boot_up()
-  CheckBox_bootup.OnEvent("Click", (*) => adaptive_bootup())
-  
-  ; 回显: Url协议
-  Edit_url_protocol.Value := app_config.UrlProtocol
-  Edit_url_protocol.OnEvent("LoseFocus",(*) => app_config.UrlProtocol := Edit_url_protocol.Value)
-  
+
+  ; 回显：发送图片延迟
+  Edit_send_image_delays.Value := app_config.SendImageDelays
+  Edit_send_image_delays.OnEvent("LoseFocus",(*) => app_config.SendImageDelays := Edit_send_image_delays.Value)
+
   ; 回显: 回链快捷键
   hk_backlink.Value := app_config.HotkeyBacklink
   hk_backlink.OnEvent("Change", Update_Hk_Backlink)
@@ -94,6 +75,30 @@ InitGui(app_config, potplayer_control){
     RefreshHotkey(app_config.HotkeyAbCirculation, GuiCtrlObj.Value, Potplayer2ObsidianFragment)
     app_config.HotkeyAbCirculation := GuiCtrlObj.Value
   }
+
+  ;=================其他设置=================
+  ; 回显: Url协议
+  Edit_url_protocol.Value := app_config.UrlProtocol
+  Edit_url_protocol.OnEvent("LoseFocus",(*) => app_config.UrlProtocol := Edit_url_protocol.Value)
+
+  ; 回显：减少的时间
+  Edit_reduce_time.Value := app_config.ReduceTime
+  Edit_reduce_time.OnEvent("LoseFocus",(*) => app_config.ReduceTime := Edit_reduce_time.Value)
+
+  ; 回显：是否暂停
+  CheckBox_is_stop.Value := app_config.IsStop
+  CheckBox_is_stop.OnEvent("Click", (*) => app_config.IsStop := CheckBox_is_stop.Value)
+  
+  CheckBox_remove_suffix_of_video_file.Value := app_config.MarkdownRemoveSuffixOfVideoFile
+  CheckBox_remove_suffix_of_video_file.OnEvent("Click", (*) => app_config.MarkdownRemoveSuffixOfVideoFile := CheckBox_remove_suffix_of_video_file.Value)
+  
+  ; 回显：路径是否编码
+  CheckBox_path_is_encode.Value := app_config.MarkdownPathIsEncode
+  checkBox_path_is_encode.OnEvent("Click", (*) => app_config.MarkdownPathIsEncode := checkBox_path_is_encode.Value)
+  
+  ; 回显: 是否开机启动
+  CheckBox_bootup.Value := get_boot_up()
+  CheckBox_bootup.OnEvent("Click", (*) => adaptive_bootup())
 
   ; ============映射Potplayer快捷键===========
   ; 回显: 快捷键 上一帧
