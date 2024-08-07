@@ -44,10 +44,11 @@
 
 ![image-20231229004156479](../assets/image-20231229004156479.png)
 
-There are `4` template items for **pasting templates**.
+There are `5` template items for **pasting templates**.
 
 **Note**: Not all positions can use these four items.
 
+- Subtitle Template: Only `{subtitle}` can be used.
 - Backlink Name: Only `{name}` and `{time}` can be used.
 - Backlink Template: Only `{title}` can be used.
 - Video Backlink Template: Only `{image}` and `{title}` can be used.
@@ -58,6 +59,9 @@ Explanation:
 - `{time}`: Represents the current playback time of the video, i.e., `[Video **Time**]`.
 - `{title}`: **Represents the entire Markdown format link**, e.g., `[google](https://www.google.com)`. This means that this is the Markdown format backlink for Potplayer.
 - `{image}`: Represents the **position for pasting the image**.
+- `{subtitle}`: represents the subtitles that can be copied from the video currently being played in PotPlayer.
+
+  `{subtitleTemplate}`: represents the subtitle template. **If there are no subtitles in the currently playing video, no data will be generated for the subtitle template**, meaning if there are no subtitles, `{subtitleTemplate}` will disappear.
 
 ### Example 1
 

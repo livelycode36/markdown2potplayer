@@ -1,13 +1,10 @@
+[README_EN](./doc/README_EN.md)
+
 # 使用说明
 
 效果：
 
 ![image-20240210193023137](./assets/image-20240210193023137.png)
-
-
-## For English Users
-
-[README_EN](./doc/README_EN.md)
 
 ## 1 前置准备
 
@@ -58,16 +55,16 @@
 
 ![image-20231229004156479](./assets/image-20231229004156479.png)
 
-此处是**粘贴模板**的修改，一共有`4`个模板项。
+此处修改的是**粘贴数据的模板**，一共有`6`个模板项。
 
 
 
-**注意**：这4项，不是哪个位置都可以用
+**注意**：这5项，不是哪个位置都可以用
 
-- 回链的名称：只能用`{name}`、`{time}`
-
-- 回链模板：只能用`{title}`
-- 视频回链模板：只能用`{image}`、`{title}`
+- 字幕模板：只能用`{subtitle}`
+- 回链的名称：只能用`{name}`、`{time}`、`{subtitleTemplate}`
+- 回链模板：只能用`{title}`、`{subtitleTemplate}`
+- 视频回链模板：只能用`{image}`、`{title}`、`{subtitleTemplate}`
 
 
 
@@ -75,8 +72,10 @@
 
 - `{name}`：代表视频的文件名称，也就是`[`视频**名称**`]`
 - `{time}`：代表当前播放视频的时间，也就是`[`视频**时间**`]`
-- `{title}`**代表整个markdown格式的链接**，例如`[百度](https://www.baidu.com)`也就是说，此处是markdown格式的potplayer回链
-- `{image}`代表**图片粘贴的位置**
+- `{title}`：**代表整个markdown格式的链接**，例如`[百度](https://www.baidu.com)`也就是说，此处是markdown格式的potplayer回链
+- `{image}`：代表**图片粘贴的位置**
+- `{subtitle}`: 代表的是当前在potplayer播放的视频中，能够复制的字幕
+- `{subtitleTemplate}`: 代表的是 字幕模板 ，**如果当前播放的视频中没有字幕时，字幕模板将不会有数据产生**，也就是说没有字幕，则`{subtitleTemplate}`消失
 
 
 
@@ -133,7 +132,8 @@ image:{image}
 
 ```
 
-
+### 示例4
+![](./assets/Untitled-2024-06-13-0228.png)
 
 
 ## 播放B站视频

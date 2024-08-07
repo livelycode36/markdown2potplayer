@@ -48,6 +48,11 @@ Class Config{
     }
     
     ; ============回链的设置================
+    SubtitleTemplate{
+        get => GetKey("subtitle_template")
+        set => UpdateOrIntert("subtitle_template",Value)
+    }
+    ; backlink_template
     MarkdownTemplate{
         get => GetKey("template")
         set => UpdateOrIntert("template",Value)

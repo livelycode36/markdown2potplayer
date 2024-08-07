@@ -46,6 +46,10 @@ class PotplayerControl {
     GetMediaTimestampToClipboard(){
         this.PostCommand(this.COMMAND_TYPE,10924,0)
     }
+
+    GetSubtitleToClipboard(){
+        this.PostCommand(this.COMMAND_TYPE,10624,0)
+    }
     SaveImageToClipboard(){
         this.SendCommand(this.COMMAND_TYPE,10223,0)
     }
@@ -124,6 +128,29 @@ class PotplayerControl {
             seconds := 0
         }
         this.SetMediaTimeMilliseconds(seconds*1000)
+    }
+
+    ForwardBySeconds(forward_seconds, potplayer_control){
+        try{
+            if(forward_seconds != 0){
+                potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds * 1000)))
+            }else{
+                potplayer_control.Forward()
+            }
+        }catch Error as err{
+            MsgBox "Forward Seconds and Backward Seconds It can't be empty"
+        }
+    }
+    BackwardBySeconds(backward_seconds, potplayer_control){
+        try{
+            if(backward_seconds != 0){
+                potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds * 1000)))
+            }else{
+                potplayer_control.Backward()
+            }
+        }catch Error as err{
+            MsgBox "Forward Seconds and Backward Seconds It can't be empty"
+        }
     }
 
     ; A-B 循环
