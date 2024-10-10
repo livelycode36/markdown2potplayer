@@ -13,13 +13,18 @@ TemplateConvertedToTemplates(template, delimiter) {
 
   while (true) {
     delimiterIndex := InStr(template, delimiter, false, searchIndex)
-    ; 情况2: 搜索结束
-    if (delimiterIndex = 0)
+    ; 情况1: 搜索结束
+    if (delimiterIndex = 0) {
+      if (searchIndex > 0 && searchIndex < StrLen(template)) {
+        result.Push(SubStr(template, searchIndex))
+      }
       break
-    ; 情况1: 搜索到 {image}本身
+    }
+    ; 情况2: 搜索到 identifier自身
     if (delimiterIndex == searchIndex) {
       result.Push(delimiter)
     } else {
+      ; 情况3：正常分割
       result.Push(SubStr(template, searchIndex, delimiterIndex - searchIndex))
       result.Push(delimiter)
     }
@@ -31,10 +36,10 @@ TemplateConvertedToTemplates(template, delimiter) {
   return result
 }
 
+; test
 ; testString := "{image}123123{image}{image}456456{image}"
 ; delimiterString := "{image}"
 ; result := TemplateConvertedToTemplates(testString, delimiterString)
 
-; ; 打印结果
 ; for index, item in result
 ;   MsgBox("Item " . index . ": " . item)

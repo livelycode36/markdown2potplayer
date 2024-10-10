@@ -1,4 +1,3 @@
-
 #Requires Autohotkey v2
 #SingleInstance force
 
@@ -21,10 +20,10 @@ if A_LineFile = A_ScriptFullPath && !A_IsCompiled {
 	myMenu.Default := "&Open"
 	myMenu.ClickCount := 2
 
-	myMenu.Rename("&Open" , "打开")
-	myMenu.Rename("E&xit" , "退出")
-	myMenu.Rename("&Pause Script" , "暂停脚本")
-	myMenu.Rename("&Suspend Hotkeys" , "暂停热键")
+	myMenu.Rename("&Open", "打开")
+	myMenu.Rename("E&xit", "退出")
+	myMenu.Rename("&Pause Script", "暂停脚本")
+	myMenu.Rename("&Suspend Hotkeys", "暂停热键")
 
 	myGui.Show("w485 h774")
 }
@@ -44,52 +43,56 @@ Constructor() {
 	Edit_note_app_name := myGui.Add("Edit", "x160 y48 w162 h63 +Multi", "Obsidian.exe`nTypora.exe")
 	myGui.Add("Text", "x160 y121 w123 h23", "多个笔记软件每行一个")
 
-	myGui.Add("Text", "x40 y140 w63 h23", "字幕模板")
-	Edit_note_app_name := myGui.Add("Edit", "x160 y140 w162 h30 +Multi", "字幕：`n{subtitle}")
+	myGui.Add("Text", "x40 y136 w63 h23", "字幕模板")
+	Edit_note_app_name := myGui.Add("Edit", "x160 y136 w162 h30 +Multi", "字幕：`n{subtitle}")
+	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x384 y136 w103 h23", "srt转回链md")
 
-	myGui.Add("Text", "x40 y208 w63 h23", "回链的名称")
-	Edit_title := myGui.Add("Edit", "x160 y208 w148 h23", "{name} | {time}")
+	myGui.Add("Text", "x40 y185 w63 h23", "回链的名称")
+	Edit_title := myGui.Add("Edit", "x160 y185 w148 h23", "{name} | {time}")
 
-	myGui.Add("Text", "x40 y240 w51 h23", "回链模板")
-	Edit_markdown_template := myGui.Add("Edit", "x160 y240 w149 h48 +Multi", "`n视频：{title}`n")
+	myGui.Add("Text", "x40 y223 w51 h23", "回链模板")
+	Edit_markdown_template := myGui.Add("Edit", "x160 y223 w149 h48 +Multi", "`n视频：{title}`n")
 
-	myGui.Add("Text", "x40 y295 w77 h23", "图片回链模板")
-	Edit_image_template := myGui.Add("Edit", "x160 y295 w151 h66 +Multi", "`n图片:{image}`n视频:{title}`n")
+	myGui.Add("Text", "x40 y284 w77 h23", "图片回链模板")
+	Edit_image_template := myGui.Add("Edit", "x160 y284 w151 h66 +Multi", "`n图片:{image}`n视频:{title}`n")
 
-	myGui.Add("Text", "x40 y365 w111", "图片粘贴延迟")
-	Edit6 := myGui.Add("Edit", "x160 y365 w120 h21")
-	myGui.Add("Text", "x288 y365 w22 h23", "ms")
+	myGui.Add("Text", "x40 y355 w111", "图片粘贴延迟")
+	Edit6 := myGui.Add("Edit", "x160 y355 w120 h21")
+	myGui.Add("Text", "x288 y355 w22 h23", "ms")
 
 	; =======快捷键=========
-	myGui.Add("Text", "x40 y399 w105 h23", "回链快捷键")
-	hk_backlink := myGui.Add("Hotkey", "x160 y399 w156 h21", "!g")
+	myGui.Add("Text", "x40 y387 w105 h23", "字幕快捷键")
+	hk_subtitle := myGui.Add("Hotkey", "x160 y387 w156 h21", "!t")
 
-	myGui.Add("Text", "x40 y431 w105 h32", "图片+回链快捷键")
-	hk_image_backlink := myGui.Add("Hotkey", "x160 y431 w156 h21", "^!g")
+	myGui.Add("Text", "x40 y416 w105 h23", "回链快捷键")
+	hk_backlink := myGui.Add("Hotkey", "x160 y416 w156 h21", "!g")
 
-	myGui.Add("Text", "x40 y455 w114 h23", "A-B片段快捷键")
-	hk_ab_fragment := myGui.Add("Hotkey", "x160 y455 w156 h21","F1")
+	myGui.Add("Text", "x40 y448 w105 h32", "图片+回链快捷键")
+	hk_image_backlink := myGui.Add("Hotkey", "x160 y448 w156 h21", "^!g")
 
-	myGui.Add("Text", "x40 y484 w98 h23", "A-B片段检测延迟")
-	Edit_ab_fragment_detection_delays := myGui.Add("Edit", "x160 y484 w120 h21","1000")
-	myGui.Add("Text", "x288 y484 w31 h23", "ms")
+	myGui.Add("Text", "x40 y472 w114 h23", "A-B片段快捷键")
+	hk_ab_fragment := myGui.Add("Hotkey", "x160 y472 w156 h21", "F1")
 
-	CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y501 w120 h23", "循环播放片段")
+	myGui.Add("Text", "x40 y501 w98 h23", "A-B片段检测延迟")
+	Edit_ab_fragment_detection_delays := myGui.Add("Edit", "x160 y501 w120 h21", "1000")
+	myGui.Add("Text", "x288 y501 w31 h23", "ms")
 
-	myGui.Add("Text", "x40 y530 w105 h12", "A-B循环快捷键")
-	hk_ab_circulation := myGui.Add("Hotkey", "x160 y530 w156 h21")
+	CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y518 w120 h23", "循环播放片段")
+
+	myGui.Add("Text", "x40 y547 w105 h12", "A-B循环快捷键")
+	hk_ab_circulation := myGui.Add("Hotkey", "x160 y547 w156 h21")
 
 	; =======其他设置=========
-	myGui.Add("Text", "x40 y565 w105 h36", "修改协议【谨慎】此项重启生效")
-	Edit_url_protocol := myGui.Add("Edit", "x160 y565 w156 h21", "jv://open")
+	myGui.Add("Text", "x40 y582 w105 h36", "修改协议【谨慎】此项重启生效")
+	Edit_url_protocol := myGui.Add("Edit", "x160 y582 w156 h21", "jv://open")
 
-	myGui.Add("Text", "x40 y601 w60 h23", "减少的时间")
-	Edit_reduce_time := myGui.Add("Edit", "x160 y601 w120 h21", "0")
+	myGui.Add("Text", "x40 y618 w60 h23", "减少的时间")
+	Edit_reduce_time := myGui.Add("Edit", "x160 y618 w120 h21", "0")
 
-	CheckBox_is_stop := myGui.Add("CheckBox", "x160 y625 w69 h23", "暂停")
-	CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y649 w150 h23", "本地视频移除文件后缀名")
-	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y673 w120 h23", "路径编码")
-	CheckBox_bootup := myGui.Add("CheckBox", "x160 y697 w120 h23", "开机启动")
+	CheckBox_is_stop := myGui.Add("CheckBox", "x160 y642 w69 h23", "暂停")
+	CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y666 w150 h23", "本地视频移除文件后缀名")
+	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y690 w120 h23", "路径编码")
+	CheckBox_bootup := myGui.Add("CheckBox", "x160 y714 w120 h23", "开机启动")
 
 	Tab.UseTab(2)
 	myGui.Add("Text", "x86 y24 w42 h23", "上一帧")
@@ -111,6 +114,6 @@ Constructor() {
 
 	Tab.UseTab()
 	myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">检查更新</a>")
-	
+
 	return myGui
 }

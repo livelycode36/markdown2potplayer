@@ -2,131 +2,135 @@
 #Include ../sqlite/SqliteControl.ahk
 #Include ../MyTool.ahk
 
-Class Config{
+Class Config {
     ; 其他微调设置
-    PotplayerPath{
+    PotplayerPath {
         get => GetKey("path")
-        set => UpdateOrIntert("path",Value)
+        set => UpdateOrIntert("path", Value)
     }
-    PotplayerProcessName{
+    PotplayerProcessName {
         get => GetNameForPath(this.PotplayerPath)
     }
 
-    IsStop{
+    IsStop {
         get => GetKey("is_stop")
-        set => UpdateOrIntert("is_stop",Value)
+        set => UpdateOrIntert("is_stop", Value)
     }
 
-    ReduceTime{
+    ReduceTime {
         get => GetKey("reduce_time")
-        set => UpdateOrIntert("reduce_time",Value)
+        set => UpdateOrIntert("reduce_time", Value)
     }
 
-    NoteAppName{
+    NoteAppName {
         get => GetKey("app_name")
-        set => UpdateOrIntert("app_name",Value)
+        set => UpdateOrIntert("app_name", Value)
     }
 
-    MarkdownPathIsEncode{
+    MarkdownPathIsEncode {
         get => GetKey("path_is_encode")
-        set => UpdateOrIntert("path_is_encode",Value)
+        set => UpdateOrIntert("path_is_encode", Value)
     }
 
-    MarkdownRemoveSuffixOfVideoFile{
+    MarkdownRemoveSuffixOfVideoFile {
         get => GetKey("remove_suffix_of_video_file")
-        set => UpdateOrIntert("remove_suffix_of_video_file",Value)
+        set => UpdateOrIntert("remove_suffix_of_video_file", Value)
     }
 
-    UrlProtocol{
+    UrlProtocol {
         get => GetKey("url_protocol")
-        set => UpdateOrIntert("url_protocol",Value)
+        set => UpdateOrIntert("url_protocol", Value)
     }
 
-    SendImageDelays{
+    SendImageDelays {
         get => GetKey("send_image_delays")
-        set => UpdateOrIntert("send_image_delays",Value)
+        set => UpdateOrIntert("send_image_delays", Value)
     }
-    
+
     ; ============回链的设置================
-    SubtitleTemplate{
+    SubtitleTemplate {
         get => GetKey("subtitle_template")
-        set => UpdateOrIntert("subtitle_template",Value)
+        set => UpdateOrIntert("subtitle_template", Value)
     }
     ; backlink_template
-    MarkdownTemplate{
+    MarkdownTemplate {
         get => GetKey("template")
-        set => UpdateOrIntert("template",Value)
+        set => UpdateOrIntert("template", Value)
     }
 
-    MarkdownImageTemplate{
+    MarkdownImageTemplate {
         get => GetKey("image_template")
-        set => UpdateOrIntert("image_template",Value)
+        set => UpdateOrIntert("image_template", Value)
     }
 
-    MarkdownTitle{
+    MarkdownTitle {
         get => GetKey("title")
-        set => UpdateOrIntert("title",Value)
+        set => UpdateOrIntert("title", Value)
     }
 
     ; ============回链快捷键相关================
-    HotkeyBacklink{
+    HotkeySubtitle {
+        get => GetKey("hotkey_subtitle")
+        set => UpdateOrIntert("hotkey_subtitle", Value)
+    }
+    HotkeyBacklink {
         get => GetKey("hotkey_backlink")
-        set => UpdateOrIntert("hotkey_backlink",Value)
+        set => UpdateOrIntert("hotkey_backlink", Value)
     }
-    HotkeyIamgeBacklink{
+    HotkeyIamgeBacklink {
         get => GetKey("hotkey_iamge_backlink")
-        set => UpdateOrIntert("hotkey_iamge_backlink",Value)
+        set => UpdateOrIntert("hotkey_iamge_backlink", Value)
     }
-    HotkeyAbFragment{
+    HotkeyAbFragment {
         get => GetKey("hotkey_ab_fragment")
-        set => UpdateOrIntert("hotkey_ab_fragment",Value)
+        set => UpdateOrIntert("hotkey_ab_fragment", Value)
     }
 
-    AbFragmentDetectionDelays{
+    AbFragmentDetectionDelays {
         get => GetKey("ab_fragment_detection_delays")
-        set => UpdateOrIntert("ab_fragment_detection_delays",Value)
+        set => UpdateOrIntert("ab_fragment_detection_delays", Value)
     }
 
-    LoopAbFragment{
+    LoopAbFragment {
         get => GetKey("loop_ab_fragment")
-        set => UpdateOrIntert("loop_ab_fragment",Value)
+        set => UpdateOrIntert("loop_ab_fragment", Value)
     }
-    HotkeyAbCirculation{
+    HotkeyAbCirculation {
         get => GetKey("hotkey_ab_circulation")
-        set => UpdateOrIntert("hotkey_ab_circulation",Value)
+        set => UpdateOrIntert("hotkey_ab_circulation", Value)
     }
 
     ; ============映射Potplayer快捷键相关================
-    HotkeyPreviousFrame{
+    HotkeyPreviousFrame {
         get => GetKey("hotkey_previous_frame")
-        set => UpdateOrIntert("hotkey_previous_frame",Value)
+        set => UpdateOrIntert("hotkey_previous_frame", Value)
     }
-    HotkeyNextFrame{
+    HotkeyNextFrame {
         get => GetKey("hotkey_next_frame")
-        set => UpdateOrIntert("hotkey_next_frame",Value)
+        set => UpdateOrIntert("hotkey_next_frame", Value)
     }
-    HotkeyForward{
+    HotkeyForward {
         get => GetKey("hotkey_forward")
-        set => UpdateOrIntert("hotkey_forward",Value)
+        set => UpdateOrIntert("hotkey_forward", Value)
     }
-    ForwardSeconds{
+    ForwardSeconds {
         get => GetKey("forward_seconds")
-        set => UpdateOrIntert("forward_seconds",Value)
+        set => UpdateOrIntert("forward_seconds", Value)
     }
-    HotkeyBackward{
+    HotkeyBackward {
         get => GetKey("hotkey_backward")
-        set => UpdateOrIntert("hotkey_backward",Value)
+        set => UpdateOrIntert("hotkey_backward", Value)
     }
-    BackwardSeconds{
+    BackwardSeconds {
         get => GetKey("backward_seconds")
-        set => UpdateOrIntert("backward_seconds",Value)
+        set => UpdateOrIntert("backward_seconds", Value)
     }
-    HotkeyPlayOrPause{
+    HotkeyPlayOrPause {
         get => GetKey("hotkey_play_or_pause")
-        set => UpdateOrIntert("hotkey_play_or_pause",Value)
+        set => UpdateOrIntert("hotkey_play_or_pause", Value)
     }
-    HotkeyStop{
+    HotkeyStop {
         get => GetKey("hotkey_stop")
-        set => UpdateOrIntert("hotkey_stop",Value)
+        set => UpdateOrIntert("hotkey_stop", Value)
     }
 }

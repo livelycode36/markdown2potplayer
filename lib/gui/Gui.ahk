@@ -53,52 +53,56 @@ Constructor(i18n_local) {
 	Edit_note_app_name := myGui.Add("Edit", "x160 y48 w162 h63 +Multi", "Obsidian.exe`nTypora.exe")
 	myGui.Add("Text", "x160 y121 w123 h23", i18n_local.Gui_note_names_tips)
 
-	myGui.Add("Text", "x40 y140 w63 h23", i18n_local.Gui_subtitle_template_name)
-	Edit_subtitle_template := myGui.Add("Edit", "x160 y140 w162 h30 +Multi", "字幕：`n{subtitle}")
+	myGui.Add("Text", "x40 y136 w63 h23", i18n_local.Gui_subtitle_template_name)
+	Edit_subtitle_template := myGui.Add("Edit", "x160 y136 w162 h30 +Multi", "字幕：`n{subtitle}")
+	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x384 y136 w103 h23", "srt转回链md")
 
-	myGui.Add("Text", "x40 y190 w63 h23", i18n_local.Gui_backlink_name)
-	Edit_title := myGui.Add("Edit", "x160 y190 w148 h23", "{name} | {time}")
+	myGui.Add("Text", "x40 y185 w63 h23", i18n_local.Gui_backlink_name)
+	Edit_title := myGui.Add("Edit", "x160 y185 w148 h23", "{name} | {time}")
 
-	myGui.Add("Text", "x40 y240 w51 h23", i18n_local.Gui_backlink_template)
-	Edit_markdown_template := myGui.Add("Edit", "x160 y240 w149 h48 +Multi", "`n视频：{title}`n")
+	myGui.Add("Text", "x40 y223 w51 h23", i18n_local.Gui_backlink_template)
+	Edit_markdown_template := myGui.Add("Edit", "x160 y223 w149 h48 +Multi", "`n视频：{title}`n")
 
-	myGui.Add("Text", "x40 y295 w77 h23", i18n_local.Gui_image_backlink_tempalte_name)
-	Edit_image_template := myGui.Add("Edit", "x160 y295 w151 h66 +Multi", "`n图片:{image}`n视频:{title}`n")
+	myGui.Add("Text", "x40 y284 w77 h23", i18n_local.Gui_image_backlink_tempalte_name)
+	Edit_image_template := myGui.Add("Edit", "x160 y284 w151 h66 +Multi", "`n图片:{image}`n视频:{title}`n")
 
-	myGui.Add("Text", "x40 y365 w111", i18n_local.Gui_send_image_delays)
-	Edit_send_image_delays := myGui.Add("Edit", "x160 y365 w120 h21")
-	myGui.Add("Text", "x288 y365 w22 h23", "ms")
+	myGui.Add("Text", "x40 y355 w111", i18n_local.Gui_send_image_delays)
+	Edit_send_image_delays := myGui.Add("Edit", "x160 y355 w120 h21")
+	myGui.Add("Text", "x288 y355 w22 h23", "ms")
 
 	; =======快捷键=========
-	myGui.Add("Text", "x40 y399 w105 h23", i18n_local.Gui_hotkey_backlink)
-	hk_backlink := myGui.Add("Hotkey", "x160 y399 w156 h21", "!g")
+	myGui.Add("Text", "x40 y387 w105 h23", i18n_local.Gui_hotkey_title)
+	hk_subtitle := myGui.Add("Hotkey", "x160 y387 w156 h21", "!t")
 
-	myGui.Add("Text", "x40 y431 w105 h32", i18n_local.Gui_hotkey_image_and_backlink)
-	hk_image_backlink := myGui.Add("Hotkey", "x160 y431 w156 h21", "^!g")
+	myGui.Add("Text", "x40 y416 w105 h23", i18n_local.Gui_hotkey_backlink)
+	hk_backlink := myGui.Add("Hotkey", "x160 y416 w156 h21", "!g")
 
-	myGui.Add("Text", "x40 y455 w114 h23", i18n_local.Gui_hotkey_ab_fragment)
-	hk_ab_fragment := myGui.Add("Hotkey", "x160 y455 w156 h21", "F1")
+	myGui.Add("Text", "x40 y448 w105 h32", i18n_local.Gui_hotkey_image_and_backlink)
+	hk_image_backlink := myGui.Add("Hotkey", "x160 y448 w156 h21", "^!g")
 
-	myGui.Add("Text", "x40 y484 w98 h23", i18n_local.Gui_hotkey_ab_fragment_detection_delays)
-	Edit_ab_fragment_detection_delays := myGui.Add("Edit", "x160 y484 w120 h21", "1000")
-	myGui.Add("Text", "x288 y484 w31 h23", "ms")
+	myGui.Add("Text", "x40 y472 w114 h23", i18n_local.Gui_hotkey_ab_fragment)
+	hk_ab_fragment := myGui.Add("Hotkey", "x160 y472 w156 h21", "F1")
 
-	CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y505 w120 h23", i18n_local.Gui_is_loop_ab_fragment)
+	myGui.Add("Text", "x40 y501 w98 h23", i18n_local.Gui_hotkey_ab_fragment_detection_delays)
+	Edit_ab_fragment_detection_delays := myGui.Add("Edit", "x160 y501 w120 h21", "1000")
+	myGui.Add("Text", "x288 y501 w31 h23", "ms")
 
-	myGui.Add("Text", "x40 y530 w105 h12", i18n_local.Gui_hotkey_ab_circulation)
-	hk_ab_circulation := myGui.Add("Hotkey", "x160 y530 w156 h21")
+	CheckBox_loop_ab_fragment := myGui.Add("CheckBox", "x160 y518 w120 h23", i18n_local.Gui_is_loop_ab_fragment)
+
+	myGui.Add("Text", "x40 y547 w105 h12", i18n_local.Gui_hotkey_ab_circulation)
+	hk_ab_circulation := myGui.Add("Hotkey", "x160 y547 w156 h21")
 
 	; =======其他设置=========
-	myGui.Add("Text", "x40 y565 w105 h36", i18n_local.Gui_edit_url_protocol)
-	Edit_url_protocol := myGui.Add("Edit", "x160 y565 w156 h21", "jv://open")
+	myGui.Add("Text", "x40 y582 w105 h36", i18n_local.Gui_edit_url_protocol)
+	Edit_url_protocol := myGui.Add("Edit", "x160 y582 w156 h21", "jv://open")
 
-	myGui.Add("Text", "x40 y601 w60 h23", i18n_local.Gui_reduce_time)
-	Edit_reduce_time := myGui.Add("Edit", "x160 y601 w120 h21", "0")
+	myGui.Add("Text", "x40 y618 w60 h23", i18n_local.Gui_reduce_time)
+	Edit_reduce_time := myGui.Add("Edit", "x160 y618 w120 h21", "0")
 
-	CheckBox_is_stop := myGui.Add("CheckBox", "x160 y625 w69 h23", i18n_local.Gui_is_stop)
-	CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y649 w150 h23", i18n_local.Gui_remove_suffix_of_video_file)
-	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y673 w120 h23", i18n_local.Gui_is_path_encode)
-	CheckBox_bootup := myGui.Add("CheckBox", "x160 y697 w120 h23", i18n_local.Gui_bootup)
+	CheckBox_is_stop := myGui.Add("CheckBox", "x160 y642 w69 h23", i18n_local.Gui_is_stop)
+	CheckBox_remove_suffix_of_video_file := myGui.Add("CheckBox", "x160 y666 w150 h23", i18n_local.Gui_remove_suffix_of_video_file)
+	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y690 w120 h23", i18n_local.Gui_is_path_encode)
+	CheckBox_bootup := myGui.Add("CheckBox", "x160 y714 w120 h23", i18n_local.Gui_bootup)
 
 	Tab.UseTab(2)
 	myGui.Add("Text", "x86 y24 w42 h23", i18n_local.Gui_hotkey_previous_frame)
@@ -126,6 +130,7 @@ Constructor(i18n_local) {
 	guiData.controls.Button_potplayer := Button_potplayer
 	guiData.controls.Edit_note_app_name := Edit_note_app_name
 	guiData.controls.Edit_subtitle_template := Edit_subtitle_template
+	guiData.controls.Button_srt_to_backlink_mdfile := Button_srt_to_backlink_mdfile
 	guiData.controls.Edit_title := Edit_title
 	guiData.controls.Edit_markdown_template := Edit_markdown_template
 	guiData.controls.Edit_image_template := Edit_image_template

@@ -5,8 +5,9 @@
 #Include "lib\ReduceTime.ahk"
 #Include "lib\TemplateParser.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
-#Include lib\socket\Socket.ahk
-
+#Include lib\srt.ahk
+#Include lib\Redner.ahk
+#Include lib\socket\SocketService.ahk
 #Include lib\entity\Config.ahk
 #Include lib\entity\MediaData.ahk
 #Include lib\PotplayerControl.ahk
@@ -31,54 +32,9 @@ main() {
     RegisterHotKey()
 }
 
-InitServer() {
-    sock := winsock("server", callback, "IPV4")
-    sock.Bind("0.0.0.0", 33660)
-    sock.Listen()
-
-    callback(sock, event, err) {
-        if (sock.name = "server") || instr(sock.name, "serving-") {
-            if (event = "accept") {
-                sock.Accept(&addr, &newsock) ; pass &addr param to extract addr of connected machine
-            } else if (event = "close") {
-            } else if (event = "read") {
-                If !(buf := sock.Recv()).size
-                    return
-
-                ; 返回html
-                html_body := '<h1>open potplayer...</h1>'
-                httpResponse := "HTTP/1.1 200 0K`r`n"
-                    . "Content-Type: text/html; charset=UTF-8`r`n"
-                    . "Content-Length: " StrLen(html_body) "`r`n"
-                    . "`r`n"
-                httpResponse := httpResponse html_body
-                strbuf := Buffer(StrPut(httpResponse, "UTF-8"))
-                StrPut(httpResponse, strbuf, "UTF-8")
-                sock.Send(strbuf)
-                sock.ConnectFinish()
-
-                ; 得到回链
-                request := strget(buf, "UTF-8")
-                RegExMatch(request, "GET /(.+?) HTTP/1.1", &match)
-                if (match == "") {
-                    return
-                }
-                backlink := match[1]
-                if (!InStr(backlink, "path=")) {
-                    return
-                }
-
-                ; 打开potplayer
-                Run(backlink)
-                ; 关闭 notion打开的网页标签
-                Send "^w"
-            }
-        }
-    }
-}
-
 RegisterHotKey() {
     HotIf CheckCurrentProgram
+    Hotkey(app_config.HotkeySubtitle " Up", Potplayer2Obsidian)
     Hotkey(app_config.HotkeyBacklink " Up", Potplayer2Obsidian)
     Hotkey(app_config.HotkeyIamgeBacklink " Up", Potplayer2ObsidianImage)
     Hotkey(app_config.HotkeyAbFragment " Up", Potplayer2ObsidianFragment)
@@ -134,55 +90,33 @@ CheckCurrentProgram(*) {
 }
 
 ; 【主逻辑】将Potplayer的播放链接粘贴到Obsidian中
-Potplayer2Obsidian(*) {
+Potplayer2Obsidian(hotkey) {
     ReleaseCommonUseKeyboard()
 
-    media_data := MediaData(GetMediaPath(), GetMediaTime(), GetMediaSubtitle())
+    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
 
-    rendered_backlink_template := RenderBacklinkTemplate(app_config.MarkdownTemplate, media_data)
+    if (hotkey == (app_config.HotkeySubtitle " Up")) {
+        backlink_template := app_config.SubtitleTemplate
+
+        rendered_template := RenderTemplate(app_config.SubtitleTemplate, media_data)
+    } else {
+        rendered_template := RenderTemplate(app_config.MarkdownTemplate, media_data)
+    }
 
     PauseMedia()
 
     if (IsWordProgram()) {
-        SendText2wordApp(rendered_backlink_template)
+        SendText2wordApp(rendered_template)
     } else {
-        SendText2NoteApp(rendered_backlink_template)
+        SendText2NoteApp(rendered_template)
     }
-}
-
-RenderSubtitleTemplate(target_string, media_data) {
-    if (InStr(target_string, "{subtitleTemplate}") != 0) {
-        if (media_data.Subtitle) {
-            rendered_subtitle_template := StrReplace(app_config.SubtitleTemplate, "{subtitle}", media_data.Subtitle)
-            target_string := StrReplace(target_string, "{subtitleTemplate}", rendered_subtitle_template)
-        } else {
-            target_string := StrReplace(target_string, "{subtitleTemplate}", "")
-        }
-    }
-    return target_string
-}
-
-RenderBacklinkTemplate(backlink_template, media_data) {
-    ; 目前可用的 4个 关键字 {name}、{time}、{subtitle}、{image}
-    ;      2个 模板 {title}、{subtitleTemplate}
-
-    ; 渲染 标题
-    if (InStr(backlink_template, "{title}") != 0) {
-        rendered_link := RenderTitle(app_config, media_data)
-        backlink_template := StrReplace(backlink_template, "{title}", rendered_link)
-    }
-
-    ; 2. 渲染 字幕模板
-    backlink_template := RenderSubtitleTemplate(backlink_template, media_data)
-
-    return backlink_template
 }
 
 ; 【主逻辑】粘贴图像
 Potplayer2ObsidianImage(*) {
     ReleaseCommonUseKeyboard()
 
-    media_data := MediaData(GetMediaPath(), GetMediaTime(), GetMediaSubtitle())
+    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
     image := SaveImage()
 
     PauseMedia()
@@ -201,14 +135,13 @@ GetMediaTime() {
     }
     return time
 }
+
+GetMediaTimeMilliseconds() {
+    return potplayer_control.GetMediaTimeMilliseconds()
+}
 GetMediaSubtitle() {
     subtitle_from_otplayer := ""
-    if (InStr(app_config.MarkdownTitle, "{subtitleTemplate}") != 0 ||
-        InStr(app_config.MarkdownTemplate, "{subtitleTemplate}") != 0
-        InStr(app_config.MarkdownImageTemplate, "{subtitleTemplate}") != 0) {
-
-        subtitle_from_otplayer := PressDownHotkey(potplayer_control.GetSubtitleToClipboard)
-    }
+    subtitle_from_otplayer := PressDownHotkey(potplayer_control.GetSubtitleToClipboard)
     return subtitle_from_otplayer
 }
 PressDownHotkey(operate_potplayer) {
@@ -236,19 +169,6 @@ PauseMedia() {
     }
 }
 
-RenderTitle(app_config, media_data) {
-    markdown_link_data := GenerateBackLinkData(app_config, media_data)
-    ; 生成word链接
-    if (IsWordProgram()) {
-        result_link := "<a href='http://127.0.0.1:33660/" markdown_link_data.link "'>" markdown_link_data.title "</a>"
-
-    } else {
-        ; 生成MarkDown链接
-        result_link := GenerateMarkdownLink(markdown_link_data.title, markdown_link_data.link)
-    }
-    return result_link
-}
-
 IsWordProgram() {
     target_program := SelectedNoteProgram(app_config.NoteAppName)
     return target_program == "wps.exe" || target_program == "winword.exe"
@@ -261,68 +181,12 @@ IsNotionProgram() {
         || target_program == "firefox.exe"
 }
 
-; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
-GenerateBackLinkData(app_config, media_data) {
-    ; B站的视频
-    if (InStr(media_data.Path, "https://www.bilibili.com/video/")) {
-        ; 正常播放的情况
-        name := StrReplace(GetPotplayerTitle(app_config.PotplayerProcessName), " - PotPlayer", "")
-
-        ; 视频没有播放，已经停止的情况，不是暂停是停止
-        if name == "PotPlayer" {
-            name := GetFileNameInPath(media_data.Path)
-        }
-    } else {
-        ; 本地视频
-        name := GetFileNameInPath(media_data.Path)
-    }
-    ; 渲染 title
-    title := app_config.MarkdownTitle
-    title := StrReplace(title, "{name}", name)
-    title := StrReplace(title, "{time}", media_data.Time)
-    ; 渲染 title 中的 字幕模板
-    title := RenderSubtitleTemplate(title, media_data)
-
-    markdown2potplayer_link := app_config.UrlProtocol "?path=" ProcessUrl(media_data.Path) "&time=" media_data.Time
-
-    result := {}
-    result.title := title
-    result.link := markdown2potplayer_link
-    return result
-}
-
-GenerateMarkdownLink(markdown_title, markdown_link) {
-    if (IsNotionProgram()) {
-        result := "[" markdown_title "](http://127.0.0.1:33660/" markdown_link ")"
-    } else {
-        result := "[" markdown_title "](" markdown_link ")"
-    }
-    return result
-}
-
 GetFileNameInPath(path) {
     name := GetNameForPath(path)
     if (app_config.MarkdownRemoveSuffixOfVideoFile != "0") {
         name := RemoveSuffix(name)
     }
     return name
-}
-
-RenderImage(markdown_image_template, media_data, image) {
-    identifier := "{image}"
-    image_templates := TemplateConvertedToTemplates(markdown_image_template, identifier)
-    For index, image_template in image_templates {
-        if (image_template == identifier) {
-            SendImage2NoteApp(image)
-        } else {
-            rendered_template := RenderBacklinkTemplate(image_template, media_data)
-            if (IsWordProgram() && InStr(image_template, "{title}")) {
-                SendText2wordApp(rendered_template)
-            } else {
-                SendText2NoteApp(rendered_template)
-            }
-        }
-    }
 }
 
 RemoveSuffix(name) {
@@ -337,13 +201,18 @@ RemoveSuffix(name) {
 ; 路径地址处理
 ProcessUrl(media_path) {
     ; 进行Url编码
-    if (app_config.MarkdownPathIsEncode != "0") {
-        media_path := UrlEncode(media_path)
-    } else {
+    if (app_config.MarkdownPathIsEncode != "0" ||
         ; 全系urlencode的bug：如果路径中存在"\["会让，在【ob的预览模式】下(回链会被ob自动urlencode)，"\"离奇消失变为,"["；例如：G:\BaiduSyncdisk\123\[456] 在bug下变为：G:\BaiduSyncdisk\123[456] <= 丢失了"\"
         ; 所以先将"\["替换为"%5C["（\的urlencode编码%5C）。变为：G:\BaiduSyncdisk\123%5C[456]
-        media_path := StrReplace(media_path, "\[", "%5C[")
-        media_path := StrReplace(media_path, "\!", "%5C!")
+        ; Typora能打开
+        InStr(media_path, "\[") != 0 ||
+        InStr(media_path, "\!") != 0) {
+        media_path := UrlEncode(media_path)
+    } else {
+        ; ob 能打开，Typora打不开
+        ; media_path := StrReplace(media_path, "\[", "%5C[")
+        ; media_path := StrReplace(media_path, "\!", "%5C!")
+
         ; 但是 obidian中的potplayer回链路径有空格，在obsidian的预览模式【无法渲染】，所以将空格进行Url编码
         media_path := StrReplace(media_path, " ", "%20")
     }
@@ -404,7 +273,7 @@ Potplayer2ObsidianFragment(HotkeyName) {
 
     if (PressHotkeyCount == 1) {
         ; 第一次按下快捷键，记录时间
-        fragment_start_time := GetMediaTime()
+        fragment_time_start := GetMediaTime()
         ; 通知用户
         ToolTip("已经记录起点的时间！请再次按下快捷键，记录终点的时间。按Esc取消")
         SetTimer () => ToolTip(), -2000
@@ -417,35 +286,35 @@ Potplayer2ObsidianFragment(HotkeyName) {
             Hotkey("Escape Up", "off")
         }
     } else if (PressHotkeyCount == 2) {
-        Assert(fragment_start_time == "", "未设置起点时间，无法生成该片段的链接！")
+        Assert(fragment_time_start == "", "未设置起点时间，无法生成该片段的链接！")
         ; 重置计数器
         PressHotkeyCount := 0
         Hotkey("Escape Up", "off")
 
         ; 第二次按下快捷键，记录时间
-        fragment_end_time := GetMediaTime()
+        fragment_time_end := GetMediaTime()
 
         ; 如果终点时间小于起点时间，就交换两个时间
-        if (TimestampToMilliSecond(fragment_end_time) < TimestampToMilliSecond(fragment_start_time)) {
-            temp := fragment_start_time
-            fragment_start_time := fragment_end_time
-            fragment_end_time := temp
+        if (TimestampToMilliSecond(fragment_time_end) < TimestampToMilliSecond(fragment_time_start)) {
+            temp := fragment_time_start
+            fragment_time_start := fragment_time_end
+            fragment_time_end := temp
             ; 释放内存
             temp := ""
         }
 
         media_path := GetMediaPath()
 
-        if fragment_start_time == fragment_end_time {
-            fragment_time := fragment_start_time
+        if fragment_time_start == fragment_time_end {
+            fragment_time := fragment_time_start
         } else if HotkeyName == app_config.HotkeyAbFragment " Up" {
-            fragment_time := fragment_start_time "-" fragment_end_time
+            fragment_time := fragment_time_start "-" fragment_time_end
         } else if HotkeyName == app_config.HotkeyAbCirculation " Up" {
-            fragment_time := fragment_start_time "∞" fragment_end_time
+            fragment_time := fragment_time_start "∞" fragment_time_end
         }
 
         ; 生成片段链接
-        markdown_link := RenderBacklinkTemplate(app_config.MarkdownTemplate, MediaData(media_path, fragment_time, GetMediaSubtitle()))
+        markdown_link := RenderTemplate(app_config.MarkdownTemplate, MediaData(media_path, fragment_time, ""))
         PauseMedia()
 
         ; 发送到笔记软件

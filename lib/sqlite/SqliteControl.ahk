@@ -37,22 +37,19 @@ InitConfigSqlite() {
     ; 字幕模板
     subtitle_template: "字幕：{subtitle}",
     ; 回链的设置
-    title: "{name} | {time} | {subtitleTemplate}",
+    title: "{name} | {time}",
     template:
       "`n"
       . "视频:{title}"
-      . "`n"
-      . "{subtitleTemplate}"
       . "`n",
     image_template:
       "`n"
       . "图片:{image}"
       . "`n"
       . "视频:{title}"
-      . "`n"
-      . "{subtitleTemplate}"
       . "`n",
     ; 回链快捷键相关
+    hotkey_subtitle: "!t",
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",
     hotkey_ab_fragment: "F1",
