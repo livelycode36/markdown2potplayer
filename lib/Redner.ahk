@@ -91,7 +91,8 @@ RenderSrtTemplate(backlink_template, media_data, subtitle_data) {
 ; // [用户想要的标题格式](mk-potplayer://open?path=1&aaa=123&time=456)
 RenderNameAndTimeAndLink(app_config, media_data) {
     ; B站的视频
-    if (InStr(media_data.Path, "https://www.bilibili.com/video/")) {
+    if (InStr(media_data.Path, "https://www.bilibili.com/video/") ||
+        InStr(media_data.Path, ".youtube.com/watch")) {
         ; 正常播放的情况
         name := StrReplace(GetPotplayerTitle(app_config.PotplayerProcessName), " - PotPlayer", "")
 
@@ -100,9 +101,9 @@ RenderNameAndTimeAndLink(app_config, media_data) {
             name := GetFileNameInPath(media_data.Path)
         }
     } else {
-        ; 本地视频
-        name := GetFileNameInPath(media_data.Path)
-    }
+       ; 本地视频
+       name := GetFileNameInPath(media_data.Path)
+     }
     ; 渲染 title
     title := app_config.MarkdownTitle
     title := StrReplace(title, "{name}", name)
