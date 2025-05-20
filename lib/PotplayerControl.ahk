@@ -6,36 +6,40 @@ class PotplayerControl {
         this._PotplayerProcessName := potplayer_process_name
         this.COMMAND_TYPE := 273
         this.REQUEST_TYPE := 1024
-        this.hwnd := ""
+        this.hwnd := this.GetPotplayerHwnd()
     }
 
     SendCommand(msg_type, wParam, lParam) {
         hwnd := this.GetPotplayerHwnd()
-        return SendMessage(msg_type, wParam, lParam, hwnd)
+        return SendMessage(msg_type, wParam, lParam, this.getHwnd())
     }
     PostCommand(msg_type, wParam, lParam) {
         hwnd := this.GetPotplayerHwnd()
-        return PostMessage(msg_type, wParam, lParam, hwnd)
+        return PostMessage(msg_type, wParam, lParam, this.getHwnd())
     }
 
-    GetOncePotplayerHwnd() {
-        if (this.hwnd != "") {
-            return this.hwnd
-        }
-        return this.GetPotplayerHwnd()
+    getHwnd() {
+      ; potplayer 运行中
+      if (this.hwnd > 0 && WinExist("ahk_id " this.hwnd)){
+        return this.hwnd
+      }
+
+      ; 上一次获取potplayer的hwnd失效了, 可能是potplayer关闭重开了, 再次获取hwnd
+      this.hwnd := this.GetPotplayerHwnd()
+      return this.hwnd
     }
 
     GetPotplayerHwnd() {
-        Assert(!WinExist("ahk_exe " this._PotplayerProcessName), "PotPlayer is not running")
-
-        ids := WinGetList("ahk_exe " this._PotplayerProcessName)
-        for id in ids {
-            title := WinGetTitle("ahk_id " id)
-            if (InStr(title, "PotPlayer")) {
-                this.hwnd := id
-                return id
-            }
-        }
+      ids := WinGetList("ahk_exe " this._PotplayerProcessName)
+      for id in ids {
+          title := WinGetTitle("ahk_id " id)
+          if (InStr(title, "PotPlayer")) {
+              this.hwnd := id
+              return id
+          }
+      }
+      ; potplayer 未运行
+      return 0
     }
 
     GetMediaPathToClipboard() {
