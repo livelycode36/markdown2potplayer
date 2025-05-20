@@ -56,15 +56,6 @@ InitConfigSqlite() {
     ab_fragment_detection_delays: "1000",
     loop_ab_fragment: "0",
     hotkey_ab_circulation: "F2",
-    ; 映射Potplayer快捷键相关
-    hotkey_previous_frame: "",
-    hotkey_next_frame: "",
-    hotkey_forward: "",
-    forward_seconds: "1",
-    hotkey_backward: "",
-    backward_seconds: "1",
-    hotkey_play_or_pause: "",
-    hotkey_stop: ""
   }
 
   DB := OpenLocalDB()

@@ -90,27 +90,27 @@ class PotplayerControl {
     }
 
     ; 速度
-    PreviousFrame() {
-        this.PostCommand(this.COMMAND_TYPE, 10242, 0)
-    }
-    NextFrame() {
-        this.PostCommand(this.COMMAND_TYPE, 10241, 0)
-    }
-    Forward() {
-        this.PostCommand(this.COMMAND_TYPE, 10060, 0)
-    }
-    Backward() {
-        this.PostCommand(this.COMMAND_TYPE, 10059, 0)
-    }
-    SpeedUp() {
-        this.PostCommand(this.COMMAND_TYPE, 10248, 0)
-    }
-    SpeedDown() {
-        this.PostCommand(this.COMMAND_TYPE, 10247, 0)
-    }
-    SpeedNormal() {
-        this.PostCommand(this.COMMAND_TYPE, 10246, 0)
-    }
+    ; PreviousFrame() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10242, 0)
+    ; }
+    ; NextFrame() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10241, 0)
+    ; }
+    ; Forward() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10060, 0)
+    ; }
+    ; Backward() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10059, 0)
+    ; }
+    ; SpeedUp() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10248, 0)
+    ; }
+    ; SpeedDown() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10247, 0)
+    ; }
+    ; SpeedNormal() {
+    ;     this.PostCommand(this.COMMAND_TYPE, 10246, 0)
+    ; }
 
     ; 时间
     GetMediaTimeMilliseconds() {

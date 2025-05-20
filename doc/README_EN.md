@@ -163,21 +163,12 @@ Note:
   - After disabling encoding, if the video path contains `spaces`, the backlink will **not render as a link** in Obsidian's preview mode, so spaces will also be forcibly encoded. To avoid this, you can remove spaces from the file name or use `-`, `_`, etc., as alternatives.
 - There may be other symbols with similar issues, but none have been discovered so far.
 
-## Potplayer Shortcut Control
-
-![image-20240206221936051](../assets/image-20240206221936051.png)
-
-Convenient for controlling Potplayer from the note-taking software.
-
-### **Forward and backward precise to the `second`**:
+## Why isn't the seek time always precise?
+This happens because Potplayer adjusts the timing based on keyframes after seeking, which may cause slight inaccuracies.
+You can fix this by disabling this feature in Potplayer's settings.
 
 ![img](../assets/ba221f08ea6fa4f224889186c12606d7.png)
 
-**Precise to 0.5 seconds, etc.**:
-
-![image-20240210192118660](../assets/image-20240210192118660.png)
-
-- Potplayer's minimum is 1 second, you can set it to 0.x seconds here.
 
 ## Custom Protocol
 

@@ -99,38 +99,4 @@ Class Config {
         get => GetKey("hotkey_ab_circulation")
         set => UpdateOrIntert("hotkey_ab_circulation", Value)
     }
-
-    ; ============映射Potplayer快捷键相关================
-    HotkeyPreviousFrame {
-        get => GetKey("hotkey_previous_frame")
-        set => UpdateOrIntert("hotkey_previous_frame", Value)
-    }
-    HotkeyNextFrame {
-        get => GetKey("hotkey_next_frame")
-        set => UpdateOrIntert("hotkey_next_frame", Value)
-    }
-    HotkeyForward {
-        get => GetKey("hotkey_forward")
-        set => UpdateOrIntert("hotkey_forward", Value)
-    }
-    ForwardSeconds {
-        get => GetKey("forward_seconds")
-        set => UpdateOrIntert("forward_seconds", Value)
-    }
-    HotkeyBackward {
-        get => GetKey("hotkey_backward")
-        set => UpdateOrIntert("hotkey_backward", Value)
-    }
-    BackwardSeconds {
-        get => GetKey("backward_seconds")
-        set => UpdateOrIntert("backward_seconds", Value)
-    }
-    HotkeyPlayOrPause {
-        get => GetKey("hotkey_play_or_pause")
-        set => UpdateOrIntert("hotkey_play_or_pause", Value)
-    }
-    HotkeyStop {
-        get => GetKey("hotkey_stop")
-        set => UpdateOrIntert("hotkey_stop", Value)
-    }
 }
