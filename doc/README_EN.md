@@ -169,7 +169,7 @@ Note:
 
 Convenient for controlling Potplayer from the note-taking software.
 
-**Forward and backward precise to the `second`**:
+### **Forward and backward precise to the `second`**:
 
 ![img](../assets/ba221f08ea6fa4f224889186c12606d7.png)
 
@@ -177,9 +177,7 @@ Convenient for controlling Potplayer from the note-taking software.
 
 ![image-20240210192118660](../assets/image-20240210192118660.png)
 
-- Since Potplayer's minimum is 1 second, you can set it to 0.x seconds here.
-- Note:
-  - Do not leave it blank. If you enter `0`, it will use the time span set by the user in Potplayer.
+- Potplayer's minimum is 1 second, you can set it to 0.x seconds here.
 
 ## Custom Protocol
 
