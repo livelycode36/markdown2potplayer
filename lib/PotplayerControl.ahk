@@ -133,35 +133,6 @@ class PotplayerControl {
         this.SetMediaTimeMilliseconds(seconds * 1000)
     }
 
-    ForwardBySeconds(forward_seconds, potplayer_control) {
-      if (forward_seconds == 0) {
-        potplayer_control.Forward()
-        return
-      }
-
-      if (forward_seconds > 99) {
-        ; 大于99秒，前进 毫秒数
-        potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds)))
-        return 
-      }
-
-      potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds * 1000)))
-    }
-    BackwardBySeconds(backward_seconds, potplayer_control) {
-      if (backward_seconds == 0) {
-          potplayer_control.Backward()
-          return
-      }
-
-      if (backward_seconds > 99) {
-        ; 大于99秒，后退 毫秒数
-        potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds)))
-        return
-      }
-
-      potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds * 1000)))
-    }
-
     ; A-B 循环
     SetStartPointOfTheABCycle() {
         this.PostCommand(this.COMMAND_TYPE, 10249, 0)
