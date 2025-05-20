@@ -158,7 +158,7 @@ IsSameVideo(jump_path) {
   }
 
   ; 判断本地视频
-  potplayer_title := WinGetTitle("ahk_id " potplayer.control.GetOncePotplayerHwnd())
+  potplayer_title := WinGetTitle("ahk_id " potplayer.control.getHwnd())
   video_name := GetNameForPath(UrlDecode(jump_path))
   if (InStr(potplayer_title, video_name)) {
     return true
@@ -297,7 +297,7 @@ WaitForPotplayerToFinishLoadingTheVideo(video_name) {
   WinWaitActive("ahk_exe " GetNameForPath(potplayer_path))
 
   while (true) {
-    if (WinGetTitle("ahk_id " potplayer.control.GetOncePotplayerHwnd()) != "PotPlayer"
+    if (WinGetTitle("ahk_id " potplayer.control.getHwnd()) != "PotPlayer"
     && potplayer.control.GetPlayStatus() == "Running") {
       break
     }
