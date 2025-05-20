@@ -60,9 +60,9 @@ InitConfigSqlite() {
     hotkey_previous_frame: "",
     hotkey_next_frame: "",
     hotkey_forward: "",
-    forward_seconds: "0",
+    forward_seconds: "1",
     hotkey_backward: "",
-    backward_seconds: "0",
+    backward_seconds: "1",
     hotkey_play_or_pause: "",
     hotkey_stop: ""
   }

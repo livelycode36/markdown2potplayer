@@ -182,7 +182,7 @@ image:{image}
 
 使用Potplayer自带的"AB区段循环"实现，默认**无限播放**
 
-**关闭AB区段循环**：Potplayer**默认快捷键`/`**
+**关闭AB区段循环**：Potplayer**默认快捷键`\`**
 
 
 

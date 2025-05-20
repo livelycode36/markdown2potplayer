@@ -130,26 +130,32 @@ class PotplayerControl {
     }
 
     ForwardBySeconds(forward_seconds, potplayer_control) {
-        try {
-            if (forward_seconds != 0) {
-                potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds * 1000)))
-            } else {
-                potplayer_control.Forward()
-            }
-        } catch Error as err {
-            MsgBox "Forward Seconds and Backward Seconds It can't be empty"
-        }
+      if (forward_seconds == 0) {
+        potplayer_control.Forward()
+        return
+      }
+
+      if (forward_seconds > 99) {
+        ; 大于99秒，前进 毫秒数
+        potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds)))
+        return 
+      }
+
+      potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() + (forward_seconds * 1000)))
     }
     BackwardBySeconds(backward_seconds, potplayer_control) {
-        try {
-            if (backward_seconds != 0) {
-                potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds * 1000)))
-            } else {
-                potplayer_control.Backward()
-            }
-        } catch Error as err {
-            MsgBox "Forward Seconds and Backward Seconds It can't be empty"
-        }
+      if (backward_seconds == 0) {
+          potplayer_control.Backward()
+          return
+      }
+
+      if (backward_seconds > 99) {
+        ; 大于99秒，后退 毫秒数
+        potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds)))
+        return
+      }
+
+      potplayer_control.SetMediaTimeMilliseconds(Integer(this.GetMediaTimeMilliseconds() - (backward_seconds * 1000)))
     }
 
     ; A-B 循环

@@ -140,7 +140,7 @@ After playing, if you don't want to pause at the end point, press `Esc` to cance
 
 Use Potplayer's built-in "AB Section Loop" for **infinite playback**.
 
-**To close the AB section loop**: Use Potplayer's **default hotkey `/`**.
+**To close the AB section loop**: Use Potplayer's **default hotkey `\`**.
 
 ## Video File Extensions
 
