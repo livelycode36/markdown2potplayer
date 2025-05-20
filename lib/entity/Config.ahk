@@ -6,7 +6,7 @@ Class Config {
     ; 其他微调设置
     PotplayerPath {
         get => GetKey("path")
-        set => UpdateOrIntert("path", Value)
+        set => UpdateOrInsertConfig("path", Value)
     }
     PotplayerProcessName {
         get => GetNameForPath(this.PotplayerPath)
@@ -14,89 +14,89 @@ Class Config {
 
     IsStop {
         get => GetKey("is_stop")
-        set => UpdateOrIntert("is_stop", Value)
+        set => UpdateOrInsertConfig("is_stop", Value)
     }
 
     ReduceTime {
         get => GetKey("reduce_time")
-        set => UpdateOrIntert("reduce_time", Value)
+        set => UpdateOrInsertConfig("reduce_time", Value)
     }
 
     NoteAppName {
         get => GetKey("app_name")
-        set => UpdateOrIntert("app_name", Value)
+        set => UpdateOrInsertConfig("app_name", Value)
     }
 
     MarkdownPathIsEncode {
         get => GetKey("path_is_encode")
-        set => UpdateOrIntert("path_is_encode", Value)
+        set => UpdateOrInsertConfig("path_is_encode", Value)
     }
 
     MarkdownRemoveSuffixOfVideoFile {
         get => GetKey("remove_suffix_of_video_file")
-        set => UpdateOrIntert("remove_suffix_of_video_file", Value)
+        set => UpdateOrInsertConfig("remove_suffix_of_video_file", Value)
     }
 
     UrlProtocol {
         get => GetKey("url_protocol")
-        set => UpdateOrIntert("url_protocol", Value)
+        set => UpdateOrInsertConfig("url_protocol", Value)
     }
 
     SendImageDelays {
         get => GetKey("send_image_delays")
-        set => UpdateOrIntert("send_image_delays", Value)
+        set => UpdateOrInsertConfig("send_image_delays", Value)
     }
 
     ; ============回链的设置================
     SubtitleTemplate {
         get => GetKey("subtitle_template")
-        set => UpdateOrIntert("subtitle_template", Value)
+        set => UpdateOrInsertConfig("subtitle_template", Value)
     }
     ; backlink_template
     MarkdownTemplate {
         get => GetKey("template")
-        set => UpdateOrIntert("template", Value)
+        set => UpdateOrInsertConfig("template", Value)
     }
 
     MarkdownImageTemplate {
         get => GetKey("image_template")
-        set => UpdateOrIntert("image_template", Value)
+        set => UpdateOrInsertConfig("image_template", Value)
     }
 
     MarkdownTitle {
         get => GetKey("title")
-        set => UpdateOrIntert("title", Value)
+        set => UpdateOrInsertConfig("title", Value)
     }
 
     ; ============回链快捷键相关================
     HotkeySubtitle {
         get => GetKey("hotkey_subtitle")
-        set => UpdateOrIntert("hotkey_subtitle", Value)
+        set => UpdateOrInsertConfig("hotkey_subtitle", Value)
     }
     HotkeyBacklink {
         get => GetKey("hotkey_backlink")
-        set => UpdateOrIntert("hotkey_backlink", Value)
+        set => UpdateOrInsertConfig("hotkey_backlink", Value)
     }
     HotkeyIamgeBacklink {
         get => GetKey("hotkey_iamge_backlink")
-        set => UpdateOrIntert("hotkey_iamge_backlink", Value)
+        set => UpdateOrInsertConfig("hotkey_iamge_backlink", Value)
     }
     HotkeyAbFragment {
         get => GetKey("hotkey_ab_fragment")
-        set => UpdateOrIntert("hotkey_ab_fragment", Value)
+        set => UpdateOrInsertConfig("hotkey_ab_fragment", Value)
     }
 
     AbFragmentDetectionDelays {
         get => GetKey("ab_fragment_detection_delays")
-        set => UpdateOrIntert("ab_fragment_detection_delays", Value)
+        set => UpdateOrInsertConfig("ab_fragment_detection_delays", Value)
     }
 
     LoopAbFragment {
         get => GetKey("loop_ab_fragment")
-        set => UpdateOrIntert("loop_ab_fragment", Value)
+        set => UpdateOrInsertConfig("loop_ab_fragment", Value)
     }
     HotkeyAbCirculation {
         get => GetKey("hotkey_ab_circulation")
-        set => UpdateOrIntert("hotkey_ab_circulation", Value)
+        set => UpdateOrInsertConfig("hotkey_ab_circulation", Value)
     }
 }

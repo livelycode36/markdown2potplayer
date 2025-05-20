@@ -19,7 +19,7 @@ main() {
     global
     TraySetIcon("lib/icon.png", 1, false)
 
-    InitConfigSqlite()
+    InitSqlite()
     app_config := Config()
     potplayer_control := PotplayerControl(app_config.PotplayerProcessName)
 

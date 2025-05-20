@@ -3,25 +3,16 @@
 
 ; 数据库文件路径
 db_file_path := "config.db"
-table_name := "config"
+table_name_config := "config"
 
-InitConfigSqlite() {
-  if !TableExist(table_name) {
-    DB := OpenLocalDB()
-    ; 创建 config 表
-    SQL_CreateTable :=
-      "CREATE TABLE IF NOT EXISTS " table_name " ("
-      . " key TEXT PRIMARY KEY,"
-      . " value TEXT"
-      . " );"
+InitSqlite() {
+  initTableConfig()
+}
 
-    if !DB.Exec(SQL_CreateTable) {
-      MsgBox("无法创建表 " table_name "`n错误信息: " DB.ErrorMsg)
-      DB.CloseDB()
-      ExitApp
-    }
-    DB.CloseDB()
-  }
+initTableConfig(){
+  ; 定义 config 表的列
+  config_columns := "key TEXT PRIMARY KEY, value TEXT"
+  EnsureTableExists(table_name_config, config_columns)
 
   ; 初始化插入数据
   config_data := {
@@ -65,7 +56,35 @@ InitConfigSqlite() {
       continue
     }
 
-    UpdateOrIntert(key, value)
+    UpdateOrInsertConfig(key, value)
+  }
+}
+
+UpdateOrInsertConfig(key, value) {
+  DB := OpenLocalDB()
+
+  ; 插入或更新配置项
+  SQL_InsertOrUpdate := "INSERT OR REPLACE INTO " table_name_config " (key, value) VALUES ('" key "', '" value "');"
+  if !DB.Exec(SQL_InsertOrUpdate) {
+    MsgBox("无法插入或更新配置项 '" table_name_config "'`n错误信息: " . DB.ErrorMsg)
+    DB.CloseDB()
+    ExitApp
+  }
+  DB.CloseDB()
+}
+
+EnsureTableExists(tableName, tableColumns) {
+  if !TableExist(tableName) {
+    DB := OpenLocalDB()
+    ; 创建表
+    SQL_CreateTable := "CREATE TABLE IF NOT EXISTS " tableName " (" tableColumns ");"
+
+    if !DB.Exec(SQL_CreateTable) {
+      MsgBox("无法创建表 " tableName "`n错误信息: " DB.ErrorMsg)
+      DB.CloseDB()
+      ExitApp
+    }
+    DB.CloseDB()
   }
 }
 
@@ -107,10 +126,10 @@ TableExist(table_name) {
 CheckKeyExist(key) {
   DB := OpenLocalDB()
 
-  SQL_Check_Key := "SELECT COUNT(*) FROM " table_name " WHERE key = '" key "'"
+  SQL_Check_Key := "SELECT COUNT(*) FROM " table_name_config " WHERE key = '" key "'"
   Result := ""
   If !DB.GetTable(SQL_Check_Key, &Result) {
-    MsgBox "打开数据表" table_name "失败！"
+    MsgBox "打开数据表" table_name_config "失败！"
     ExitApp
   }
 
@@ -128,7 +147,7 @@ GetKey(key) {
   DB := OpenLocalDB()
 
   ; 读取 key 为 'app_name' 的值
-  SQL_SelectValue := "SELECT value FROM " table_name " WHERE key = '" key "';"
+  SQL_SelectValue := "SELECT value FROM " table_name_config " WHERE key = '" key "';"
   Result := ""
   if !DB.GetTable(SQL_SelectValue, &Result) {
     MsgBox("无法读取配置项 '" key "'`n错误信息: " . DB.ErrorMsg)
@@ -145,18 +164,5 @@ GetKey(key) {
     return false
   }
 
-  DB.CloseDB()
-}
-
-UpdateOrIntert(key, value) {
-  DB := OpenLocalDB()
-
-  ; 插入或更新配置项
-  SQL_InsertOrUpdate := "INSERT OR REPLACE INTO " table_name " (key, value) VALUES ('" key "', '" value "');"
-  if !DB.Exec(SQL_InsertOrUpdate) {
-    MsgBox("无法插入或更新配置项 '" table_name "'`n错误信息: " . DB.ErrorMsg)
-    DB.CloseDB()
-    ExitApp
-  }
   DB.CloseDB()
 }
