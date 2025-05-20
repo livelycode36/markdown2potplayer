@@ -49,24 +49,6 @@ RegisterHotKey() {
   if (app_config.HotkeyAbCirculation!= ""){
     Hotkey(app_config.HotkeyAbCirculation " Up", Potplayer2ObsidianFragment)
   }
-  if (app_config.HotkeyPreviousFrame != ""){
-    Hotkey(app_config.HotkeyPreviousFrame " Up", potplayer_control.PreviousFrame)
-  }
-  if (app_config.HotkeyNextFrame != ""){
-    Hotkey(app_config.HotkeyNextFrame " Up", potplayer_control.NextFrame)
-  }
-  if (app_config.HotkeyForward != ""){
-    Hotkey(app_config.HotkeyForward " Up", (*) => potplayer_control.ForwardBySeconds(app_config.ForwardSeconds))
-  }
-  if (app_config.HotkeyBackward != ""){
-    Hotkey(app_config.HotkeyBackward " Up", (*) => potplayer_control.BackwardBySeconds(app_config.BackwardSeconds))
-  }
-  if (app_config.HotkeyPlayOrPause != ""){
-    Hotkey(app_config.HotkeyPlayOrPause " Up", potplayer_control.PlayOrPause)
-  }
-  if (app_config.HotkeyStop != ""){
-    Hotkey(app_config.HotkeyStop " Up", potplayer_control.Stop)
-  }
 }
 
 RefreshHotkey(old_hotkey, new_hotkey, callback) {

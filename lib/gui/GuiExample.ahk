@@ -11,7 +11,7 @@ if A_LineFile = A_ScriptFullPath && !A_IsCompiled {
 	; =======界面设置=========
 	myGui.OnEvent('Close', (*) => myGui.Hide())
 	myGui.OnEvent('Escape', (*) => myGui.Hide())
-	version := "0.2.5"
+	version := "0.2.6"
 	myGui.Title := "markdown2potpalyer - " version
 
 	; =======托盘菜单=========
@@ -31,7 +31,8 @@ if A_LineFile = A_ScriptFullPath && !A_IsCompiled {
 Constructor() {
 	myGui := Gui()
 	myGui.BackColor := "0xffffff"
-	Tab := myGui.Add("Tab3", "x0 y0 w493 h745", ["回链设置", "Potplayer控制"])
+	; Tab := myGui.Add("Tab3", "x0 y0 w493 h745", ["回链设置", "Potplayer控制"])
+	Tab := myGui.Add("Tab3", "x0 y0 w493 h745", ["回链设置"])
 	Tab.UseTab(1)
 
 	myGui.Add("Text", "x40 y24 w132 h23", "potplayer播放器的路径")
@@ -94,23 +95,23 @@ Constructor() {
 	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y690 w120 h23", "路径编码")
 	CheckBox_bootup := myGui.Add("CheckBox", "x160 y714 w120 h23", "开机启动")
 
-	Tab.UseTab(2)
-	myGui.Add("Text", "x86 y24 w42 h23", "上一帧")
-	hk_previous_frame := myGui.Add("Hotkey", "x152 y24 w120 h21")
-	myGui.Add("Text", "x86 y48 w38 h23", "下一帧")
-	hk_next_frame := myGui.Add("Hotkey", "x152 y48 w120 h21")
-	myGui.Add("Text", "x86 y80", "快进")
-	hk_forward := myGui.Add("Hotkey", "x152 y80 w120 h21")
-	Edit_forward_seconds := myGui.Add("Edit", "x280 y80 w37 h21")
-	myGui.Add("Text", "x322 y80 w17", "秒")
-	myGui.Add("Text", "x86 y104", "快退")
-	hk_backward := myGui.Add("Hotkey", "x152 y104 w120 h21")
-	Edit_backward_seconds := myGui.Add("Edit", "x281 y104 w36 h21")
-	myGui.Add("Text", "x322 y102", "秒")
-	myGui.Add("Text", "x86 y133", "播放/暂停")
-	hk_play_or_pause := myGui.Add("Hotkey", "x152 y129 w120 h21")
-	myGui.Add("Text", "x86 y153 w24 h21", "停止")
-	hk_stop := myGui.Add("Hotkey", "x152 y153 w120 h21")
+	; Tab.UseTab(2)
+	; myGui.Add("Text", "x86 y24 w42 h23", "上一帧")
+	; hk_previous_frame := myGui.Add("Hotkey", "x152 y24 w120 h21")
+	; myGui.Add("Text", "x86 y48 w38 h23", "下一帧")
+	; hk_next_frame := myGui.Add("Hotkey", "x152 y48 w120 h21")
+	; myGui.Add("Text", "x86 y80", "快进")
+	; hk_forward := myGui.Add("Hotkey", "x152 y80 w120 h21")
+	; Edit_forward_seconds := myGui.Add("Edit", "x280 y80 w37 h21")
+	; myGui.Add("Text", "x322 y80 w17", "秒")
+	; myGui.Add("Text", "x86 y104", "快退")
+	; hk_backward := myGui.Add("Hotkey", "x152 y104 w120 h21")
+	; Edit_backward_seconds := myGui.Add("Edit", "x281 y104 w36 h21")
+	; myGui.Add("Text", "x322 y102", "秒")
+	; myGui.Add("Text", "x86 y133", "播放/暂停")
+	; hk_play_or_pause := myGui.Add("Hotkey", "x152 y129 w120 h21")
+	; myGui.Add("Text", "x86 y153 w24 h21", "停止")
+	; hk_stop := myGui.Add("Hotkey", "x152 y153 w120 h21")
 
 	Tab.UseTab()
 	myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">检查更新</a>")

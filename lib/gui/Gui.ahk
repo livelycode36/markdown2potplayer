@@ -13,7 +13,7 @@ creationGui() {
 	; =======界面设置=========
 	guiData.myGui.OnEvent('Close', (*) => guiData.myGui.Hide())
 	guiData.myGui.OnEvent('Escape', (*) => guiData.myGui.Hide())
-	version := "0.2.5"
+	version := "0.2.6"
 	guiData.myGui.Title := "markdown2potpalyer - " version
 
 	; =======托盘菜单=========
@@ -41,7 +41,7 @@ Constructor(i18n_local) {
 
 	myGui := Gui()
 	myGui.BackColor := "0xffffff"
-	Tab := myGui.Add("Tab3", "x0 y0 w493 h745", [i18n_local.Gui_Tab_backlink_setting, i18n_local.Gui_Tab_potplayer_hotkey_setting])
+	Tab := myGui.Add("Tab3", "x0 y0 w493 h745", [i18n_local.Gui_Tab_backlink_setting])
 	Tab.UseTab(1)
 
 	myGui.Add("Text", "x40 y24 w132 h23", i18n_local.Gui_potplayer_path)
@@ -104,24 +104,6 @@ Constructor(i18n_local) {
 	CheckBox_path_is_encode := myGui.Add("CheckBox", "x160 y690 w120 h23", i18n_local.Gui_is_path_encode)
 	CheckBox_bootup := myGui.Add("CheckBox", "x160 y714 w120 h23", i18n_local.Gui_bootup)
 
-	Tab.UseTab(2)
-	myGui.Add("Text", "x86 y24 w42 h23", i18n_local.Gui_hotkey_previous_frame)
-	hk_previous_frame := myGui.Add("Hotkey", "x152 y24 w120 h21")
-	myGui.Add("Text", "x86 y48 w38 h23", i18n_local.Gui_hotkey_next_frame)
-	hk_next_frame := myGui.Add("Hotkey", "x152 y48 w120 h21")
-	myGui.Add("Text", "x86 y80", i18n_local.Gui_hotkey_forward)
-	hk_forward := myGui.Add("Hotkey", "x152 y80 w120 h21")
-	Edit_forward_seconds := myGui.Add("Edit", "x280 y80 w37 h21")
-	myGui.Add("Text", "x322 y80 w17", i18n_local.Gui_second)
-	myGui.Add("Text", "x86 y104", i18n_local.Gui_hotkey_backward)
-	hk_backward := myGui.Add("Hotkey", "x152 y104 w120 h21")
-	Edit_backward_seconds := myGui.Add("Edit", "x281 y104 w36 h21")
-	myGui.Add("Text", "x322 y102", i18n_local.Gui_second)
-	myGui.Add("Text", "x86 y133", i18n_local.Gui_hotkey_play_or_pause)
-	hk_play_or_pause := myGui.Add("Hotkey", "x152 y129 w120 h21")
-	myGui.Add("Text", "x86 y153 w24 h21", i18n_local.Gui_hotkey_stop)
-	hk_stop := myGui.Add("Hotkey", "x152 y153 w120 h21")
-
 	Tab.UseTab()
 	myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">" i18n_local.Gui_check_update "</a>")
 
@@ -147,14 +129,6 @@ Constructor(i18n_local) {
 	guiData.controls.CheckBox_remove_suffix_of_video_file := CheckBox_remove_suffix_of_video_file
 	guiData.controls.CheckBox_path_is_encode := CheckBox_path_is_encode
 	guiData.controls.CheckBox_bootup := CheckBox_bootup
-	guiData.controls.hk_previous_frame := hk_previous_frame
-	guiData.controls.hk_next_frame := hk_next_frame
-	guiData.controls.hk_forward := hk_forward
-	guiData.controls.Edit_forward_seconds := Edit_forward_seconds
-	guiData.controls.hk_backward := hk_backward
-	guiData.controls.Edit_backward_seconds := Edit_backward_seconds
-	guiData.controls.hk_play_or_pause := hk_play_or_pause
-	guiData.controls.hk_stop := hk_stop
 
 	return guiData
 }
