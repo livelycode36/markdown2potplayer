@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2.0
+#Include ./NetRequest.ahk
 
 log_toggle := false
 
@@ -149,5 +150,32 @@ Assert(condition, exception_message) {
   if (condition) {
     MsgBox exception_message
     Exit
+  }
+}
+
+getLatestVersionFromGithub() {
+  try {
+    myRequest := NetRequest()
+
+    myRequest.apiSetup("https://api.github.com", "repos/livelycode36/markdown2potplayer/releases/latest")
+
+    response := myRequest.apiRequest("GET")
+
+    latest_tag := "N/A"
+    if IsObject(response) {
+      ; Check if tag_name exists
+      if response.Has("tag_name") {
+        latest_tag := response["tag_name"]
+        return latest_tag
+      } else {
+        return latest_tag
+      }
+    } else {
+      ; MsgBox("API Request Failed. Unknown error.", "Error", 16)
+      return latest_tag
+    }
+  } catch {
+    ; MsgBox("API Request Failed. Unknown error.", "Error", 16)
+    return latest_tag
   }
 }

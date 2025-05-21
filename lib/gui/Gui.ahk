@@ -1,5 +1,6 @@
 #Requires Autohotkey v2
 #Include i18n\I18n.ahk
+#Include ..\MyTool.ahk
 
 ;AutoGUI creator: Alguimist autohotkey.com/boards/viewtopic.php?f=64&t=89901
 ;AHKv2converter creator: github.com/mmikeww/AHK-v2-script-converter
@@ -13,13 +14,12 @@ creationGui() {
 	; =======界面设置=========
 	guiData.myGui.OnEvent('Close', (*) => guiData.myGui.Hide())
 	guiData.myGui.OnEvent('Escape', (*) => guiData.myGui.Hide())
-	version := "0.2.6"
-	guiData.myGui.Title := "markdown2potpalyer - " version
+	guiData.myGui.Title := "markdown2potpalyer"
 
 	; =======托盘菜单=========
 	myMenu := A_TrayMenu
 
-	window_size := "w477 h780"
+	window_size := "w477 h788"
 
 	myMenu.Add("&Open", (*) => guiData.myGui.Show(window_size))
 	myMenu.Default := "&Open"
@@ -53,9 +53,9 @@ Constructor(i18n_local) {
 	Edit_note_app_name := myGui.Add("Edit", "x160 y48 w162 h63 +Multi", "Obsidian.exe`nTypora.exe")
 	myGui.Add("Text", "x160 y121 w123 h23", i18n_local.Gui_note_names_tips)
 
-	myGui.Add("Text", "x40 y136 w63 h23", i18n_local.Gui_subtitle_template_name)
-	Edit_subtitle_template := myGui.Add("Edit", "x160 y136 w162 h30 +Multi", "字幕：`n{subtitle}")
-	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x384 y136 w103 h23", "srt转回链md")
+	myGui.Add("Text", "x40 y150 w63 h23", i18n_local.Gui_subtitle_template_name)
+	Edit_subtitle_template := myGui.Add("Edit", "x160 y150 w162 h30 +Multi", "字幕：`n{subtitle}")
+	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x384 y150 w103 h23", i18n_local.Gui_srt_to_backlink)
 
 	myGui.Add("Text", "x40 y185 w63 h23", i18n_local.Gui_backlink_name)
 	Edit_title := myGui.Add("Edit", "x160 y185 w148 h23", "{name} | {time}")
@@ -105,7 +105,9 @@ Constructor(i18n_local) {
 	CheckBox_bootup := myGui.Add("CheckBox", "x160 y714 w120 h23", i18n_local.Gui_bootup)
 
 	Tab.UseTab()
-	myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">" i18n_local.Gui_check_update "</a>")
+  myGui.Add("Text", "x332 y755 w150 h12", i18n_local.Gui_current_version ":0.2.6")
+  myGui.Add("Link", "x332 y770 w150 h12", i18n_local.Gui_latest_version ":<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">" getLatestVersionFromGithub() "</a>")
+	; myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">去下载</a>")
 
 	guiData.myGui := myGui
 	guiData.controls.Edit_potplayer := Edit_potplayer

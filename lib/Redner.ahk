@@ -113,9 +113,10 @@ RenderNameAndTimeAndLink(app_config, media_data) {
 
     markdown2potplayer_link := GenerateMarkdownLink2PotplayerLink(app_config, media_data)
 
-    result := {}
-    result.title := title
-    result.link := markdown2potplayer_link
+    result := {
+      title: title,
+      link: markdown2potplayer_link
+    }
     return result
 }
 
