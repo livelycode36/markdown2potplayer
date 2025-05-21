@@ -73,6 +73,10 @@ Class Config {
         get => GetKey("hotkey_subtitle")
         set => UpdateOrInsertConfig("hotkey_subtitle", Value)
     }
+    HotkeyUserNote  {
+      get => GetKey("hotkey_user_note")
+      set => UpdateOrInsertConfig("hotkey_user_note", Value)
+    }
     HotkeyBacklink {
         get => GetKey("hotkey_backlink")
         set => UpdateOrInsertConfig("hotkey_backlink", Value)

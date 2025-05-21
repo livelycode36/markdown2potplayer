@@ -41,6 +41,7 @@ initTableConfig(){
       . "`n",
     ; 回链快捷键相关
     hotkey_subtitle: "!t",
+    hotkey_user_note: "!n",
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",
     hotkey_ab_fragment: "F1",

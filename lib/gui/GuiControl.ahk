@@ -97,6 +97,14 @@ InitGui(app_config, potplayer_control) {
     app_config.HotkeyBacklink := GuiCtrlObj.Value
   }
 
+  ; 回显: 用户笔记快捷键
+  guiData.controls.hk_user_note.Value := app_config.HotkeyUserNote
+  guiData.controls.hk_user_note.OnEvent("Change", Update_Hk_UserNote)
+  Update_Hk_UserNote(GuiCtrlObj, Info) {
+    RefreshHotkey(app_config.HotkeyUserNote, GuiCtrlObj.Value, Potplayer2Obsidian)
+    app_config.HotkeyUserNote := GuiCtrlObj.Value
+  }
+
   ; 回显: 图片+回链快捷键
   guiData.controls.hk_image_backlink.Value := app_config.HotkeyIamgeBacklink
   guiData.controls.hk_image_backlink.OnEvent("Change", Update_Hk_Image_Backlink)

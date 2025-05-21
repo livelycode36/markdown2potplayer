@@ -1,6 +1,6 @@
 #Requires AutoHotkey v2.0
 
-RenderTemplate(backlink_template, media_data) {
+RenderTemplate(backlink_template, media_data, current_hotkey := "") {
     backlink_template := RenderSrtTemplate(backlink_template, media_data, "")
 
     markdown_link_data := RenderNameAndTimeAndLink(app_config, media_data)
@@ -20,6 +20,36 @@ RenderTemplate(backlink_template, media_data) {
 
     if (InStr(backlink_template, "{time}") != 0) {
         backlink_template := StrReplace(backlink_template, "{time}", media_data.Time)
+    }
+
+    if (InStr(backlink_template, "{userNote}") != 0) {
+      userNote := ""
+
+      if(current_hotkey == (app_config.HotkeyUserNote " Up")) {
+        value := InputBox("Please enter a note.", "note")
+        if (value.Result != "Cancel") {
+          userNote := value.Value
+        }
+      }
+
+      ; 用户没有输入, 删除userNote占位符
+      if (userNote == "") {
+        userNoteOneLineFirst := "{userNote}`n"
+        userNoteOneLine := "`n{userNote}`n"
+        userNoteOneLineLast := "`n{userNote}"
+        
+        if (InStr(backlink_template, userNoteOneLineFirst) != 0) {
+          backlink_template := StrReplace(backlink_template, userNoteOneLineFirst, "")
+        }
+        if (InStr(backlink_template, userNoteOneLine) != 0) {
+          backlink_template := StrReplace(backlink_template, userNoteOneLine, "")
+        }
+        if (InStr(backlink_template, userNoteOneLineLast) != 0) {
+          backlink_template := StrReplace(backlink_template, userNoteOneLineLast, "")
+        }
+      }
+
+      backlink_template := StrReplace(backlink_template, "{userNote}", userNote)
     }
 
     if (InStr(backlink_template, "{subtitle}") != 0) {
@@ -133,14 +163,14 @@ GenerateMarkdownLink2PotplayerLink(app_config, media_data) {
     return app_config.UrlProtocol "?path=" ProcessUrl(media_data.Path) "&time=" media_data.Time
 }
 
-RenderImage(markdown_image_template, media_data, image) {
+RenderImage(markdown_image_template, media_data, image, hotkey:="") {
     identifier := "{image}"
     image_templates := TemplateConvertedToTemplates(markdown_image_template, identifier)
     For index, image_template in image_templates {
         if (image_template == identifier) {
             SendImage2NoteApp(image)
         } else {
-            rendered_template := RenderTemplate(image_template, media_data)
+            rendered_template := RenderTemplate(image_template, media_data, hotkey)
             if (IsWordProgram() && InStr(image_template, "{title}")) {
                 SendText2wordApp(rendered_template)
             } else {

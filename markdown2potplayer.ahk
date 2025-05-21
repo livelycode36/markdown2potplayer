@@ -12,6 +12,7 @@
 #Include lib\entity\MediaData.ahk
 #Include lib\PotplayerControl.ahk
 #Include lib\gui\GuiControl.ahk
+#Include lib\gui\i18n\I18n.ahk
 
 main()
 
@@ -36,6 +37,9 @@ RegisterHotKey() {
   HotIf CheckCurrentProgram
   if(app_config.HotkeySubtitle!= ""){
     Hotkey(app_config.HotkeySubtitle " Up", Potplayer2Obsidian)
+  }
+  if (app_config.HotkeyUserNote != "") {
+    Hotkey(app_config.HotkeyUserNote " Up", Potplayer2Obsidian)
   }
   if (app_config.HotkeyBacklink!= ""){
     Hotkey(app_config.HotkeyBacklink " Up", Potplayer2Obsidian)
@@ -96,9 +100,9 @@ Potplayer2Obsidian(hotkey) {
     if (hotkey == (app_config.HotkeySubtitle " Up")) {
         backlink_template := app_config.SubtitleTemplate
 
-        rendered_template := RenderTemplate(app_config.SubtitleTemplate, media_data)
+        rendered_template := RenderTemplate(app_config.SubtitleTemplate, media_data, hotkey)
     } else {
-        rendered_template := RenderTemplate(app_config.MarkdownTemplate, media_data)
+        rendered_template := RenderTemplate(app_config.MarkdownTemplate, media_data, hotkey)
     }
 
     PauseMedia()
@@ -131,7 +135,7 @@ GetMediaTime() {
     if (app_config.ReduceTime != "0") {
         time := ReduceTime(time, app_config.ReduceTime)
     }
-    return time
+    return time == "" ? "00" : time
 }
 
 GetMediaTimeMilliseconds() {
@@ -264,62 +268,64 @@ SendImage2NoteApp(image) {
 ; 【A-B片段、循环】
 PressHotkeyCount := 0
 Potplayer2ObsidianFragment(HotkeyName) {
-    global
-    ReleaseCommonUseKeyboard()
+  global
+  ReleaseCommonUseKeyboard()
 
-    PressHotkeyCount += 1
+  i18n_strings := I18n(A_WorkingDir "\lib\gui\i18n")
 
-    if (PressHotkeyCount == 1) {
-        ; 第一次按下快捷键，记录时间
-        fragment_time_start := GetMediaTime()
-        ; 通知用户
-        ToolTip("已经记录起点的时间！请再次按下快捷键，记录终点的时间。按Esc取消")
-        SetTimer () => ToolTip(), -2000
+  PressHotkeyCount += 1
 
-        HotIf CheckCurrentProgram
-        Hotkey("Escape Up", cancel, "On")
-        cancel(*) {
-            ; 重置计数器
-            PressHotkeyCount := 0
-            Hotkey("Escape Up", "off")
-        }
-    } else if (PressHotkeyCount == 2) {
-        Assert(fragment_time_start == "", "未设置起点时间，无法生成该片段的链接！")
-        ; 重置计数器
-        PressHotkeyCount := 0
-        Hotkey("Escape Up", "off")
+  if (PressHotkeyCount == 1) {
+      ; 第一次按下快捷键，记录时间
+      fragment_time_start := GetMediaTime()
+      ; 通知用户
+      ToolTip(i18n_strings.tips_ab_start)
+      SetTimer () => ToolTip(), -2000
 
-        ; 第二次按下快捷键，记录时间
-        fragment_time_end := GetMediaTime()
+      HotIf CheckCurrentProgram
+      Hotkey("Escape Up", cancel, "On")
+      cancel(*) {
+          ; 重置计数器
+          PressHotkeyCount := 0
+          Hotkey("Escape Up", "off")
+      }
+  } else if (PressHotkeyCount == 2) {
+      Assert(fragment_time_start == "", i18n_strings.tips_ab_failed)
+      ; 重置计数器
+      PressHotkeyCount := 0
+      Hotkey("Escape Up", "off")
 
-        ; 如果终点时间小于起点时间，就交换两个时间
-        if (TimestampToMilliSecond(fragment_time_end) < TimestampToMilliSecond(fragment_time_start)) {
-            temp := fragment_time_start
-            fragment_time_start := fragment_time_end
-            fragment_time_end := temp
-            ; 释放内存
-            temp := ""
-        }
+      ; 第二次按下快捷键，记录时间
+      fragment_time_end := GetMediaTime()
 
-        media_path := GetMediaPath()
+      ; 如果终点时间小于起点时间，就交换两个时间
+      if (TimestampToMilliSecond(fragment_time_end) < TimestampToMilliSecond(fragment_time_start)) {
+          temp := fragment_time_start
+          fragment_time_start := fragment_time_end
+          fragment_time_end := temp
+          ; 释放内存
+          temp := ""
+      }
 
-        if fragment_time_start == fragment_time_end {
-            fragment_time := fragment_time_start
-        } else if HotkeyName == app_config.HotkeyAbFragment " Up" {
-            fragment_time := fragment_time_start "-" fragment_time_end
-        } else if HotkeyName == app_config.HotkeyAbCirculation " Up" {
-            fragment_time := fragment_time_start "∞" fragment_time_end
-        }
+      media_path := GetMediaPath()
 
-        ; 生成片段链接
-        markdown_link := RenderTemplate(app_config.MarkdownTemplate, MediaData(media_path, fragment_time, ""))
-        PauseMedia()
+      if fragment_time_start == fragment_time_end {
+          fragment_time := fragment_time_start
+      } else if HotkeyName == app_config.HotkeyAbFragment " Up" {
+          fragment_time := fragment_time_start "-" fragment_time_end
+      } else if HotkeyName == app_config.HotkeyAbCirculation " Up" {
+          fragment_time := fragment_time_start "∞" fragment_time_end
+      }
 
-        ; 发送到笔记软件
-        if (IsWordProgram()) {
-            SendText2wordApp(markdown_link)
-        } else {
-            SendText2NoteApp(markdown_link)
-        }
-    }
+      ; 生成片段链接
+      markdown_link := RenderTemplate(app_config.MarkdownTemplate, MediaData(media_path, fragment_time, ""))
+      PauseMedia()
+
+      ; 发送到笔记软件
+      if (IsWordProgram()) {
+          SendText2wordApp(markdown_link)
+      } else {
+          SendText2NoteApp(markdown_link)
+      }
+  }
 }
