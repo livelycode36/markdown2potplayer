@@ -82,7 +82,7 @@ global running_count := 0
 SafeRecursion() {
   global running_count
   running_count++
-  ToolTip("正在重试，第" running_count "次尝试...")
+  ToolTip("Retrying... Attempt: " running_count)
   SetTimer () => ToolTip(), -1000
   if (running_count > 5) {
     running_count := 0

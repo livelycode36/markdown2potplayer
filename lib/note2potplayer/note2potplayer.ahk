@@ -152,7 +152,9 @@ IsSameVideo(jump_path) {
     GetPotplayerpath() {
       A_Clipboard := ""
       potplayer.control.GetMediaPathToClipboard()
-      ClipWait 1, 0
+      if (!ClipWait(1, 0)) {
+        return ""
+      }
       return A_Clipboard
     }
   }

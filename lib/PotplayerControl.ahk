@@ -120,7 +120,7 @@ class PotplayerControl {
     SetMediaTimeMilliseconds(ms) {
         this.PostCommand(this.REQUEST_TYPE, 20485, ms)
     }
-    GetCurrentSecondsTime() {
+    GetMediaTimeSecondsTime() {
         return Integer(this.GetMediaTimeMilliseconds() / 1000)
     }
     GetTotalTimeSeconds() {

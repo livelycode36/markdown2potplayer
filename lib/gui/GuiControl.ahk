@@ -113,6 +113,28 @@ InitGui(app_config, potplayer_control) {
     app_config.HotkeyIamgeBacklink := GuiCtrlObj.Value
   }
 
+  ; 回显: 第三方截图工具的快捷键
+  guiData.controls.hk_image_screenshot_tool_hotkeys.Value := app_config.HotkeyScreenshotToolHotkeys
+  guiData.controls.hk_image_screenshot_tool_hotkeys.OnEvent("Change", Update_Hk_Image_Screenshot_Tool_Hotkeys)
+  Update_Hk_Image_Screenshot_Tool_Hotkeys(GuiCtrlObj, Info) {
+    app_config.HotkeyScreenshotToolHotkeys := GuiCtrlObj.Value
+  }
+
+  ; 回显: 第三方截图工具的快捷键
+  guiData.controls.hk_image_edit.Value := app_config.HotkeyImageEdit
+  guiData.controls.hk_image_edit.OnEvent("Change", Update_Hk_Image_Edit)
+  Update_Hk_Image_Edit(GuiCtrlObj, Info) {
+    RefreshHotkey(app_config.HotkeyImageEdit, GuiCtrlObj.Value, Potplayer2ObsidianImage)
+    app_config.HotkeyImageEdit := GuiCtrlObj.Value
+  }
+
+  ; 回显: 第三方截图工具的快捷键
+  guiData.controls.Edit_image_edit_detection_time.Value := app_config.ImageEditDetectionTime
+  guiData.controls.Edit_image_edit_detection_time.OnEvent("Change", Update_Image_Edit_Detection_Time)
+  Update_Image_Edit_Detection_Time(GuiCtrlObj, Info) {
+    app_config.ImageEditDetectionTime := GuiCtrlObj.Value
+  }
+
   ; 回显: ab片段快捷键
   guiData.controls.hk_ab_fragment.Value := app_config.HotkeyAbFragment
   guiData.controls.hk_ab_fragment.OnEvent("Change", Update_Hk_Ab_Fragment)

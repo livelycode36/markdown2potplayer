@@ -85,6 +85,18 @@ Class Config {
         get => GetKey("hotkey_iamge_backlink")
         set => UpdateOrInsertConfig("hotkey_iamge_backlink", Value)
     }
+    HotkeyScreenshotToolHotkeys {
+      get => GetKey("hotkey_image_screenshot_tool_hotkeys")
+      set => UpdateOrInsertConfig("hotkey_image_screenshot_tool_hotkeys", Value)
+    }
+    HotkeyImageEdit {
+      get => GetKey("hotkey_image_edit")
+      set => UpdateOrInsertConfig("hotkey_image_edit", Value)
+    }
+    ImageEditDetectionTime {
+      get => GetKey("image_edit_detection_time")
+      set => UpdateOrInsertConfig("image_edit_detection_time", Value)
+    }
     HotkeyAbFragment {
         get => GetKey("hotkey_ab_fragment")
         set => UpdateOrInsertConfig("hotkey_ab_fragment", Value)

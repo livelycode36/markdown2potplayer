@@ -47,6 +47,9 @@ RegisterHotKey() {
   if (app_config.HotkeyIamgeBacklink!= ""){
     Hotkey(app_config.HotkeyIamgeBacklink " Up", Potplayer2ObsidianImage)
   }
+  if (app_config.HotkeyImageEdit != "") {
+    Hotkey(app_config.HotkeyImageEdit " Up", Potplayer2ObsidianImage)
+  }
   if (app_config.HotkeyAbFragment!= ""){
     Hotkey(app_config.HotkeyAbFragment " Up", Potplayer2ObsidianFragment)
   }
@@ -115,15 +118,20 @@ Potplayer2Obsidian(hotkey) {
 }
 
 ; 【主逻辑】粘贴图像
-Potplayer2ObsidianImage(*) {
-    ReleaseCommonUseKeyboard()
+Potplayer2ObsidianImage(hotkey) {
+  ReleaseCommonUseKeyboard()
 
-    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
-    image := SaveImage()
+  media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
+  iamgeData := SaveImage(hotkey)
+  if (iamgeData == "edit image timeout") {
+    return
+  } else {
+    image := iamgeData
+  }
 
-    PauseMedia()
+  PauseMedia()
 
-    RenderImage(app_config.MarkdownImageTemplate, media_data, image)
+  RenderImage(app_config.MarkdownImageTemplate, media_data, image)
 }
 
 GetMediaPath() {
@@ -151,7 +159,10 @@ PressDownHotkey(operate_potplayer) {
     A_Clipboard := ""
     ; 调用函数会丢失this，将对象传入，以便不会丢失this => https://wyagd001.github.io/v2/docs/Objects.htm#Custom_Classes_method
     operate_potplayer(potplayer_control)
-    ClipWait 1, 0
+    result := ""
+    if(!ClipWait(1, 0)){
+      return result
+    }
     result := A_Clipboard
     ; MyLog "剪切板的值是：" . result
 
@@ -228,7 +239,10 @@ SendText2NoteApp(text) {
 
     A_Clipboard := ""
     A_Clipboard := text
-    ClipWait 2, 0
+    ; 超时
+    if(!ClipWait(2, 0)){
+     return 
+    }
     Send "{LCtrl down}"
     Send "{v}"
     Send "{LCtrl up}"
@@ -241,23 +255,37 @@ SendText2wordApp(text) {
     Run(A_ScriptDir "\lib\word\word.exe " text, , "Hide", ,)
 }
 
-SaveImage() {
-    Assert(potplayer_control.GetPlayStatus() == "Stopped", "视频尚未播放，无法截图！")
+SaveImage(hotkey) {
+  Assert(potplayer_control.GetPlayStatus() == "Stopped", "视频尚未播放，无法截图！")
 
+  if (hotkey == (app_config.HotkeyIamgeBacklink " Up")) {
     A_Clipboard := ""
     potplayer_control.SaveImageToClipboard()
     if !ClipWait(2, 1) {
-        SafeRecursion()
+      SafeRecursion()
     }
     running_count := 0
     return ClipboardAll()
+  }
+
+  if (hotkey == (app_config.HotkeyImageEdit " Up")) {
+    ActivateProgram(app_config.PotplayerProcessName)
+    Send app_config.HotkeyScreenshotToolHotkeys
+    A_Clipboard := ""
+    if !ClipWait(app_config.ImageEditDetectionTime, 1) {
+      return "edit image timeout"
+    }
+    return ClipboardAll()
+  }
 }
 SendImage2NoteApp(image) {
     selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
     ActivateProgram(selected_note_program)
     A_Clipboard := ""
     A_Clipboard := ClipboardAll(image)
-    ClipWait 2, 1
+    if(!ClipWait(2, 1)){
+      return false
+    }
     Send "{LCtrl down}"
     Send "{v}"
     Send "{LCtrl up}"

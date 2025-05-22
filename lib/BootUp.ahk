@@ -29,10 +29,10 @@ remove_boot_up(){
 adaptive_bootup(){
     if get_boot_up(){
         remove_boot_up()
-        MsgBox "已取消开机启动"
+        MsgBox "Startup launch: OFF"
     }
     else{
         set_boot_up()
-        MsgBox "已设置开机启动"
+        MsgBox "Startup launch: ON"
     }
 }
