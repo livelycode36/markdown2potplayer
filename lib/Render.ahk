@@ -97,15 +97,15 @@ RenderSrtTemplate(backlink_template, media_data, subtitle_data) {
         if (subtitle_data) {
             if (InStr(backlink_template, '{subtitleTimeRange}') != 0) {
                 ; 1. 修改渲染回链的 link 中的 time
-                media_data.Time := MilliSecondToTimestamp(subtitle_data.timeStart + 1) "-" MilliSecondToTimestamp(subtitle_data.timeEnd - 1)
+                media_data.Time := MillisecondsToTimestamp(subtitle_data.timeStart + 1) "-" MillisecondsToTimestamp(subtitle_data.timeEnd - 1)
                 ; 2. 修改渲染回链的 title 中的 time
-                backlink_template := StrReplace(backlink_template, "{subtitleTimeRange}", RemoveMillisecondFormTimestamp(media_data.Time))
+                backlink_template := StrReplace(backlink_template, "{subtitleTimeRange}", RemoveMillisecondsFromTimestamp(media_data.Time))
             } else if (InStr(backlink_template, '{subtitleTimeStart}') != 0) {
-                media_data.Time := MilliSecondToTimestamp(subtitle_data.timeStart + 1)
-                backlink_template := StrReplace(backlink_template, "{subtitleTimeStart}", RemoveMillisecondFormTimestamp(media_data.Time))
+                media_data.Time := MillisecondsToTimestamp(subtitle_data.timeStart + 1)
+                backlink_template := StrReplace(backlink_template, "{subtitleTimeStart}", RemoveMillisecondsFromTimestamp(media_data.Time))
             } else if (InStr(backlink_template, '{subtitleTimeEnd}') != 0) {
-                media_data.Time := MilliSecondToTimestamp(subtitle_data.timeEnd - 1)
-                backlink_template := StrReplace(backlink_template, "{subtitleTimeEnd}", RemoveMillisecondFormTimestamp(media_data.Time))
+                media_data.Time := MillisecondsToTimestamp(subtitle_data.timeEnd - 1)
+                backlink_template := StrReplace(backlink_template, "{subtitleTimeEnd}", RemoveMillisecondsFromTimestamp(media_data.Time))
             }
 
             if (InStr(backlink_template, '{subtitleOrigin}') != 0) {
@@ -137,7 +137,12 @@ RenderNameAndTimeAndLink(app_config, media_data) {
     ; 渲染 title
     title := app_config.MarkdownTitle
     title := StrReplace(title, "{name}", name)
-    title := StrReplace(title, "{time}", media_data.Time)
+    if(InStr(media_data.Time, "-") != 0 ||
+       InStr(media_data.Time, "∞") != 0) {
+      title := StrReplace(title, "{time}", RemoveMillisecondsFromTimeRange(media_data.Time))
+    } else {
+      title := StrReplace(title, "{time}", RemoveMillisecondsFromTimestamp(media_data.Time))
+    }
     ; 渲染 title 中的 字幕模板
     title := RenderSubtitleTemplate(title, media_data)
 

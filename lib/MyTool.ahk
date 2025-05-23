@@ -3,7 +3,7 @@
 
 log_toggle := false
 
-; 在路径中，获取程序的名称
+; 获取路径中的文件名
 GetNameForPath(program_path) {
   SplitPath program_path, &name, &dir, &ext, &name_no_ext, &drive
   return name

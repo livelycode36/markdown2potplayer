@@ -2,11 +2,11 @@
 #SingleInstance force
 #Include "lib\note2potplayer\RegisterUrlProtocol.ahk"
 #Include "lib\MyTool.ahk"
-#Include "lib\ReduceTime.ahk"
+#Include "lib\TimeTool.ahk"
 #Include "lib\TemplateParser.ahk"
 #Include "lib\sqlite\SqliteControl.ahk"
 #Include lib\srt.ahk
-#Include lib\Redner.ahk
+#Include lib\Render.ahk
 #Include lib\socket\SocketService.ahk
 #Include lib\entity\Config.ahk
 #Include lib\entity\MediaData.ahk
@@ -94,11 +94,30 @@ CheckCurrentProgram(*) {
     return false
 }
 
+lastMediaPath := ""
 ; 【主逻辑】将Potplayer的播放链接粘贴到Obsidian中
 Potplayer2Obsidian(hotkey) {
+    global lastMediaPath
+    ; 取消可能正在进行的截图等待
+    CancelScreenshotWaiting()
+    
     ReleaseCommonUseKeyboard()
 
-    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
+    if (lastMediaPath == "") {
+        lastMediaPath := UrlDecode(GetMediaPath())
+    }
+
+    nameInPath := UrlDecode(GetNameForPath(lastMediaPath))
+    nameInPotplayer := StrReplace(GetPotplayerTitle(app_config.PotplayerProcessName), " - PotPlayer", "")
+
+    if (nameInPath == nameInPotplayer) {
+        media_path := lastMediaPath
+    } else {
+        lastMediaPath := UrlDecode(GetMediaPath())
+        media_path := lastMediaPath
+    }
+
+    media_data := MediaData(media_path, GetMediaTime(), "")
 
     if (hotkey == (app_config.HotkeySubtitle " Up")) {
         backlink_template := app_config.SubtitleTemplate
@@ -120,39 +139,53 @@ Potplayer2Obsidian(hotkey) {
 ; 【主逻辑】粘贴图像
 Potplayer2ObsidianImage(hotkey) {
   ReleaseCommonUseKeyboard()
+  
+  ; 取消可能正在进行的截图等待
+  CancelScreenshotWaiting()
 
-  media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
   iamgeData := SaveImage(hotkey)
-  if (iamgeData == "edit image timeout") {
-    return
-  } else {
-    image := iamgeData
+  
+  ; 对于 HotkeyIamgeBacklink，仍然是同步的
+  if (hotkey == (app_config.HotkeyIamgeBacklink " Up")) {
+    if (iamgeData == "edit image timeout") {
+      return
+    }
+    
+    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
+    PauseMedia()
+    RenderImage(app_config.MarkdownImageTemplate, media_data, iamgeData)
   }
-
-  PauseMedia()
-
-  RenderImage(app_config.MarkdownImageTemplate, media_data, image)
+  
+  ; 对于 HotkeyImageEdit，现在是异步的，SaveImage 已经启动了异步流程
+  ; ProcessScreenshotResult 会在检测到图片时自动调用
 }
 
 GetMediaPath() {
     return PressDownHotkey(potplayer_control.GetMediaPathToClipboard)
 }
 GetMediaTime() {
-    time := PressDownHotkey(potplayer_control.GetMediaTimestampToClipboard)
+    milliseconds := potplayer_control.GetMediaTimeMilliseconds()
 
     if (app_config.ReduceTime != "0") {
-        time := ReduceTime(time, app_config.ReduceTime)
+        milliseconds := (milliseconds - (app_config.ReduceTime * 1000))
     }
-    return time == "" ? "00" : time
+
+    if (milliseconds < 0) {
+        milliseconds := 0
+    }
+
+    timestamp := MillisecondsToTimestamp(milliseconds)
+
+    return timestamp
 }
 
 GetMediaTimeMilliseconds() {
     return potplayer_control.GetMediaTimeMilliseconds()
 }
 GetMediaSubtitle() {
-    subtitle_from_otplayer := ""
-    subtitle_from_otplayer := PressDownHotkey(potplayer_control.GetSubtitleToClipboard)
-    return subtitle_from_otplayer
+    subtitle_from_potplayer := ""
+    subtitle_from_potplayer := PressDownHotkey(potplayer_control.GetSubtitleToClipboard)
+    return subtitle_from_potplayer
 }
 PressDownHotkey(operate_potplayer) {
     ; 先让剪贴板为空, 这样可以使用 ClipWait 检测文本什么时候被复制到剪贴板中.
@@ -255,8 +288,19 @@ SendText2wordApp(text) {
     Run(A_ScriptDir "\lib\word\word.exe " text, , "Hide", ,)
 }
 
+; 添加截图等待状态跟踪变量
+IsWaitingForScreenshot := false
+ScreenshotContext := {hotkey: "", media_data: ""}
 SaveImage(hotkey) {
-  Assert(potplayer_control.GetPlayStatus() == "Stopped", "视频尚未播放，无法截图！")
+  global IsWaitingForScreenshot
+  
+  ; 如果已经在等待截图，先取消之前的等待
+  if (IsWaitingForScreenshot) {
+      SetTimer(ScreenshotTimeout, 0)
+      IsWaitingForScreenshot := false
+  }
+  
+  Assert(potplayer_control.GetPlayStatus() == "Stopped", "Please start video playback to take screenshots.")
 
   if (hotkey == (app_config.HotkeyIamgeBacklink " Up")) {
     A_Clipboard := ""
@@ -272,19 +316,92 @@ SaveImage(hotkey) {
     ActivateProgram(app_config.PotplayerProcessName)
     Send app_config.HotkeyScreenshotToolHotkeys
     A_Clipboard := ""
-    if !ClipWait(app_config.ImageEditDetectionTime, 1) {
-      return "edit image timeout"
-    }
-    return ClipboardAll()
+    
+    ; 设置等待状态和上下文
+    IsWaitingForScreenshot := true
+    ScreenshotContext.hotkey := hotkey
+    
+    ; 启动异步检查定时器 - 每250ms检查一次剪切板
+    SetTimer(CheckClipboardForImage, 250)
+    
+    ; 设置超时定时器
+    SetTimer(ScreenshotTimeout, app_config.ImageEditDetectionTime * 1000)
+    
+    ; 立即返回，不阻塞快捷键
+    return "async_started"
   }
 }
+
+; 截图超时处理函数
+ScreenshotTimeout() {
+    global IsWaitingForScreenshot
+    if (IsWaitingForScreenshot) {
+        IsWaitingForScreenshot := false
+        ; 停止剪切板检查定时器
+        SetTimer(CheckClipboardForImage, 0)
+        ; 这里可以添加超时提示，比如：
+        ; ToolTip("截图已超时或被取消")
+        ; SetTimer(() => ToolTip(), -2000)
+    }
+}
+
+; 异步检查剪切板是否有图片
+CheckClipboardForImage() {
+    global IsWaitingForScreenshot, ScreenshotContext
+    
+    if (!IsWaitingForScreenshot) {
+        ; 停止检查
+        SetTimer(CheckClipboardForImage, 0)
+        return
+    }
+    
+    ; 检查剪切板是否有图片
+    if ClipWait(0, 1) {
+        try {
+            clipboard_data := ClipboardAll()
+            ; 停止所有定时器并重置状态
+            SetTimer(CheckClipboardForImage, 0)
+            SetTimer(ScreenshotTimeout, 0)
+            IsWaitingForScreenshot := false
+            
+            ; 继续处理截图 - 直接调用后续流程
+            ProcessScreenshotResult(clipboard_data, ScreenshotContext.hotkey)
+            
+        } catch {
+            ; 获取剪切板数据失败，继续等待
+        }
+    }
+}
+
+; 处理截图结果
+ProcessScreenshotResult(image_data, hotkey) {
+    ; 获取媒体数据
+    media_data := MediaData(GetMediaPath(), GetMediaTime(), "")
+    
+    ; 暂停媒体
+    PauseMedia()
+    
+    ; 渲染图片
+    RenderImage(app_config.MarkdownImageTemplate, media_data, image_data)
+}
+
+; 取消截图等待（用于防止其他操作与截图冲突）
+CancelScreenshotWaiting() {
+    global IsWaitingForScreenshot
+    if (IsWaitingForScreenshot) {
+        SetTimer(CheckClipboardForImage, 0)
+        SetTimer(ScreenshotTimeout, 0)
+        IsWaitingForScreenshot := false
+    }
+}
+
 SendImage2NoteApp(image) {
     selected_note_program := SelectedNoteProgram(app_config.NoteAppName)
     ActivateProgram(selected_note_program)
     A_Clipboard := ""
     A_Clipboard := ClipboardAll(image)
     if(!ClipWait(2, 1)){
-      return false
+      return
     }
     Send "{LCtrl down}"
     Send "{v}"
@@ -297,6 +414,10 @@ SendImage2NoteApp(image) {
 PressHotkeyCount := 0
 Potplayer2ObsidianFragment(HotkeyName) {
   global
+
+  ; 取消可能正在进行的截图等待
+  CancelScreenshotWaiting()
+  
   ReleaseCommonUseKeyboard()
 
   i18n_strings := I18n(A_WorkingDir "\lib\gui\i18n")
@@ -327,7 +448,7 @@ Potplayer2ObsidianFragment(HotkeyName) {
       fragment_time_end := GetMediaTime()
 
       ; 如果终点时间小于起点时间，就交换两个时间
-      if (TimestampToMilliSecond(fragment_time_end) < TimestampToMilliSecond(fragment_time_start)) {
+      if (TimestampToMilliseconds(fragment_time_end) < TimestampToMilliseconds(fragment_time_start)) {
           temp := fragment_time_start
           fragment_time_start := fragment_time_end
           fragment_time_end := temp
@@ -336,7 +457,6 @@ Potplayer2ObsidianFragment(HotkeyName) {
       }
 
       media_path := GetMediaPath()
-
       if fragment_time_start == fragment_time_end {
           fragment_time := fragment_time_start
       } else if HotkeyName == app_config.HotkeyAbFragment " Up" {

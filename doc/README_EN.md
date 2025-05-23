@@ -110,11 +110,6 @@ image:{image}
 2. Follow the plugin's usage documentation to play videos in Potplayer.
 3. Use the hotkey to mark timestamps.
 
-## Adjusting the Time Format
-
-Here:
-
-![image-20231214183647513](../assets/en/potplayer_format_1710485389.png)
 
 ## AB Segments
 

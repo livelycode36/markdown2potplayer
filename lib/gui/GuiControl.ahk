@@ -47,7 +47,7 @@ InitGui(app_config, potplayer_control) {
           SplitPath FileName, &name, &dir, &ext, &name_no_ext, &drive
           videoFilePath := dir "\" name_no_ext videoFileExtension
 
-          media_data := MediaData(videoFilePath, MilliSecondToTimestamp(subtitle.timeStart), subtitle.subtitle)
+          media_data := MediaData(videoFilePath, MillisecondsToTimestamp(subtitle.timeStart), subtitle.subtitle)
           rendered_template := RenderSrtTemplate(app_config.SubtitleTemplate, media_data, subtitle)
           rendered_template := RenderTemplate(rendered_template, media_data) "`r`n`r`n"
 

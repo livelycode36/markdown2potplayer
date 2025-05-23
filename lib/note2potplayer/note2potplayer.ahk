@@ -3,7 +3,7 @@
 #Include ..\MyTool.ahk
 #Include sqlite\SqliteControl.ahk
 #Include ..\PotplayerControl.ahk
-#Include ..\ReduceTime.ahk
+#Include ..\TimeTool.ahk
 
 ; 1. init
 ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
@@ -200,7 +200,7 @@ JumpToSingleTimestamp(path, time) {
   if (potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped"
     && IsSameVideo(potplayer.jump.path)) {
-    potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(time))
+    potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(time))
     potplayer.control.Play()
   } else {
     OpenPotplayerAndJumpToTimestamp(path, time)
@@ -223,7 +223,7 @@ JumpToAbFragment(media_path, media_time_span) {
     Hotkey "Esc", "off"
   }
 
-  duration := TimestampToMilliSecond(potplayer.jump.time.end) - TimestampToMilliSecond(potplayer.jump.time.start)
+  duration := TimestampToMilliseconds(potplayer.jump.time.end) - TimestampToMilliseconds(potplayer.jump.time.start)
   past := 0
   ; 3. 检查结束时间
   while (flag_ab_fragment) {
@@ -243,7 +243,7 @@ JumpToAbFragment(media_path, media_time_span) {
 
     ; 正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间
     current_time := potplayer.control.GetMediaTimeMilliseconds()
-    if (current_time >= TimestampToMilliSecond(potplayer.jump.time.end)) {
+    if (current_time >= TimestampToMilliseconds(potplayer.jump.time.end)) {
       potplayer.control.PlayPause()
       Hotkey "Esc", "off"
       break
@@ -271,7 +271,7 @@ JumpToAbCirculation(media_path, media_time_span) {
   potplayer.control.SetStartPointOfTheABCycle()
 
   ; 4. 设置A-B循环终点
-  potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(time.end))
+  potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(time.end))
   potplayer.control.SetEndPointOfTheABCycle()
 }
 
@@ -279,7 +279,7 @@ CallPotplayer() {
   if (potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped"
     && IsSameVideo(potplayer.jump.path)) {
-    potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliSecond(potplayer.jump.time.start))
+    potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(potplayer.jump.time.start))
     potplayer.control.Play()
   } else {
     ; 播放指定视频
