@@ -13,6 +13,7 @@
 #Include lib\PotplayerControl.ahk
 #Include lib\gui\GuiControl.ahk
 #Include lib\gui\i18n\I18n.ahk
+#Include lib/PotplayerFragment.ahk
 
 main()
 
@@ -31,6 +32,7 @@ main() {
     RegisterUrlProtocol(app_config.UrlProtocol)
 
     RegisterHotKey()
+    RegisterSubtitleFragmentHotkeys()
 }
 
 RegisterHotKey() {
@@ -476,4 +478,49 @@ Potplayer2ObsidianFragment(HotkeyName) {
           SendText2NoteApp(markdown_link)
       }
   }
+}
+
+RegisterSubtitleFragmentHotkeys() {
+    Hotkey("^j", (*) => SubtitleFragmentPlay("prev", "single"))
+    Hotkey("^k", (*) => SubtitleFragmentPlay("current", "single"))
+    Hotkey("^l", (*) => SubtitleFragmentPlay("next", "single"))
+    Hotkey("^!j", (*) => SubtitleFragmentPlay("prev", "loop"))
+    Hotkey("^!k", (*) => SubtitleFragmentPlay("current", "loop"))
+    Hotkey("^!l", (*) => SubtitleFragmentPlay("next", "loop"))
+}
+
+SubtitleFragmentPlay(mode, playtype) {
+    global app_config, potplayer_control
+    media_path := GetMediaPath()
+    if (media_path == "") {
+        MsgBox "未获取到视频路径"
+        return
+    }
+    srt_path := GetNameForPathWithoutExt(media_path) ".srt"
+    if !FileExist(srt_path) {
+        MsgBox "未找到对应的SRT字幕文件: " srt_path
+        return
+    }
+    subtitles_data := SubtitlesDataFromSrt(srt_path)
+    milliseconds := potplayer_control.GetMediaTimeMilliseconds()
+    frag := GetSubtitleSegmentByTimestamp(subtitles_data, milliseconds, mode)
+    if !frag {
+        MsgBox "未找到对应字幕片段"
+        return
+    }
+    time_start := MsToSrtTime(frag.timeStart)
+    time_end := MsToSrtTime(frag.timeEnd)
+    ; 转为00:00:00.000格式
+    time_start := StrReplace(time_start, ",", ".")
+    time_end := StrReplace(time_end, ",", ".")
+    MsgBox("time_start: " time_start "`n" "time_end: " time_end)
+    ; 取消AB循环
+    CancelABCycleIfNeeded(potplayer_control, app_config.PotplayerProcessName, media_path)
+    if (playtype = "single") {
+        ; JumpToAbFragment(potplayer_control, app_config.PotplayerProcessName, media_path, time_start, time_end, app_config.AbFragmentDetectionDelays)
+        text := app_config.UrlProtocol "?path=" ProcessUrl(media_path) "&time=" time_start "-" time_end
+        Run A_ScriptDir "\lib\note2potplayer\note2potplayer.exe " text
+    } else {
+        JumpToAbCirculation(potplayer_control, app_config.PotplayerProcessName, media_path, time_start, time_end)
+    }
 }

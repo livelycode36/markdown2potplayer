@@ -26,18 +26,20 @@ initTableConfig(){
     remove_suffix_of_video_file: "1",
     send_image_delays: "1000",
     ; 字幕模板
-    subtitle_template: "字幕：{subtitle}",
+    subtitle_template: "subtitle: [{subtitleTimeRange}]({link}) {subtitleOrigin}",
     ; 回链的设置
     title: "{name} | {time}",
     template:
-      "`n"
-      . "视频:{title}"
+      "{userNote}"
+      . "`n"
+      . "video:{title}"
       . "`n",
     image_template:
-      "`n"
-      . "图片:{image}"
+      "{userNote}"
       . "`n"
-      . "视频:{title}"
+      . "image:{image}"
+      . "`n"
+      . "video:{title}"
       . "`n",
     ; 回链快捷键相关
     hotkey_subtitle: "!t",

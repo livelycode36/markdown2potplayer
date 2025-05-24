@@ -173,21 +173,48 @@ FormatDuration(ms) {
 }
 
 ; 函数: RemoveMillisecondsFromTimestamp
-; 描述: 从时间戳字符串中移除毫秒部分.
-;       例如 "01:01.012" 变为 "01:01", "25:01:01.012" 变为 "25:01:01".
-; 参数: timestamp - 输入的时间戳字符串.
-; 返回: 移除了毫秒部分的时间戳字符串. 如果输入不包含 '.', 则原样返回.
+; 描述: 从时间戳字符串或时间片段中移除毫秒部分.
+;       支持单个时间戳: "01:01.012" 变为 "01:01", "25:01:01.012" 变为 "25:01:01"
+;       支持时间片段: "00:24.271-00:31.089" 变为 "00:24-00:31"
+; 参数: timestamp - 输入的时间戳字符串或时间片段字符串.
+; 返回: 移除了毫秒部分的时间戳字符串或时间片段. 如果输入不包含 '.', 则原样返回.
 ; ======================================================================================================================
 RemoveMillisecondsFromTimestamp(timestamp) {
   if timestamp = "" {
-    return timestamp ; 如果不是字符串，直接返回原值
+    return timestamp ; 如果为空字符串，直接返回原值
   }
 
-  local pos := InStr(timestamp, ".")
+  ; 检查是否包含连字符，判断是否为时间片段格式
+  local dashPos := InStr(timestamp, "-")
+  if (dashPos > 0) {
+    ; 处理时间片段格式 "00:24.271-00:31.089"
+    local startTime := SubStr(timestamp, 1, dashPos - 1)
+    local endTime := SubStr(timestamp, dashPos + 1)
+
+    ; 分别处理开始时间和结束时间的毫秒
+    local processedStart := RemoveMillisecondsFromSingleTimestamp(startTime)
+    local processedEnd := RemoveMillisecondsFromSingleTimestamp(endTime)
+
+    return processedStart "-" processedEnd
+  } else {
+    ; 处理单个时间戳格式
+    return RemoveMillisecondsFromSingleTimestamp(timestamp)
+  }
+}
+
+; 辅助函数: 处理单个时间戳的毫秒移除
+; 参数: singleTimestamp - 单个时间戳字符串
+; 返回: 移除毫秒后的时间戳
+RemoveMillisecondsFromSingleTimestamp(singleTimestamp) {
+  if singleTimestamp = "" {
+    return singleTimestamp
+  }
+
+  local pos := InStr(singleTimestamp, ".")
   if (pos > 0)
-    return SubStr(timestamp, 1, pos - 1)
+    return SubStr(singleTimestamp, 1, pos - 1)
   else
-    return timestamp ; 没有找到 '.', 原样返回
+    return singleTimestamp ; 没有找到 '.', 原样返回
 }
 
 ; ======================================================================================================================

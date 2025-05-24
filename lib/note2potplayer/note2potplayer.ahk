@@ -4,9 +4,9 @@
 #Include sqlite\SqliteControl.ahk
 #Include ..\PotplayerControl.ahk
 #Include ..\TimeTool.ahk
+#Include ..\PotplayerFragment.ahk
 
 ; 1. init
-ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
 potplayer_path := GetKeyName("path")
 
 potplayer := {
@@ -58,6 +58,7 @@ ReceivParameter() {
   return Trim(params)
 }
 
+ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
 ParseUrl(url) {
   ;url := "jv://open?path=https://www.bilibili.com/video/123456/?spm_id_from=..search-card.all.click&time=00:01:53.824"
   ; MsgBox url
@@ -93,25 +94,26 @@ ParseUrl(url) {
   }
 
   ; 情况0：是同一个视频进行跳转，之前可能设置了AB循环，所以此处先取消A-B循环
-  if (potplayer.info.isRunning
-    && potplayer.control.GetPlayStatus() != "Stopped"
-    && IsSameVideo(potplayer.jump.path)) {
-    potplayer.control.CancelTheABCycle()
-  }
+  CancelABCycleIfNeeded(potplayer.control, potplayer.jump.path, potplayer.jump.path)
 
   ; 情况1：单个时间戳 00:01:53
   if (IsSingleTimestamp(potplayer.jump.timeSpan)) {
     JumpToSingleTimestamp(potplayer.jump.path, potplayer.jump.timeSpan)
-    ; 情况2：时间戳片段 00:01:53-00:02:53
-  } else if (IsAbFragment(potplayer.jump.timeSpan)) {
-    if (GetKeyName("loop_ab_fragment")) {
-      JumpToAbCirculation(potplayer.jump.path, potplayer.jump.timeSpan)
-    } else {
-      JumpToAbFragment(potplayer.jump.path, potplayer.jump.timeSpan)
+  } else {
+    ; 情况2：时间戳片段
+    time := TimeSpanToTime(potplayer.jump.timeSpan)
+    time_start := time.start
+    time_end := time.end
+    if (IsAbFragment(potplayer.jump.timeSpan)) {
+      if (GetKeyName("loop_ab_fragment")) {
+        JumpToAbCirculation(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end)
+      } else {
+        JumpToAbFragment(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end, ab_fragment_detection_delays)
+      }
+    } else if (IsAbCirculation(potplayer.jump.timeSpan)) {
+      ; 情况3：时间戳循环
+      JumpToAbCirculation(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end)
     }
-    ; 情况3：时间戳循环 00:01:53∞00:02:53
-  } else if (IsAbCirculation(potplayer.jump.timeSpan)) {
-    JumpToAbCirculation(potplayer.jump.path, potplayer.jump.timeSpan)
   }
   ExitApp()
 }
@@ -122,8 +124,8 @@ TimeSpanToTime(media_time) {
   time_separator := ["∞", "-"]
 
   index_of := ""
-  Loop time_separator.Length {
-    index_of := InStr(media_time, time_separator[A_Index])
+  for index, separator in time_separator {
+    index_of := InStr(media_time, separator)
     if (index_of > 0) {
       break
     }
@@ -135,33 +137,6 @@ TimeSpanToTime(media_time) {
     end: SubStr(media_time, index_of + 1)
   }
   return time
-}
-
-; 判断当前播放的视频，是否是跳转的视频
-IsSameVideo(jump_path) {
-  ; 判断网络视频
-  if (InStr(jump_path, "http")) {
-    current_path := GetPotplayerpath()
-    if (InStr(jump_path, current_path)) {
-      return true
-    }
-
-    GetPotplayerpath() {
-      A_Clipboard := ""
-      potplayer.control.GetMediaPathToClipboard()
-      if (!ClipWait(1, 0)) {
-        return ""
-      }
-      return A_Clipboard
-    }
-  }
-
-  ; 判断本地视频
-  potplayer_title := WinGetTitle("ahk_id " potplayer.control.getHwnd())
-  video_name := GetNameForPath(UrlDecode(jump_path))
-  if (InStr(potplayer_title, video_name)) {
-    return true
-  }
 }
 
 ; 字符串中不包含"-、∞"，则为单个时间戳
@@ -196,57 +171,11 @@ IsAbFragment(media_time) {
 JumpToSingleTimestamp(path, time) {
   if (potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped"
-    && IsSameVideo(potplayer.jump.path)) {
+    && IsSameVideo(potplayer.control, potplayer.jump.path)) {
     potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(time))
     potplayer.control.Play()
   } else {
     OpenPotplayerAndJumpToTimestamp(path, time)
-  }
-}
-
-JumpToAbFragment(media_path, media_time_span) {
-  ; 1. 解析时间戳
-  potplayer.jump.time := TimeSpanToTime(media_time_span)
-
-  ; 2. 跳转
-  CallPotplayer()
-  Sleep 500
-
-  flag_ab_fragment := true
-
-  Hotkey "Esc", CancelAbFragment
-  CancelAbFragment(*) {
-    flag_ab_fragment := false
-    Hotkey "Esc", "off"
-  }
-
-  duration := TimestampToMilliseconds(potplayer.jump.time.end) - TimestampToMilliseconds(potplayer.jump.time.start)
-  past := 0
-  ; 3. 检查结束时间
-  while (flag_ab_fragment) {
-    ; 异常情况：用户关闭Potplayer
-    if (!IsPotplayerRunning(potplayer_path)) {
-      break
-      ; 异常情况：用户停止播放视频
-    } else if (potplayer.control.GetPlayStatus() != "Running") {
-      break
-    }
-    ; todo: 异常情况：不是同一个视频
-    ; - 在播放B站视频时，可以加载视频列表，这样用户就会切换视频，此时就要结束循环 else if (!IsSameVideo(media_path)) {break}
-    ; - 另一种思路：当前循环的时间超过了时间期间，就结束循环； +5是为了防止误差
-    ; else if (past >= duration + 5000) {
-    ;   break
-    ; }
-
-    ; 正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间
-    current_time := potplayer.control.GetMediaTimeMilliseconds()
-    if (current_time >= TimestampToMilliseconds(potplayer.jump.time.end)) {
-      potplayer.control.PlayPause()
-      Hotkey "Esc", "off"
-      break
-    }
-    Sleep ab_fragment_detection_delays
-    past += ab_fragment_detection_delays
   }
 }
 
@@ -256,27 +185,11 @@ IsAbCirculation(time_span) {
   else
     return false
 }
-JumpToAbCirculation(media_path, media_time_span) {
-  call_data := {
-    media_path: media_path,
-    time: TimeSpanToTime(media_time_span)
-  }
-
-  ; 2. 跳转
-  CallPotplayer()
-
-  ; 3. 设置A-B循环起点
-  potplayer.control.SetStartPointOfTheABCycle()
-
-  ; 4. 设置A-B循环终点
-  potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(time.end))
-  potplayer.control.SetEndPointOfTheABCycle()
-}
 
 CallPotplayer() {
   if (potplayer.info.isRunning
     && potplayer.control.GetPlayStatus() != "Stopped"
-    && IsSameVideo(potplayer.jump.path)) {
+    && IsSameVideo(potplayer.control, potplayer.jump.path)) {
     potplayer.control.SetMediaTimeMilliseconds(TimestampToMilliseconds(potplayer.jump.time.start))
     potplayer.control.Play()
   } else {

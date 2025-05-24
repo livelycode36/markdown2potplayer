@@ -9,6 +9,11 @@ GetNameForPath(program_path) {
   return name
 }
 
+GetNameForPathWithoutExt(program_path) {
+  SplitPath program_path, &name, &dir, &ext, &name_no_ext, &drive
+  return dir "\" name_no_ext
+}
+
 SearchProgram(target_app_path) {
   ; 程序正在运行
   if (WinExist("ahk_exe " GetNameForPath(target_app_path))) {

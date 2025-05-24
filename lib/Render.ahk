@@ -90,7 +90,7 @@ RenderSrtTemplate(backlink_template, media_data, subtitle_data) {
 
         if (!subtitle_data) {
             SplitPath media_data.Path, &name, &dir, &ext, &name_no_ext, &drive
-            subtitles_data := SubtitlesFromSrt(dir "/" name_no_ext ".srt")
+            subtitles_data := SubtitlesDataFromSrt(dir "/" name_no_ext ".srt")
             subtitle_data := FindSubtitleByTimestamp(GetMediaTimeMilliseconds() + 1, subtitles_data)
         }
 

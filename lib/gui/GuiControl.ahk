@@ -40,7 +40,7 @@ InitGui(app_config, potplayer_control) {
       videoFileExtension := InputBoxObj.Value
 
     for FileName in SelectedFiles {
-      subtitles := SubtitlesFromSrt(FileName)
+      subtitles := SubtitlesDataFromSrt(FileName)
       if (subtitles) {
         md_content := ""
         for subtitle in subtitles {
