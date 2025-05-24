@@ -47,12 +47,14 @@ Constructor() {
 	Edit_note_app_name := myGui.Add("Edit", "x160 y125 w190 h30 +Multi", "字幕：`n{subtitle}")
 	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x380 y125 w90 h20", "srt转回链md")
 	myGui.SetFont("s8")
-  myGui.Add("Text", "x40 y160 w80 h20", "上/下句话(暂停)")
-  hk_subtitle_previous_sentence_once := myGui.Add("Hotkey", "x160 y160 w90 h13", "^p")
-  hk_subtitle_next_sentence_once := myGui.Add("Hotkey", "x260 y160 w90 h13", "^n")
-	myGui.Add("Text", "x40 y175 w80 h20", "上/下句话(循环)")
-  hk_subtitle_previous_sentence_loop := myGui.Add("Hotkey", "x160 y175 w90 h13", "^!p")
-  hk_subtitle_next_sentence_loop := myGui.Add("Hotkey", "x260 y175 w90 h13", "^!n")
+  myGui.Add("Text", "x40 y160 w115 h20", "上/当前/下(单次)")
+  hk_subtitle_previous_once := myGui.Add("Hotkey", "x160 y160 w90 h13", "^j")
+  hk_subtitle_current_once := myGui.Add("Hotkey", "x260 y160 w90 h13", "^k")
+  hk_subtitle_next_once := myGui.Add("Hotkey", "x360 y160 w90 h13", "^l")
+  myGui.Add("Text", "x40 y175 w115 h20", "上/当前/下(循环)")
+  hk_subtitle_previous_loop := myGui.Add("Hotkey", "x160 y175 w90 h13", "^!j")
+  hk_subtitle_current_loop := myGui.Add("Hotkey", "x260 y175 w90 h13", "^!k")
+  hk_subtitle_next_loop := myGui.Add("Hotkey", "x360 y175 w90 h13", "^!l")
   myGui.SetFont()
 
 	myGui.Add("Text", "x40 y195 w63 h20", "回链的名称")
@@ -85,7 +87,7 @@ Constructor() {
   myGui.SetFont()
   hk_image_other_tool_screenshot := myGui.Add("Hotkey", "x160 y431 w120 h17", "!a")
   myGui.Add("Text", "x40 y453 w105 h32", "图片编辑")
-  hk_image_edit := myGui.Add("Hotkey", "x160 y453 w120 h17", "!a")
+  hk_image_edit := myGui.Add("Hotkey", "x160 y453 w120 h17", "!e")
   myGui.Add("Text", "x40 y475 w105 h32", "图片检测超时")
   Edit_Image_screenshot_detection_delays := myGui.Add("Edit", "x160 y475 w120 h17", "1000")
 	myGui.Add("Text", "x288 y475 w31 h20", "s")
@@ -135,7 +137,7 @@ Constructor() {
 	; hk_stop := myGui.Add("Hotkey", "x152 y153 w120 h17")
 
 	Tab.UseTab()
-	myGui.Add("Text", "x332 y725 w150 h12", "当前版本:0.2.6")
+	myGui.Add("Text", "x332 y725 w150 h12", "当前版本:0.2.7")
 	myGui.Add("Link", "x332 y740 w150 h12", "最新版本:<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">0.2.6</a>")
 
 	return myGui

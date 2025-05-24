@@ -58,7 +58,6 @@ ReceivParameter() {
   return Trim(params)
 }
 
-ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
 ParseUrl(url) {
   ;url := "jv://open?path=https://www.bilibili.com/video/123456/?spm_id_from=..search-card.all.click&time=00:01:53.824"
   ; MsgBox url
@@ -94,8 +93,7 @@ ParseUrl(url) {
   }
 
   ; 情况0：是同一个视频进行跳转，之前可能设置了AB循环，所以此处先取消A-B循环
-  CancelABCycleIfNeeded(potplayer.control, potplayer.jump.path, potplayer.jump.path)
-
+  CancelABCycleIfNeeded(potplayer.control, potplayer.info.path, potplayer.jump.path)
   ; 情况1：单个时间戳 00:01:53
   if (IsSingleTimestamp(potplayer.jump.timeSpan)) {
     JumpToSingleTimestamp(potplayer.jump.path, potplayer.jump.timeSpan)
@@ -108,7 +106,7 @@ ParseUrl(url) {
       if (GetKeyName("loop_ab_fragment")) {
         JumpToAbCirculation(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end)
       } else {
-        JumpToAbFragment(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end, ab_fragment_detection_delays)
+        JumpToAbFragment(potplayer.control, potplayer_path, potplayer.jump.path, time_start, time_end, GetKeyName("ab_fragment_detection_delays"))
       }
     } else if (IsAbCirculation(potplayer.jump.timeSpan)) {
       ; 情况3：时间戳循环

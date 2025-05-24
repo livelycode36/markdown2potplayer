@@ -60,8 +60,18 @@ Explanation:
 - `{title}`: **Represents the entire Markdown format link**, e.g., `[google](https://www.google.com)`. This means that this is the Markdown format backlink for Potplayer.
 - `{image}`: Represents the **position for pasting the image**.
 - `{subtitle}`: represents the subtitles that can be copied from the video currently being played in PotPlayer.
+- `{subtitleTemplate}`: represents the subtitle template. **If there are no subtitles in the currently playing video, no data will be generated for the subtitle template**, meaning if there are no subtitles, `{subtitleTemplate}` will disappear.
 
-  `{subtitleTemplate}`: represents the subtitle template. **If there are no subtitles in the currently playing video, no data will be generated for the subtitle template**, meaning if there are no subtitles, `{subtitleTemplate}` will disappear.
+Subtitle Template Variables:
+- `{time}`: Current timestamp in PotPlayer
+- `{subtitle}`: Currently displayed subtitle in PotPlayer
+- `{subtitleOrigin}`: Original subtitle text at current timestamp from .srt file
+- `{subtitleTimeRange}`: Time range in .srt file (format: HH:MM:SS-HH:MM:SS)
+- `{subtitleTimeStart}`: Start time in .srt file (e.g. 00:01:02)
+- `{subtitleTimeEnd}`: End time in .srt file (e.g. 00:03:04)
+
+**Note**: The data styling in `SRT-to-Markdown` conversion is controlled by these template variables.
+
 
 ### Example 1
 
@@ -109,6 +119,22 @@ image:{image}
 1. Potplayer needs to have the plugin installed: [chen310/BilibiliPotPlayer](https://github.com/chen310/BilibiliPotPlayer).
 2. Follow the plugin's usage documentation to play videos in Potplayer.
 3. Use the hotkey to mark timestamps.
+
+
+## Subtitle Navigation
+
+Requirements:
+- An SRT file with identical name as the video must exist in the same directory  
+  (e.g. `test.mp4` requires `test.srt`)
+
+Navigation Modes:
+- **Single-play**: Jump to previous/current/next subtitle line based on current timestamp
+- **Loop-mode**: Continuously cycle through previous/current/next subtitle lines
+
+Native PotPlayer Shortcuts:
+- `Home`: Previous dialogue line
+- `End`: Next dialogue line  
+- `Ctrl+Home`: Jump to start timestamp of current subtitle
 
 
 ## AB Segments

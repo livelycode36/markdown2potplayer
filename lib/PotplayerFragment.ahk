@@ -35,7 +35,7 @@ CancelABCycleIfNeeded(potplayer_control, potplayer_path, jump_path) {
     if (IsPotplayerRunning(potplayer_path)
         && potplayer_control.GetPlayStatus() != "Stopped"
         && IsSameVideo(potplayer_control, jump_path)) {
-        potplayer_control.CancelTheABCycle()
+          potplayer_control.CancelTheABCycle()
     }
 }
 
@@ -76,11 +76,11 @@ JumpToAbFragment(potplayer_control, potplayer_path, media_path, time_start, time
     while (flag_ab_fragment) {
         ; 异常情况：用户关闭Potplayer
         if (!IsPotplayerRunning(potplayer_path)) {
-            MsgBox("异常情况：用户关闭Potplayer")
+            ; MsgBox("异常情况：用户关闭Potplayer")
             break
         ; 异常情况：用户停止播放视频
         } else if (potplayer_control.GetPlayStatus() != "Running") {
-            MsgBox("异常情况：用户停止播放视频")
+            ; MsgBox("异常情况：用户停止播放视频")
             break
         }
 
@@ -97,7 +97,7 @@ JumpToAbFragment(potplayer_control, potplayer_path, media_path, time_start, time
             potplayer_control.PlayPause()
             Hotkey "Esc", "off"
             flag_ab_fragment := false
-            MsgBox("正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间")
+            ; MsgBox("正常情况：当前播放时间超过了结束时间、用户手动调整时间，超过了结束时间")
             break
         }
         Sleep ab_fragment_detection_delays

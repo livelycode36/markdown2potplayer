@@ -59,13 +59,15 @@ Constructor(i18n_local) {
 	Edit_subtitle_template := myGui.Add("Edit", "x160 y125 w190 h30 +Multi", "字幕：`n{subtitle}")
 	Button_srt_to_backlink_mdfile := myGui.Add("Button", "x380 y125 w90 h20", i18n_local.Gui_srt_to_backlink)
 	myGui.SetFont("s8")
-	myGui.Add("Text", "x40 y160 w80 h20", "上/下句话(暂停)")
-	hk_subtitle_previous_sentence_once := myGui.Add("Hotkey", "x160 y160 w90 h13", "^p")
-	hk_subtitle_next_sentence_once := myGui.Add("Hotkey", "x260 y160 w90 h13", "^n")
-	myGui.Add("Text", "x40 y175 w80 h20", "上/下句话(循环)")
-	hk_subtitle_previous_sentence_loop := myGui.Add("Hotkey", "x160 y175 w90 h13", "^!p")
-	hk_subtitle_next_sentence_loop := myGui.Add("Hotkey", "x260 y175 w90 h13", "^!n")
-	myGui.SetFont()
+  myGui.Add("Text", "x40 y160 w115 h20", i18n_local.Gui_subtitle_navigation_single)
+  hk_subtitle_previous_once := myGui.Add("Hotkey", "x160 y160 w90 h13", "^j")
+  hk_subtitle_current_once := myGui.Add("Hotkey", "x260 y160 w90 h13", "^k")
+  hk_subtitle_next_once := myGui.Add("Hotkey", "x360 y160 w90 h13", "^l")
+	myGui.Add("Text", "x40 y175 w115 h20", i18n_local.Gui_subtitle_navigation_loop)
+  hk_subtitle_previous_loop := myGui.Add("Hotkey", "x160 y175 w90 h13", "^!j")
+  hk_subtitle_current_loop := myGui.Add("Hotkey", "x260 y175 w90 h13", "^!k")
+  hk_subtitle_next_loop := myGui.Add("Hotkey", "x360 y175 w90 h13", "^!l")
+  myGui.SetFont()
 
 	myGui.Add("Text", "x40 y195 w150 h23", i18n_local.Gui_backlink_name)
 	Edit_title := myGui.Add("Edit", "x160 y195 w190 h17", "{name} | {time}")
@@ -133,7 +135,7 @@ Constructor(i18n_local) {
 	CheckBox_bootup := myGui.Add("CheckBox", "x160 y695 w120 h17", i18n_local.Gui_bootup)
 
 	Tab.UseTab()
-  myGui.Add("Text", "x332 y725 w150 h12", i18n_local.Gui_current_version ":0.2.6")
+  myGui.Add("Text", "x332 y725 w150 h12", i18n_local.Gui_current_version ":0.2.7")
   myGui.Add("Link", "x332 y740 w150 h12", i18n_local.Gui_latest_version ":<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">" getLatestVersionFromGithub() "</a>")
 	; myGui.Add("Link", "x432 y755 w48 h12", "<a href=`"https://github.com/livelycode36/markdown2potplayer/releases/latest`">去下载</a>")
 
@@ -143,6 +145,12 @@ Constructor(i18n_local) {
 	guiData.controls.Edit_note_app_name := Edit_note_app_name
 	guiData.controls.Edit_subtitle_template := Edit_subtitle_template
 	guiData.controls.Button_srt_to_backlink_mdfile := Button_srt_to_backlink_mdfile
+  guiData.controls.hk_subtitle_previous_once := hk_subtitle_previous_once
+  guiData.controls.hk_subtitle_current_once := hk_subtitle_current_once
+  guiData.controls.hk_subtitle_next_once := hk_subtitle_next_once
+  guiData.controls.hk_subtitle_previous_loop := hk_subtitle_previous_loop
+  guiData.controls.hk_subtitle_current_loop := hk_subtitle_current_loop
+  guiData.controls.hk_subtitle_next_loop := hk_subtitle_next_loop
 	guiData.controls.Edit_title := Edit_title
 	guiData.controls.Edit_markdown_template := Edit_markdown_template
 	guiData.controls.Edit_image_template := Edit_image_template

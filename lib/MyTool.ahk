@@ -74,7 +74,7 @@ GetPotplayerTitle(potplayer_process_name) {
     else
       return title
   }
-  Assert(title == "", "Error: Get Potplayer title failure!")
+  Assert(title == "", "Error: Maybe Potplayer isn't running!")
 }
 
 MyLog(message) {

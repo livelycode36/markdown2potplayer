@@ -43,6 +43,12 @@ initTableConfig(){
       . "`n",
     ; 回链快捷键相关
     hotkey_subtitle: "!t",
+    hotkey_subtitle_previous_once: "^j",
+    hotkey_subtitle_current_once: "^k",
+    hotkey_subtitle_next_once: "^l",
+    hotkey_subtitle_previous_loop: "^!j",
+    hotkey_subtitle_current_loop: "^!k",
+    hotkey_subtitle_next_loop: "^!l",
     hotkey_user_note: "!n",
     hotkey_backlink: "!g",
     hotkey_iamge_backlink: "^!g",

@@ -32,7 +32,6 @@ main() {
     RegisterUrlProtocol(app_config.UrlProtocol)
 
     RegisterHotKey()
-    RegisterSubtitleFragmentHotkeys()
 }
 
 RegisterHotKey() {
@@ -58,6 +57,24 @@ RegisterHotKey() {
   if (app_config.HotkeyAbCirculation!= ""){
     Hotkey(app_config.HotkeyAbCirculation " Up", Potplayer2ObsidianFragment)
   }
+  if (app_config.HotkeySubtitlePreviousOnce!= ""){
+    Hotkey(app_config.HotkeySubtitlePreviousOnce, (*) => SubtitleFragmentPlay("prev", "single"))
+  }
+  if (app_config.HotkeySubtitleCurrentOnce != "") {
+    Hotkey(app_config.HotkeySubtitleCurrentOnce, (*) => SubtitleFragmentPlay("current", "single"))
+  }
+  if (app_config.HotkeySubtitleNextOnce!= ""){
+    Hotkey(app_config.HotkeySubtitleNextOnce, (*) => SubtitleFragmentPlay("next", "single"))
+  }
+  if (app_config.HotkeySubtitlePreviousLoop!= ""){
+    Hotkey(app_config.HotkeySubtitlePreviousLoop, (*) => SubtitleFragmentPlay("prev", "loop"))
+  }
+  if (app_config.HotkeySubtitleCurrentLoop!= "") {
+    Hotkey(app_config.HotkeySubtitleCurrentLoop, (*) => SubtitleFragmentPlay("current", "loop"))
+  }
+  if (app_config.HotkeySubtitleNextLoop!= ""){
+    Hotkey(app_config.HotkeySubtitleNextLoop, (*) => SubtitleFragmentPlay("next", "loop"))
+  }
 }
 
 RefreshHotkey(old_hotkey, new_hotkey, callback) {
@@ -81,6 +98,29 @@ RefreshHotkey(old_hotkey, new_hotkey, callback) {
         ; 防止无效的快捷键产生报错，中断程序
         Exit
     }
+}
+
+RefreshHotkeyWithoutUp(old_hotkey, new_hotkey, callback) {
+  try {
+    ; 情况1：用户删除热键
+    if new_hotkey == "" {
+      if (old_hotkey != "") {
+        Hotkey old_hotkey, "off"
+      }
+    } else {
+      ; 情况2：用户重设热键
+      if (old_hotkey != "") {
+        Hotkey old_hotkey, "off"
+      }
+      HotIf CheckCurrentProgram
+      Hotkey new_hotkey, callback
+    }
+  }
+  catch Error as err {
+    ; 热键设置无效
+    ; 防止无效的快捷键产生报错，中断程序
+    Exit
+  }
 }
 
 CheckCurrentProgram(*) {
@@ -480,32 +520,23 @@ Potplayer2ObsidianFragment(HotkeyName) {
   }
 }
 
-RegisterSubtitleFragmentHotkeys() {
-    Hotkey("^j", (*) => SubtitleFragmentPlay("prev", "single"))
-    Hotkey("^k", (*) => SubtitleFragmentPlay("current", "single"))
-    Hotkey("^l", (*) => SubtitleFragmentPlay("next", "single"))
-    Hotkey("^!j", (*) => SubtitleFragmentPlay("prev", "loop"))
-    Hotkey("^!k", (*) => SubtitleFragmentPlay("current", "loop"))
-    Hotkey("^!l", (*) => SubtitleFragmentPlay("next", "loop"))
-}
-
 SubtitleFragmentPlay(mode, playtype) {
     global app_config, potplayer_control
     media_path := GetMediaPath()
     if (media_path == "") {
-        MsgBox "未获取到视频路径"
+        MsgBox "Video path not found"
         return
     }
     srt_path := GetNameForPathWithoutExt(media_path) ".srt"
     if !FileExist(srt_path) {
-        MsgBox "未找到对应的SRT字幕文件: " srt_path
+        MsgBox "Matching SRT subtitle file not found: " srt_path
         return
     }
     subtitles_data := SubtitlesDataFromSrt(srt_path)
     milliseconds := potplayer_control.GetMediaTimeMilliseconds()
     frag := GetSubtitleSegmentByTimestamp(subtitles_data, milliseconds, mode)
     if !frag {
-        MsgBox "未找到对应字幕片段"
+        MsgBox "Subtitle segment not found"
         return
     }
     time_start := MsToSrtTime(frag.timeStart)
@@ -513,7 +544,6 @@ SubtitleFragmentPlay(mode, playtype) {
     ; 转为00:00:00.000格式
     time_start := StrReplace(time_start, ",", ".")
     time_end := StrReplace(time_end, ",", ".")
-    MsgBox("time_start: " time_start "`n" "time_end: " time_end)
     ; 取消AB循环
     CancelABCycleIfNeeded(potplayer_control, app_config.PotplayerProcessName, media_path)
     if (playtype = "single") {

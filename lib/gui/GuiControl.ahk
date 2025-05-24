@@ -25,6 +25,8 @@ InitGui(app_config, potplayer_control) {
   ; 回显：字幕模板
   guiData.controls.Edit_subtitle_template.Value := app_config.SubtitleTemplate
   guiData.controls.Edit_subtitle_template.OnEvent("LoseFocus", (*) => app_config.SubtitleTemplate := guiData.controls.Edit_subtitle_template.Value)
+
+  ; srt转回链md文件
   guiData.controls.Button_srt_to_backlink_mdfile.OnEvent("Click", SelectSrtFiles)
   SelectSrtFiles(*) {
     SelectedFiles := FileSelect("M3", , "Open a file", "Text Documents (*.srt)")
@@ -71,6 +73,50 @@ InitGui(app_config, potplayer_control) {
         }
       }
     }
+  }
+
+  ; 字幕导航
+  ; 回显：使用字幕文件定位上一句
+  guiData.controls.hk_subtitle_previous_once.Value := app_config.HotkeySubtitlePreviousOnce
+  guiData.controls.hk_subtitle_previous_once.OnEvent("Change", Update_Hk_Subtitle_Previous_Once)
+  Update_Hk_Subtitle_Previous_Once(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitlePreviousOnce, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("prev", "single"))
+    app_config.HotkeySubtitlePreviousOnce := GuiCtrlObj.Value
+  }
+  ; 回显：使用字幕文件定位当前句
+  guiData.controls.hk_subtitle_current_once.Value := app_config.HotkeySubtitleCurrentOnce
+  guiData.controls.hk_subtitle_current_once.OnEvent("Change", Update_Hk_Subtitle_Current_Once)
+  Update_Hk_Subtitle_Current_Once(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitleCurrentOnce, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("current", "single"))
+    app_config.HotkeySubtitleCurrentOnce := GuiCtrlObj.Value
+  }
+  ; 回显：使用字幕文件定位下一句
+  guiData.controls.hk_subtitle_next_once.Value := app_config.HotkeySubtitleNextOnce
+  guiData.controls.hk_subtitle_next_once.OnEvent("Change", Update_Hk_Subtitle_Next_Once)
+  Update_Hk_Subtitle_Next_Once(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitleNextOnce, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("next", "single"))
+    app_config.HotkeySubtitleNextOnce := GuiCtrlObj.Value
+  }
+  ; 回显：使用字幕文件定位上一句(循环)
+  guiData.controls.hk_subtitle_previous_loop.Value := app_config.HotkeySubtitlePreviousLoop
+  guiData.controls.hk_subtitle_previous_loop.OnEvent("Change", Update_Hk_Subtitle_Previous_Loop)
+  Update_Hk_Subtitle_Previous_Loop(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitlePreviousLoop, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("prev", "loop"))
+    app_config.HotkeySubtitlePreviousLoop := GuiCtrlObj.Value
+  }
+  ; 回显：使用字幕文件定位当前句(循环)
+  guiData.controls.hk_subtitle_current_loop.Value := app_config.HotkeySubtitleCurrentLoop
+  guiData.controls.hk_subtitle_current_loop.OnEvent("Change", Update_Hk_Subtitle_Current_Loop)
+  Update_Hk_Subtitle_Current_Loop(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitleCurrentLoop, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("current", "loop"))
+    app_config.HotkeySubtitleCurrentLoop := GuiCtrlObj.Value
+  }
+  ; 回显：使用字幕文件定位下一句(循环)
+  guiData.controls.hk_subtitle_next_loop.Value := app_config.HotkeySubtitleNextLoop
+  guiData.controls.hk_subtitle_next_loop.OnEvent("Change", Update_Hk_Subtitle_Next_Loop)
+  Update_Hk_Subtitle_Next_Loop(GuiCtrlObj, Info) {
+    RefreshHotkeyWithoutUp(app_config.HotkeySubtitleNextLoop, GuiCtrlObj.Value, (*) => SubtitleFragmentPlay("next", "loop"))
+    app_config.HotkeySubtitleNextLoop := GuiCtrlObj.Value
   }
 
   ; 回显：回链标题
@@ -120,7 +166,7 @@ InitGui(app_config, potplayer_control) {
     app_config.HotkeyScreenshotToolHotkeys := GuiCtrlObj.Value
   }
 
-  ; 回显: 第三方截图工具的快捷键
+  ; 回显: 图片编辑快捷键
   guiData.controls.hk_image_edit.Value := app_config.HotkeyImageEdit
   guiData.controls.hk_image_edit.OnEvent("Change", Update_Hk_Image_Edit)
   Update_Hk_Image_Edit(GuiCtrlObj, Info) {
@@ -128,7 +174,7 @@ InitGui(app_config, potplayer_control) {
     app_config.HotkeyImageEdit := GuiCtrlObj.Value
   }
 
-  ; 回显: 第三方截图工具的快捷键
+  ; 回显: 检测图片编辑延迟
   guiData.controls.Edit_image_edit_detection_time.Value := app_config.ImageEditDetectionTime
   guiData.controls.Edit_image_edit_detection_time.OnEvent("Change", Update_Image_Edit_Detection_Time)
   Update_Image_Edit_Detection_Time(GuiCtrlObj, Info) {

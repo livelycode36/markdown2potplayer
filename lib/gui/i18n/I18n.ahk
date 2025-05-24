@@ -10,8 +10,7 @@
 class I18n {
     __New(languageFolder) {
         this.LanguageFolder := languageFolder
-        ; languageFile := LCID[A_Language]
-        languageFile := "en-US"
+        languageFile := LCID[A_Language]
         this.LanguageFile := languageFolder "\" languageFile ".ini"
         if (!FileExist(this.LanguageFile)) {
             this.LanguageFile := languageFolder "\en-US.ini"

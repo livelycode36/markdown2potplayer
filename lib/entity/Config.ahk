@@ -73,6 +73,30 @@ Class Config {
         get => GetKey("hotkey_subtitle")
         set => UpdateOrInsertConfig("hotkey_subtitle", Value)
     }
+    HotkeySubtitlePreviousOnce{
+        get => GetKey("hotkey_subtitle_previous_once")
+        set => UpdateOrInsertConfig("hotkey_subtitle_previous_once", Value)
+    }
+    HotkeySubtitleCurrentOnce {
+        get => GetKey("hotkey_subtitle_current_once")
+        set => UpdateOrInsertConfig("hotkey_subtitle_current_once", Value)
+    }
+    HotkeySubtitleNextOnce {
+        get => GetKey("hotkey_subtitle_next_once")
+        set => UpdateOrInsertConfig("hotkey_subtitle_next_once", Value)
+    }
+    HotkeySubtitlePreviousLoop {
+        get => GetKey("hotkey_subtitle_previous_loop")
+        set => UpdateOrInsertConfig("hotkey_subtitle_previous_loop", Value)
+    }
+    HotkeySubtitleCurrentLoop {
+        get => GetKey("hotkey_subtitle_current_loop")
+        set => UpdateOrInsertConfig("hotkey_subtitle_current_loop", Value)
+    }
+    HotkeySubtitleNextLoop {
+        get => GetKey("hotkey_subtitle_next_loop")
+        set => UpdateOrInsertConfig("hotkey_subtitle_next_loop", Value)
+    }
     HotkeyUserNote  {
       get => GetKey("hotkey_user_note")
       set => UpdateOrInsertConfig("hotkey_user_note", Value)

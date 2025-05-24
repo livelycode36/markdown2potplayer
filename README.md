@@ -77,6 +77,15 @@
 - `{subtitle}`: 代表的是当前在potplayer播放的视频中，能够复制的字幕
 - `{subtitleTemplate}`: 代表的是 字幕模板 ，**如果当前播放的视频中没有字幕时，字幕模板将不会有数据产生**，也就是说没有字幕，则`{subtitleTemplate}`消失
 
+关于字幕模板：
+- `{time}`: 代表 potplayer中的当前时间戳
+- `{subtitle}`: 代表 potplayer播放器中的当前字幕
+- `{subtitleOrigin}`: 代表 .str字幕文件中的 当前时间戳的字幕
+- `{subtitleTimeRange}`: 代表 .str字幕文件中的 开始和结束时间。例如: 01:02-03:04
+- `{subtitleTimeStart}`: 代表 .str字幕文件中的 开始时间。例如: 01:02
+- `{subtitleTimeEnd}`: 代表 .str字幕文件中的 结束时间。例如: 03:04
+
+**注意**: `srt转md`功能中的数据样式，受到 字幕模板 中的样式进行控制
 
 
 ### 示例1
@@ -142,6 +151,21 @@ image:{image}
 
 2. 按照插件的使用文档，在potplayer中播放视频
 3. 使用快捷键打时间戳即可
+
+
+
+## 字幕导航
+
+需要在视频的同目录下, 同名的srt字幕文件, 例如视频名称为test.mp4 字幕文件为 test.srt
+
+- 【单次】使用srt字幕快速定位当前时间的上一句、当前句、下一句
+- 【循环】使用srt字幕快速定位当前时间的上一句、当前句、下一句
+
+实际上potplayer也有这个功能
+
+- Home键: 上一对白
+- End键: 下一对白
+- Ctrl+Home: 当前字幕起点
 
 
 ## AB片段

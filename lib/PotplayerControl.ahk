@@ -10,12 +10,20 @@ class PotplayerControl {
     }
 
     SendCommand(msg_type, wParam, lParam) {
-        hwnd := this.GetPotplayerHwnd()
-        return SendMessage(msg_type, wParam, lParam, this.getHwnd())
+        try{
+          hwnd := this.GetPotplayerHwnd()
+          return SendMessage(msg_type, wParam, lParam, this.getHwnd())
+        } catch {
+            return 0
+        }
     }
     PostCommand(msg_type, wParam, lParam) {
-        hwnd := this.GetPotplayerHwnd()
-        return PostMessage(msg_type, wParam, lParam, this.getHwnd())
+        try{
+          hwnd := this.GetPotplayerHwnd()
+          return PostMessage(msg_type, wParam, lParam, this.getHwnd())
+        } catch {
+            return 0
+        }
     }
 
     getHwnd() {
@@ -32,7 +40,11 @@ class PotplayerControl {
     GetPotplayerHwnd() {
       ids := WinGetList("ahk_exe " this._PotplayerProcessName)
       for id in ids {
-          title := WinGetTitle("ahk_id " id)
+          try{
+            title := WinGetTitle("ahk_id " id)
+          } catch {
+              continue
+          }
           if (InStr(title, "PotPlayer")) {
               this.hwnd := id
               return id
