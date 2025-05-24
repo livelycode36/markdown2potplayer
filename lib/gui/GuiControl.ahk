@@ -32,7 +32,7 @@ InitGui(app_config, potplayer_control) {
       return
     }
 
-    InputBoxObj := InputBox("请输入视频文件的后缀(默认.mp4)", "提示", "", ".mp4")
+    InputBoxObj := InputBox("Please enter the video file extension (default: .mp4)", "tips", "", ".mp4")
     videoFileExtension := ".mp4"
     if InputBoxObj.Result = "Cancel"
       return
@@ -58,7 +58,7 @@ InitGui(app_config, potplayer_control) {
           md_path := dir "\" name_no_ext ".md"
 
           if (FileExist(md_path)) {
-            result := MsgBox("文件:" md_path " 已经存在，是否进行覆盖?", , "YesNo")
+            result := MsgBox("file:" md_path " already exists, overwrite?", , "YesNo")
             if (result == "No")
               return
             FileDelete(md_path)
@@ -66,7 +66,7 @@ InitGui(app_config, potplayer_control) {
           FileEncoding("CP0")
           FileAppend(md_content, md_path)
 
-          ToolTip("文件: " md_path " 生成成功！")
+          ToolTip("file: " md_path " generated successfully!")
           SetTimer () => ToolTip(), -2000
         }
       }

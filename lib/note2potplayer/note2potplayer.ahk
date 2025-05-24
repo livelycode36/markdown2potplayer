@@ -9,21 +9,16 @@
 ab_fragment_detection_delays := GetKeyName("ab_fragment_detection_delays")
 potplayer_path := GetKeyName("path")
 
-potplayer := {}
-potplayer.info := EnrichInfo(potplayer_path)
-potplayer.control := PotplayerControl(potplayer.info.path)
+potplayer := {
+  info: EnrichInfo(potplayer_path),
+  control: PotplayerControl(potplayer_path)
+}
 
 EnrichInfo(potplayer_path) {
-  info := {}
-
-  info.path := potplayer_path
-
-  info.isRunning := IsPotplayerRunning(potplayer_path)
-
-  if (info.isRunning) {
-    info.openWindow := "/current"
-  } else {
-    info.openWindow := "/new"
+  info := {
+    path: potplayer_path,
+    isRunning: IsPotplayerRunning(potplayer_path),
+    openWindow: IsPotplayerRunning(potplayer_path) ? "/current" : "/new"
   }
 
   return info
@@ -91,10 +86,11 @@ ParseUrl(url) {
 
   ; 2. 跳转Potplayer
   ; D:\PotPlayer64\PotPlayerMini64.exe "D:\123.mp4" /seek=00:01:53.824 /new
-  potplayer.jump := {}
-  potplayer.jump.time := ""
-  potplayer.jump.path := parameters_map["path"]
-  potplayer.jump.timeSpan := parameters_map["time"]
+  potplayer.jump := {
+    time: "",
+    path: parameters_map["path"],
+    timeSpan: parameters_map["time"]
+  }
 
   ; 情况0：是同一个视频进行跳转，之前可能设置了AB循环，所以此处先取消A-B循环
   if (potplayer.info.isRunning
@@ -134,9 +130,10 @@ TimeSpanToTime(media_time) {
   }
   Assert(index_of == "", "时间戳格式错误")
 
-  time := {}
-  time.start := SubStr(media_time, 1, index_of - 1)
-  time.end := SubStr(media_time, index_of + 1)
+  time := {
+    start: SubStr(media_time, 1, index_of - 1),
+    end: SubStr(media_time, index_of + 1)
+  }
   return time
 }
 
@@ -260,9 +257,10 @@ IsAbCirculation(time_span) {
     return false
 }
 JumpToAbCirculation(media_path, media_time_span) {
-  call_data := {}
-  call_data.media_path := media_path
-  potplayer.jump.time := time := TimeSpanToTime(media_time_span)
+  call_data := {
+    media_path: media_path,
+    time: TimeSpanToTime(media_time_span)
+  }
 
   ; 2. 跳转
   CallPotplayer()

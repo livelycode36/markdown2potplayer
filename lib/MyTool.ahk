@@ -3,7 +3,7 @@
 
 log_toggle := false
 
-; 获取路径中的文件名
+; 获取路径中的文件名带扩展名
 GetNameForPath(program_path) {
   SplitPath program_path, &name, &dir, &ext, &name_no_ext, &drive
   return name
